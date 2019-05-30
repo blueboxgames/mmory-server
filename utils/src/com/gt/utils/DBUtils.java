@@ -31,7 +31,7 @@ public class DBUtils extends UtilBase
     public DBUtils()
     {
         super();
-        db = this.ext.getParentZone().getDBManager();
+        db = ext.getParentZone().getDBManager();
     }
     public static DBUtils getInstance()
     {
@@ -89,7 +89,7 @@ public class DBUtils extends UtilBase
     {
         int[] keys = resources.keys();
         int keyLen = keys.length;
-        List<Integer> res = new ArrayList();
+        List<Integer> res = new ArrayList<>();
         for (int i = 0; i < keyLen; i++)
             if( !ResourceType.isBook(keys[i]) )
                 res.add(keys[i]);
@@ -275,9 +275,9 @@ public class DBUtils extends UtilBase
         List<Room> battles = ext.getParentZone().getRoomManager().getRoomListFromGroup("battles");
         for( Room r : battles )
         {
-            List<Game> registeredPlayers = (List<Game>) r.getProperty("registeredPlayers");
-            for( Game game : registeredPlayers )
-                result += resetDailyBattlesOfUsers(game,  " in game " + r.getName());
+            List<?> registeredPlayers = (List<?>) r.getProperty("registeredPlayers");
+            for( Object game : registeredPlayers )
+                result += resetDailyBattlesOfUsers((Game)game,  " in game " + r.getName());
         }
 
         // reset connected players

@@ -26,9 +26,10 @@ public class InboxUtils extends UtilBase
         query += ")";
         trace(query);
 
-        int messageId = 0;
+        //int messageId = 0;
         try {
-            messageId = Math.toIntExact((Long)ext.getParentZone().getDBManager().executeInsert(query, new Object[]{}));
+            // messageId = 
+            Math.toIntExact((Long)ext.getParentZone().getDBManager().executeInsert(query, new Object[]{}));
         } catch (SQLException e) { e.printStackTrace(); }
 
         // send message to online users

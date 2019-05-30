@@ -36,8 +36,8 @@ public class ChallengeUtils extends UtilBase
             challenges = ext.getParentZone().getDBManager().executeQuery("SELECT * FROM challenges WHERE start_at > NOW() - INTERVAL 1 WEEK;", new Object[]{});
         } catch (SQLException e) { e.printStackTrace(); }
 
-        Map<Integer, ChallengeSFS> allChallenges = new ConcurrentHashMap();
-        Map<Integer, ChallengeSFS> availabledChallenges = new ConcurrentHashMap();
+        Map<Integer, ChallengeSFS> allChallenges = new ConcurrentHashMap<>();
+        Map<Integer, ChallengeSFS> availabledChallenges = new ConcurrentHashMap<>();
         ISFSObject ch;
         ChallengeSFS challengeSFS;
         for( int i=0; i<challenges.size(); i++ )
@@ -54,6 +54,7 @@ public class ChallengeUtils extends UtilBase
         ext.getParentZone().setProperty("availabledChallenges", availabledChallenges);
         trace("loaded challenges data in " + (System.currentTimeMillis() - (long)ext.getParentZone().getProperty("startTime")) + " milliseconds.");
     }
+    @SuppressWarnings("unchecked")
     public ConcurrentHashMap<Integer, ChallengeSFS> getAll()
     {
         return (ConcurrentHashMap<Integer, ChallengeSFS>) ext.getParentZone().getProperty("allChallenges");
@@ -66,6 +67,7 @@ public class ChallengeUtils extends UtilBase
             return null;
         return all.get(challengeId);
     }
+    @SuppressWarnings("unchecked")
     private ChallengeSFS getAvailabled(int type, int now)
     {
         ConcurrentHashMap<Integer, ChallengeSFS> availables = (ConcurrentHashMap<Integer, ChallengeSFS>) ext.getParentZone().getProperty("availabledChallenges");
@@ -122,7 +124,7 @@ public class ChallengeUtils extends UtilBase
     {
         ISFSObject attendee;
         int arena = player.get_arena(0);
-        Map<Integer, Boolean> founds = new HashMap();
+        Map<Integer, Boolean> founds = new HashMap<>();
         ISFSArray ret = new SFSArray();
         Iterator<Map.Entry<Integer, ChallengeSFS>> iterator = getAll().entrySet().iterator();
         while( iterator.hasNext() )

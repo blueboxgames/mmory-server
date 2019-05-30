@@ -15,8 +15,6 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.extensions.ExtensionLogLevel;
-
-import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,8 +36,8 @@ public class BattleUtils extends UtilBase
     public BBGRoom make(Class roomClass, User owner, int mode, int type, int friendlyMode)
     {
         // temp solution
-        long now = Instant.now().getEpochSecond();
-        /*List<Room> rList = ext.getParentZone().getRoomListFromGroup("battles");
+        /*long now = Instant.now().getEpochSecond();
+        List<Room> rList = ext.getParentZone().getRoomListFromGroup("battles");
         for (Room r : rList)
         {
             // trace(">>>>>>>", r.containsProperty("startAt"), now );
@@ -54,7 +52,7 @@ public class BattleUtils extends UtilBase
         int league = ((Game)owner.getSession().getProperty("core")).player.get_arena(0);
         boolean singleMode = league == 0;
 
-        Map<Object, Object> roomProperties = new HashMap();
+        Map<Object, Object> roomProperties = new HashMap<>();
         roomProperties.put("mode", mode);
         roomProperties.put("type", type);
         roomProperties.put("league", league);// F===> is temp
@@ -148,6 +146,7 @@ public class BattleUtils extends UtilBase
             {
                 if( !entry.getValue().containsProperty("registeredPlayers") )
                     continue;
+                @SuppressWarnings("unchecked")
                 List<Game> games = (List<Game>)entry.getValue().getProperty("registeredPlayers");
                 for( Game g : games )
                     if( g.player.id == userId )
