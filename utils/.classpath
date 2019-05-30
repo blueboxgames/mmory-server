@@ -11,5 +11,5 @@
 	<classpathentry kind="lib" path="C:/SmartFoxServer_2X/SFS2X/extensions/__lib__/core.jar"/>
 	
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="output" path="bin/default"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
