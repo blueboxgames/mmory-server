@@ -1,0 +1,1 @@
+jar cvMf C:\SmartFoxServer_2X\SFS2X\extensions\__lib__\utils.jar -C bin/default .
