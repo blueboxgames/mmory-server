@@ -1,9 +1,5 @@
 package com.gt.utils;
 
-import com.smartfoxserver.v2.SmartFoxServer;
-import com.smartfoxserver.v2.db.IDBManager;
-import com.smartfoxserver.v2.entities.data.ISFSArray;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -11,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import com.smartfoxserver.v2.entities.data.ISFSArray;
 
 /**
  * Created by ManJav on 8/20/2017.
@@ -30,7 +28,6 @@ public class OneSignalUtils extends UtilBase
     public List<String> getPushIds(Integer[] playerIds)
     {
         List<String> ret = new ArrayList<>();
-        IDBManager dbManager = SmartFoxServer.getInstance().getZoneManager().getZoneByName("towers").getExtension().getParentZone().getDBManager();
         try{
 
             int len = playerIds.length;
@@ -40,7 +37,7 @@ public class OneSignalUtils extends UtilBase
                 queryStr += "player_id=" + playerIds[i];
                 queryStr += ( i == len-1 ) ? (" LIMIT " + len) : " OR ";
             }
-            ISFSArray sfsArray = dbManager.executeQuery(queryStr, new Object[]{});
+            ISFSArray sfsArray = ext.getParentZone().getDBManager().executeQuery(queryStr, new Object[]{});
             for ( int i=0; i<sfsArray.size(); i++ )
                 ret.add(i, sfsArray.getSFSObject(i).getText("os_pid"));
 

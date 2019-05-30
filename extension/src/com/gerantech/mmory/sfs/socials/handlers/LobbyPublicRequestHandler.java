@@ -53,7 +53,7 @@ public class LobbyPublicRequestHandler extends BaseClientRequestHandler
 
     private Room make(User owner)
     {
-        CreateRoomSettings.RoomExtensionSettings res = new CreateRoomSettings.RoomExtensionSettings("MMOryExtension", "com.gerantech.mmory.sfs.socials.BaseLobbyRoom");
+        CreateRoomSettings.RoomExtensionSettings res = new CreateRoomSettings.RoomExtensionSettings("MMOry", "com.gerantech.mmory.sfs.socials.BaseLobbyRoom");
 
         trace("---------=========<<<<  MAKE public lobby by ", owner.getName(), " >>>>==========---------");
 

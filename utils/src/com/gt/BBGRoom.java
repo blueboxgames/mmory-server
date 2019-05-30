@@ -49,7 +49,7 @@ public class BBGRoom implements Room
         this.users = new ArrayList<>();
         this.types = new ConcurrentHashMap<>();
         this.smartfox = SmartFoxServer.getInstance();
-        this.ext = (SFSExtension) smartfox.getZoneManager().getZoneByName("towers").getExtension();
+        this.ext = (SFSExtension) smartfox.getZoneManager().getZoneByName("mmory").getExtension();
 
     }
     protected void send(String cmdName, ISFSObject params, List<User> recipients) {

@@ -35,7 +35,7 @@ public class JoinSpectatorHandler extends BaseClientRequestHandler
 
     public Room make(User owner, String type)
     {
-        CreateRoomSettings.RoomExtensionSettings res = new CreateRoomSettings.RoomExtensionSettings("MMOryExtension", "com.gerantech.mmory.sfs.administration.SpectateRoom");
+        CreateRoomSettings.RoomExtensionSettings res = new CreateRoomSettings.RoomExtensionSettings("MMOry", "com.gerantech.mmory.sfs.administration.SpectateRoom");
         CreateRoomSettings rs = new CreateRoomSettings();
         rs.setGame(true);
         rs.setDynamic(true);

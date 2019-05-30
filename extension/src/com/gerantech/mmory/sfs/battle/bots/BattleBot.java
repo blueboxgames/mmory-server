@@ -36,13 +36,12 @@ public class BattleBot
     {
         this.battleRoom = battleRoom;
         this.battleField = battleRoom.battleField;
-        //ext = (SFSExtension) SmartFoxServer.getInstance().getZoneManager().getZoneByName("towers").getExtension();
 
-        chatParams = new SFSObject();
-        chatParams.putDouble("ready", battleField.now + 15000);
+        this.chatParams = new SFSObject();
+        this.chatParams.putDouble("ready", battleField.now + 15000);
 
-        player = battleField.games.__get(0).player;
-        trace("p-point:" + player.getResource(ResourceType.R2_POINT), "b-point:"+ battleField.games.__get(1).player.getResource(ResourceType.R2_POINT), " winRate:" + player.getResource(ResourceType.R16_WIN_RATE), "difficulty:" + battleField.difficulty);
+        this.player = battleField.games.__get(0).player;
+        this.trace("p-point:" + player.getResource(ResourceType.R2_POINT), "b-point:"+ battleField.games.__get(1).player.getResource(ResourceType.R2_POINT), " winRate:" + player.getResource(ResourceType.R16_WIN_RATE), "difficulty:" + battleField.difficulty);
     }
 
     public void reset()

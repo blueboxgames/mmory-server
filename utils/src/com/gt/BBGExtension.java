@@ -16,7 +16,7 @@ public class BBGExtension
 
     public BBGExtension() {
         smartfox = SmartFoxServer.getInstance();
-        ext = (SFSExtension) smartfox.getZoneManager().getZoneByName("towers").getExtension();
+        ext = (SFSExtension) smartfox.getZoneManager().getZoneByName("mmory").getExtension();
     }
     protected void send(String cmdName, ISFSObject params, List<User> recipients) {
         ext.send(cmdName, params, recipients, false);
