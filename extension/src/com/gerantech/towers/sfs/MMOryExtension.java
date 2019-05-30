@@ -33,11 +33,11 @@ import java.time.Instant;
 /**
  * @author ManJav
  */
-public class TowerExtension extends SFSExtension
+public class MMOryExtension extends SFSExtension
 {
 	public void init()
-    {
-    	UtilBase.setExtension(this);
+	{
+   	UtilBase.setExtension(this);
 		UtilBase.setBattleClass(BattleRoom.class);
 
 		// Add server event handlers

@@ -100,7 +100,7 @@ public class LobbyUtils extends UtilBase
 
     private Room createRoom(LobbySFS lobbySFS)
     {
-        CreateRoomSettings.RoomExtensionSettings res = new CreateRoomSettings.RoomExtensionSettings("TowerExtension", "com.gerantech.towers.sfs.socials.LobbyRoom");
+        CreateRoomSettings.RoomExtensionSettings res = new CreateRoomSettings.RoomExtensionSettings("MMOryExtension", "com.gerantech.towers.sfs.socials.LobbyRoom");
         CreateRoomSettings rs = new CreateRoomSettings();
         rs.setHidden(false);
         rs.setAllowOwnerOnlyInvitation(false);
