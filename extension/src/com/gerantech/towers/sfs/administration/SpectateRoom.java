@@ -5,6 +5,7 @@ import com.gerantech.towers.sfs.battle.handlers.BattleLeaveRequestHandler;
 import com.gt.utils.LobbyUtils;
 import com.gt.data.LobbySFS;
 import com.gt.towers.Game;
+import com.gt.towers.Player;
 import com.gt.towers.battle.BattleField;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.entities.Room;
@@ -30,7 +31,7 @@ public class SpectateRoom extends SFSExtension
 	{
 		room = getParentRoom();
 		addRequestHandler(Commands.BATTLE_LEAVE, BattleLeaveRequestHandler.class);
-		List<RoomVariable> listOfVars = new ArrayList();
+		List<RoomVariable> listOfVars = new ArrayList<>();
 		listOfVars.add( new SFSRoomVariable("rooms", SFSArray.newInstance()) );
 		sfsApi.setRoomVariables(null, room, listOfVars);
 		LobbyUtils lobbyUtils = LobbyUtils.getInstance();
@@ -54,12 +55,13 @@ public class SpectateRoom extends SFSExtension
 				battle.putInt("startAt", (Integer)r.getProperty("startAt"));
 				ISFSArray players = new SFSArray();
 
-				ArrayList<Game> registeredPlayers = (ArrayList)r.getProperty("registeredPlayers");
-				for ( Game g : registeredPlayers )
+				ArrayList<?> registeredPlayers = (ArrayList<?>)r.getProperty("registeredPlayers");
+				for ( Object obj : registeredPlayers )
 				{
+					Player player = ((Game)obj).player;
 					SFSObject p = new SFSObject();
-					p.putText("n", g.player.nickName);
-					LobbySFS lobby = lobbyUtils.getDataByMember(g.player.id);
+					p.putText("n", player.nickName);
+					LobbySFS lobby = lobbyUtils.getDataByMember(player.id);
 					if( lobby != null )
 					{
 						p.putText("ln", lobby.getName());
@@ -77,7 +79,7 @@ public class SpectateRoom extends SFSExtension
 
 			if( isChanged(reservedRooms, battles) )
 			{
-				List<RoomVariable> listOfVars = new ArrayList();
+				List<RoomVariable> listOfVars = new ArrayList<>();
 				listOfVars.add(new SFSRoomVariable("rooms", battles));
 				sfsApi.setRoomVariables(null, room, listOfVars);
 			}

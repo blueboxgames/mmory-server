@@ -83,7 +83,7 @@ public class LobbyPublicRequestHandler extends BaseClientRequestHandler
     {
         Player player = ((Game)user.getSession().getProperty("core")).player;
         trace("---------=========<<<<  JOIN user:"+user.getName()+" the public lobby:"+theRoom.getName()+" >>>>==========---------");
-        List<UserVariable> vars = new ArrayList();
+        List<UserVariable> vars = new ArrayList<>();
         vars.add(new SFSUserVariable("name", player.nickName));
         //vars.add(new SFSUserVariable("point", player.get_point()));
         getApi().setUserVariables(user, vars, true, true);

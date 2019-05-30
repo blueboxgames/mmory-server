@@ -332,7 +332,7 @@ public class LoginEventHandler extends BaseServerEventHandler
 		game.exchanger.updater = new ExchangeUpdater(game);
 		game.exchanger.dbItems = dbItems;
 
-		game.player.resourceIds = new ConcurrentHashMap();
+		game.player.resourceIds = new ConcurrentHashMap<>();
 		for(int i=0; i<resources.size(); i++)
 		{
 			game.player.resourceIds.put(resources.getSFSObject(i).getInt("type"), resources.getSFSObject(i).getInt("id"));

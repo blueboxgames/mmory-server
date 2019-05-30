@@ -66,7 +66,7 @@ public class BattleRoom extends BBGRoom
 	{
 		super.init(id, settings);
 		battleField = new BattleField();
-		setState( this.battleField.STATE_0_WAITING );
+		setState( BattleField.STATE_0_WAITING );
 	}
 
 	public void createGame(Boolean opponentNotFound)
@@ -80,7 +80,7 @@ public class BattleRoom extends BBGRoom
 		this.setProperty("singleMode", singleMode);
 
 		// reserve player data
-		List<Game> registeredPlayers = new ArrayList();
+		List<Game> registeredPlayers = new ArrayList<>();
 		for (User u: players)
 		{
 			Game g = (Game)u.getSession().getProperty("core");
@@ -122,15 +122,15 @@ public class BattleRoom extends BBGRoom
 
 			// sometimes auto start battle
 			if( singleMode && (battleField.difficulty > 5 || Math.random() > 0.5) && !registeredPlayers.get(0).player.inTutorial() )
-				setState( this.battleField.STATE_2_STARTED );
+				setState( BattleField.STATE_2_STARTED );
 		}
-		setState( this.battleField.STATE_1_CREATED );
+		setState( BattleField.STATE_1_CREATED );
 
 		timer = SmartFoxServer.getInstance().getTaskScheduler().scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
 
-				if( getState() < battleField.STATE_1_CREATED || getState() > battleField.STATE_4_ENDED )
+				if( getState() < BattleField.STATE_1_CREATED || getState() > BattleField.STATE_4_ENDED )
 					return;
 				try {
 					double battleDuration = battleField.getDuration();
@@ -150,16 +150,14 @@ public class BattleRoom extends BBGRoom
 				}
 
 			}
-		}, 0, this.battleField.DELTA_TIME, TimeUnit.MILLISECONDS);
+		}, 0, BattleField.DELTA_TIME, TimeUnit.MILLISECONDS);
 
 		trace(getName(), "created.");
 	}
 
 	private void updateReservesData()
 	{
-		int a = 0;
-		double b = (double)a;
-		List<RoomVariable> listOfVars = new ArrayList();
+		List<RoomVariable> listOfVars = new ArrayList<>();
 
 		int[] keys = getChangedUints();
 		if( keys != null )
@@ -210,9 +208,9 @@ public class BattleRoom extends BBGRoom
 	// summon unit  =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	public int summonUnit(int side, int type, double x, double y)
 	{
-		if( getState() == this.battleField.STATE_1_CREATED )
-			setState( this.battleField.STATE_2_STARTED );
-		if( getState() != this.battleField.STATE_2_STARTED )
+		if( getState() == BattleField.STATE_1_CREATED )
+			setState( BattleField.STATE_2_STARTED );
+		if( getState() != BattleField.STATE_2_STARTED )
 			return MessageTypes.RESPONSE_NOT_ALLOWED;
 		int id = this.battleField.summonUnit(type, side, x, y);
 
@@ -321,7 +319,7 @@ public class BattleRoom extends BBGRoom
 
 		if( this.battleField.field.isOperation() )
 		{
-			setState( this.battleField.STATE_4_ENDED );
+			setState( BattleField.STATE_4_ENDED );
 			if( retryMode )
 			{
 				close();
@@ -341,14 +339,14 @@ public class BattleRoom extends BBGRoom
 
 	private void pokeBot()
 	{
-		if( getState() < this.battleField.STATE_1_CREATED || getState() > this.battleField.STATE_4_ENDED )
+		if( getState() < BattleField.STATE_1_CREATED || getState() > BattleField.STATE_4_ENDED )
 			return;
 		bot.update();
 	}
 
 	private void checkEnding(double battleDuration)
 	{
-		if( getState() > this.battleField.STATE_2_STARTED || battleDuration < 3 )
+		if( getState() > BattleField.STATE_2_STARTED || battleDuration < 3 )
 			return;
 
 		//endCalculator.scores[0] = 3;
@@ -364,7 +362,7 @@ public class BattleRoom extends BBGRoom
 
 	private void end(double battleDuration)
 	{
-		setState( this.battleField.STATE_4_ENDED );
+		setState( BattleField.STATE_4_ENDED );
 		trace(this.getName(), "ended duration:" + battleDuration, " (" + this.battleField.field.times.toString() + ")");
 
 	    calculateResult();
@@ -552,7 +550,7 @@ public class BattleRoom extends BBGRoom
 	public void destroy()
 	{
 		//clearAllHandlers();
-		if( getState() < this.battleField.STATE_5_DISPOSED )
+		if( getState() < BattleField.STATE_5_DISPOSED )
 			setState(BattleField.STATE_5_DISPOSED);
 
 		trace(this.getName(), "destroyed.");

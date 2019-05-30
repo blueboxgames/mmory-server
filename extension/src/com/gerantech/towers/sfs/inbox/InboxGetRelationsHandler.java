@@ -23,7 +23,7 @@ public class InboxGetRelationsHandler extends BaseClientRequestHandler
 		Game game = ((Game)sender.getSession().getProperty("core"));
 		int me = params.containsKey("me") ?  params.getInt("me") : game.player.id;
 		ISFSArray relations = InboxUtils.getInstance().getRelations(me, params.getInt("id"), game.player.admin ? 100 : 40);
-		List<Integer> ids = new ArrayList();
+		List<Integer> ids = new ArrayList<>();
 		for (int i = 0; i < relations.size(); i++)
 		{
 			ISFSObject rel = relations.getSFSObject(i);

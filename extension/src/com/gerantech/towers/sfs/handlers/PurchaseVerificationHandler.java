@@ -179,7 +179,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 	 */
 	String requestAccessToken()
 	{
-		List<NameValuePair> argus = new ArrayList();
+		List<NameValuePair> argus = new ArrayList<>();
 		argus.add(new BasicNameValuePair("grant_type", "authorization_code"));
 		argus.add(new BasicNameValuePair("code", "OerQgUmJk5U2ASq8UqiGA98nPyDlHq"));
 		argus.add(new BasicNameValuePair("client_id", "1PsJN4ZdDKrolOyuDRLKQZaYKhTnIrmbSkaHK40L"));
@@ -202,7 +202,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 	 */
 	Boolean refreshAccessToken()
 	{
-		List<NameValuePair> argus = new ArrayList();
+		List<NameValuePair> argus = new ArrayList<>();
 		argus.add(new BasicNameValuePair("grant_type", "refresh_token"));
 		argus.add(new BasicNameValuePair("client_id", "1PsJN4ZdDKrolOyuDRLKQZaYKhTnIrmbSkaHK40L"));
 		argus.add(new BasicNameValuePair("client_secret", "C1nYSNSzbP72dK9J0VysZzbS8bo55AjB0UKl7X6hiCLdYACizDEeyLHoVKZt"));
@@ -229,7 +229,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 	Data verify(String productID, String purchaseToken, String market)
 	{
 		// set headers
-		Map<String, String> headers = new HashMap();
+		Map<String, String> headers = new HashMap<>();
 		if( market.equals("myket") )
 			headers.put("X-Access-Token", "4cc2d302-836c-460e-a3a7-e72c8cd9c666");
 

@@ -4,6 +4,7 @@ import com.gerantech.towers.sfs.battle.BattleRoom;
 import com.gt.Commands;
 import com.gt.data.UnitData;
 import com.gt.towers.Game;
+import com.gt.towers.Player;
 import com.gt.towers.battle.BattleField;
 import com.gt.towers.constants.MessageTypes;
 import com.gt.towers.exchanges.ExchangeItem;
@@ -136,14 +137,15 @@ public class BattleJointHandler extends BaseServerEventHandler
 		params.putBool("singleMode", room.getPropertyAsBool("singleMode"));
 		params.putSFSArray("units", UnitData.toSFSArray(room.battleField.units));
 		boolean isSpectator = room.isSpectator(user);
-		ArrayList<Game> registeredPlayers = (ArrayList)room.getProperty("registeredPlayers");
+		ArrayList<?> registeredPlayers = (ArrayList<?>)room.getProperty("registeredPlayers");
 		int i = 0;
-		for( Game g : registeredPlayers )
+		for( Object o : registeredPlayers )
 		{
+			Player player = ((Game)o).player;
 			SFSObject p = new SFSObject();
-			p.putInt("xp", g.player.get_xp());
-			p.putInt("point", g.player.get_point());
-			p.putUtfString("name", g.player.nickName);
+			p.putInt("xp", player.get_xp());
+			p.putInt("point", player.get_point());
+			p.putUtfString("name", player.nickName);
 			if( game.appVersion >= 1700 )
 			{
 				String deck = "";

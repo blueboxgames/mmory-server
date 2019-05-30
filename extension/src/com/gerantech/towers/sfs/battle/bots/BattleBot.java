@@ -1,5 +1,7 @@
 package com.gerantech.towers.sfs.battle.bots;
 
+import java.util.Map;
+
 import com.gerantech.towers.sfs.battle.BattleRoom;
 import com.gt.towers.Player;
 import com.gt.towers.battle.BattleField;
@@ -11,12 +13,8 @@ import com.gt.towers.constants.StickerType;
 import com.gt.towers.scripts.ScriptEngine;
 import com.gt.towers.socials.Challenge;
 import com.gt.towers.utils.CoreUtils;
-import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-import com.smartfoxserver.v2.extensions.SFSExtension;
-
-import java.util.Map;
 
 /**
  * Created by ManJav on 9/30/2018.
@@ -26,7 +24,6 @@ public class BattleBot
     static final private int SUMMON_DELAY = 3000;
     static final private boolean DEBUG_MODE = false;
     private Player player;
-    private SFSExtension ext;
     private BattleRoom battleRoom;
     private BattleField battleField;
     private double lastSummonTime = 0;
@@ -39,7 +36,7 @@ public class BattleBot
     {
         this.battleRoom = battleRoom;
         this.battleField = battleRoom.battleField;
-        ext = (SFSExtension) SmartFoxServer.getInstance().getZoneManager().getZoneByName("towers").getExtension();
+        //ext = (SFSExtension) SmartFoxServer.getInstance().getZoneManager().getZoneByName("towers").getExtension();
 
         chatParams = new SFSObject();
         chatParams.putDouble("ready", battleField.now + 15000);
