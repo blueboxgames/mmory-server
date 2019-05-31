@@ -94,7 +94,7 @@ public class Outcome
         int winRate = game.player.getResource(ResourceType.R16_WIN_RATE);
         //if( winRate > 3 || winRate < -3 )
         //    ret *= (int) Math.abs(winRate * 0.5);
-        if( ratio > 1 )
+        if( ratio > 1 && ret < 0 )
             ret *= star;
         Arena a = game.arenas.get(arena);
         if( ret < 0 && winRate < a.minWinStreak )
