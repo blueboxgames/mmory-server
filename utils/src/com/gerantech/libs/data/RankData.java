@@ -1,4 +1,4 @@
-package com.gt.data;
+package com.gerantech.libs.data;
 
 import java.io.Serializable;
 public class RankData implements Serializable

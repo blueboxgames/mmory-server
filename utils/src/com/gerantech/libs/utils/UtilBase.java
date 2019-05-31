@@ -1,4 +1,4 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
 import com.gt.towers.Game;
 import com.smartfoxserver.v2.entities.User;

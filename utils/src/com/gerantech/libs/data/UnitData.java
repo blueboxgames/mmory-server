@@ -1,4 +1,4 @@
-package com.gt.data;
+package com.gerantech.libs.data;
 
 import com.gt.towers.battle.units.Unit;
 import com.gt.towers.utils.maps.IntUnitMap;

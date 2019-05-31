@@ -1,6 +1,6 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
-import com.gt.data.RankData;
+import com.gerantech.libs.data.RankData;
 import com.gt.towers.Game;
 import com.gt.towers.LoginData;
 import com.gt.towers.Player;

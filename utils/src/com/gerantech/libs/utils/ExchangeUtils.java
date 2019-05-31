@@ -1,6 +1,6 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
-import com.gt.callbacks.MapChangeCallback;
+import com.gerantech.libs.callbacks.MapChangeCallback;
 import com.gt.towers.Game;
 import com.gt.towers.constants.ExchangeType;
 import com.gt.towers.constants.MessageTypes;

@@ -1,4 +1,4 @@
-package com.gt.data;
+package com.gerantech.libs.data;
 
 import com.gt.towers.utils.lists.IntList;
 import com.gt.towers.utils.maps.IntIntMap;

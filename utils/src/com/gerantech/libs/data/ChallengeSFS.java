@@ -1,7 +1,7 @@
 /**
  * Created by ManJav on 8/6/2018.
  */
-package com.gt.data;
+package com.gerantech.libs.data;
 
 import com.gt.towers.socials.Attendee;
 import com.gt.towers.socials.Challenge;

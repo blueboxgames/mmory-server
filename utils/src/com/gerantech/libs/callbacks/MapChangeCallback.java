@@ -1,4 +1,4 @@
-package com.gt.callbacks;
+package com.gerantech.libs.callbacks;
 
 import com.gt.towers.interfaces.IValueChangeCallback;
 import com.gt.towers.utils.maps.IntIntMap;

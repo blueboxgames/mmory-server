@@ -1,4 +1,4 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.gt.data.LobbySFS;
+import com.gerantech.libs.data.LobbySFS;
 import com.gt.towers.Game;
 import com.gt.towers.Player;
 import com.gt.towers.constants.MessageTypes;

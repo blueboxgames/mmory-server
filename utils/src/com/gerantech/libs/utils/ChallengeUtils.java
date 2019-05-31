@@ -1,6 +1,6 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
-import com.gt.data.ChallengeSFS;
+import com.gerantech.libs.data.ChallengeSFS;
 import com.gt.towers.Player;
 import com.gt.towers.constants.MessageTypes;
 import com.gt.towers.socials.Challenge;

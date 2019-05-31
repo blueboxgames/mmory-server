@@ -1,6 +1,6 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
-import com.gt.data.RankData;
+import com.gerantech.libs.data.RankData;
 import com.gt.towers.constants.ResourceType;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 

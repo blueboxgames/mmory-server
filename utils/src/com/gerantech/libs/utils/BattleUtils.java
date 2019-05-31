@@ -1,8 +1,8 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
-import com.gt.BBGRoom;
-import com.gt.Commands;
-import com.gt.data.LobbySFS;
+import com.gerantech.libs.BBGRoom;
+import com.gerantech.libs.Commands;
+import com.gerantech.libs.data.LobbySFS;
 import com.gt.towers.Game;
 import com.gt.towers.Player;
 import com.gt.towers.battle.BattleField;

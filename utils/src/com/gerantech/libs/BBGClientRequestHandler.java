@@ -1,4 +1,4 @@
-package com.gt;
+package com.gerantech.libs;
 
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;

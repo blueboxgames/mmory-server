@@ -1,8 +1,8 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
-import com.gt.data.LobbySFS;
-import com.gt.data.RankData;
-import com.gt.data.SFSDataModel;
+import com.gerantech.libs.data.LobbySFS;
+import com.gerantech.libs.data.RankData;
+import com.gerantech.libs.data.SFSDataModel;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;

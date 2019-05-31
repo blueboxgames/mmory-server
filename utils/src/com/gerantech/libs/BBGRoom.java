@@ -1,4 +1,4 @@
-package com.gt;
+package com.gerantech.libs;
 
 import com.gt.towers.Game;
 import com.gt.towers.constants.MessageTypes;

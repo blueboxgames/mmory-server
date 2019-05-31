@@ -1,4 +1,4 @@
-package com.gt.utils;
+package com.gerantech.libs.utils;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
