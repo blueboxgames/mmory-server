@@ -1,4 +1,4 @@
-package com.gerantech.libs.data;
+package com.gerantech.mmory.libs.data;
 
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -140,13 +140,10 @@ public class LobbySFS extends SFSDataModel
     {
         return getInt("create_at");
     }
-    private void setCreateAt(int createAt)
-    {
-        putInt("create_at", createAt);
-    }
-
+    
     /**
      * all players who participate challenge
+     * 
      * @return
      */
     public ISFSArray getMembers()

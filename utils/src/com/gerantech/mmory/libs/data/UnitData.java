@@ -1,7 +1,7 @@
-package com.gerantech.libs.data;
+package com.gerantech.mmory.libs.data;
 
-import com.gt.towers.battle.units.Unit;
-import com.gt.towers.utils.maps.IntUnitMap;
+import com.gerantech.mmory.core.battle.units.Unit;
+import com.gerantech.mmory.core.utils.maps.IntUnitMap;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 

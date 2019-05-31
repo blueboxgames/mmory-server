@@ -1,8 +1,8 @@
 package com.gerantech.mmory.sfs.battle.factories;
 
 import com.gerantech.mmory.sfs.battle.BattleRoom;
-import com.gt.towers.battle.BattleField;
-import com.gt.towers.battle.units.Unit;
+import com.gerantech.mmory.core.battle.BattleField;
+import com.gerantech.mmory.core.battle.units.Unit;
 
 import java.util.Iterator;
 import java.util.Map;

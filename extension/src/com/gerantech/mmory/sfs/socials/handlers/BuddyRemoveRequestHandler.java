@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
-import com.gt.Commands;
+import com.gerantech.mmory.libs.Commands;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;

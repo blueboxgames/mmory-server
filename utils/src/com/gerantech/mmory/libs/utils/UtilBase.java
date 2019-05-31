@@ -1,6 +1,6 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
-import com.gt.towers.Game;
+import com.gerantech.mmory.core.Game;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.extensions.ExtensionLogLevel;
 import com.smartfoxserver.v2.extensions.SFSExtension;
@@ -21,11 +21,11 @@ public class UtilBase {
             ext.getParentZone().removeProperty("startTime");
         }
     }
-    static public void setBattleClass(Class battleClass) {
+    static public void setBattleClass(Class<?> battleClass) {
             ext.getParentZone().setProperty("battleClass", battleClass);
     }
 
-    static public Object get(Class _class) {
+    static public Object get(Class<?> _class) {
         //ext.trace("get", _class.getSimpleName(), ext.getParentZone());
         if( !ext.getParentZone().containsProperty(_class.getSimpleName()) )
         {

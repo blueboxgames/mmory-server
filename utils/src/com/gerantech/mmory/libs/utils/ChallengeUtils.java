@@ -1,9 +1,9 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.libs.data.ChallengeSFS;
-import com.gt.towers.Player;
-import com.gt.towers.constants.MessageTypes;
-import com.gt.towers.socials.Challenge;
+import com.gerantech.mmory.libs.data.ChallengeSFS;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.socials.Challenge;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;

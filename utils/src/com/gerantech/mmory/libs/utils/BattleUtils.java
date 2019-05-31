@@ -1,11 +1,19 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.libs.BBGRoom;
-import com.gerantech.libs.Commands;
-import com.gerantech.libs.data.LobbySFS;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
-import com.gt.towers.battle.BattleField;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.data.LobbySFS;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.battle.BattleField;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
@@ -15,16 +23,12 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.extensions.ExtensionLogLevel;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by ManJav on 9/23/2017.
  */
 public class BattleUtils extends UtilBase
 {
-
     public static BattleUtils getInstance()
     {
         return (BattleUtils)UtilBase.get(BattleUtils.class);
@@ -33,7 +37,7 @@ public class BattleUtils extends UtilBase
     public ConcurrentHashMap<Integer, String> maps = new ConcurrentHashMap<>();
     public ConcurrentHashMap<Integer, BBGRoom> rooms = new ConcurrentHashMap<>();
 
-    public BBGRoom make(Class roomClass, User owner, int mode, int type, int friendlyMode)
+    public BBGRoom make(Class<?> roomClass, User owner, int mode, int type, int friendlyMode)
     {
         // temp solution
         /*long now = Instant.now().getEpochSecond();
@@ -146,10 +150,9 @@ public class BattleUtils extends UtilBase
             {
                 if( !entry.getValue().containsProperty("registeredPlayers") )
                     continue;
-                @SuppressWarnings("unchecked")
-                List<Game> games = (List<Game>)entry.getValue().getProperty("registeredPlayers");
-                for( Game g : games )
-                    if( g.player.id == userId )
+                List<?> games = (List<?>)entry.getValue().getProperty("registeredPlayers");
+                for( Object g : games )
+                    if( ((Game)g).player.id == userId )
                         return entry.getValue();
             }
         }

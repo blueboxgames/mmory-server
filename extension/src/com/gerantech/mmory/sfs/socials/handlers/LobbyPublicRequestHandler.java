@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.socials.handlers;
-import com.gt.Commands;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;

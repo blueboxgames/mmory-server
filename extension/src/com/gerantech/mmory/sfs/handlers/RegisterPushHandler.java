@@ -5,7 +5,7 @@ import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
-import com.gt.towers.Game;
+import com.gerantech.mmory.core.Game;
 import java.sql.SQLException;
 
 /**

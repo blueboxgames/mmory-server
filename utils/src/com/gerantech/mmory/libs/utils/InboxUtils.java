@@ -1,4 +1,4 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 

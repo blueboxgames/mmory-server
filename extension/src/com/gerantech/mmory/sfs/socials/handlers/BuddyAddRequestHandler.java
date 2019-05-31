@@ -1,14 +1,14 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
-import com.gt.BBGClientRequestHandler;
-import com.gt.Commands;
-import com.gt.towers.Game;
-import com.gt.towers.constants.MessageTypes;
-import com.gt.towers.constants.ResourceType;
-import com.gt.towers.socials.Lobby;
-import com.gt.utils.InboxUtils;
-import com.gt.utils.OneSignalUtils;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.constants.ResourceType;
+import com.gerantech.mmory.core.socials.Lobby;
+import com.gerantech.mmory.libs.utils.InboxUtils;
+import com.gerantech.mmory.libs.utils.OneSignalUtils;
 import com.smartfoxserver.v2.api.ISFSBuddyApi;
 import com.smartfoxserver.v2.buddylist.Buddy;
 import com.smartfoxserver.v2.buddylist.BuddyList;

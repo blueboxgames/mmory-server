@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.inbox;
 
-import com.gt.utils.InboxUtils;
+import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;

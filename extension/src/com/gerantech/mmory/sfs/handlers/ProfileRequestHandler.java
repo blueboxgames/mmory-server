@@ -1,9 +1,9 @@
 package com.gerantech.mmory.sfs.handlers;
 
-import com.gt.Commands;
-import com.gt.utils.LobbyUtils;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
-import com.gt.data.LobbySFS;
+import com.gerantech.mmory.libs.data.LobbySFS;
 import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;

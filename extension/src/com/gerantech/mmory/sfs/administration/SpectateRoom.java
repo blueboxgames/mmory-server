@@ -1,12 +1,12 @@
 package com.gerantech.mmory.sfs.administration;
 
-import com.gt.Commands;
+import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.sfs.battle.handlers.BattleLeaveRequestHandler;
-import com.gt.utils.LobbyUtils;
-import com.gt.data.LobbySFS;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
-import com.gt.towers.battle.BattleField;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
+import com.gerantech.mmory.libs.data.LobbySFS;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.battle.BattleField;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.data.ISFSArray;

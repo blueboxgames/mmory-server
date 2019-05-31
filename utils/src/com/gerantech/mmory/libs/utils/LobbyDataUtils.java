@@ -1,8 +1,8 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.libs.data.LobbySFS;
-import com.gerantech.libs.data.RankData;
-import com.gerantech.libs.data.SFSDataModel;
+import com.gerantech.mmory.libs.data.LobbySFS;
+import com.gerantech.mmory.libs.data.RankData;
+import com.gerantech.mmory.libs.data.SFSDataModel;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;

@@ -1,4 +1,4 @@
-package com.gerantech.libs;
+package com.gerantech.mmory.libs;
 
 /**
  * Created by ManJav on 8/28/2017.

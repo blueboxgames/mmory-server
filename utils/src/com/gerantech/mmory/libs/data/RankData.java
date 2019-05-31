@@ -1,4 +1,4 @@
-package com.gerantech.libs.data;
+package com.gerantech.mmory.libs.data;
 
 import java.io.Serializable;
 public class RankData implements Serializable

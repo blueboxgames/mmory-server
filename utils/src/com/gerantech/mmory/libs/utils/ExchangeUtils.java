@@ -1,10 +1,10 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.libs.callbacks.MapChangeCallback;
-import com.gt.towers.Game;
-import com.gt.towers.constants.ExchangeType;
-import com.gt.towers.constants.MessageTypes;
-import com.gt.towers.exchanges.ExchangeItem;
+import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.constants.ExchangeType;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;

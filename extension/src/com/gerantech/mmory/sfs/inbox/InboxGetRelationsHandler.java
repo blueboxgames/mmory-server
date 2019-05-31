@@ -1,8 +1,8 @@
 package com.gerantech.mmory.sfs.inbox;
 
-import com.gt.Commands;
-import com.gt.towers.Game;
-import com.gt.utils.InboxUtils;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;

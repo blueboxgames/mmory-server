@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.administration.issues;
 
-import com.gt.Commands;
-import com.gt.towers.Game;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.Game;
 import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;

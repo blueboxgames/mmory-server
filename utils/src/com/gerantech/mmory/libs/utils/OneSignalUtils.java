@@ -1,4 +1,4 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;

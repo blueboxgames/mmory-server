@@ -1,8 +1,8 @@
 package com.gerantech.mmory.sfs.battle.handlers;
 
-import com.gt.BBGRoom;
-import com.gt.towers.battle.BattleField;
-import com.gt.utils.BattleUtils;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.core.battle.BattleField;
+import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.core.ISFSEvent;
 import com.smartfoxserver.v2.core.SFSEventParam;

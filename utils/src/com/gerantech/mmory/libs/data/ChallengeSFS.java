@@ -1,12 +1,12 @@
 /**
  * Created by ManJav on 8/6/2018.
  */
-package com.gerantech.libs.data;
+package com.gerantech.mmory.libs.data;
 
-import com.gt.towers.socials.Attendee;
-import com.gt.towers.socials.Challenge;
-import com.gt.towers.utils.maps.IntArenaMap;
-import com.gt.towers.utils.maps.IntIntMap;
+import com.gerantech.mmory.core.socials.Attendee;
+import com.gerantech.mmory.core.socials.Challenge;
+import com.gerantech.mmory.core.utils.maps.IntArenaMap;
+import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;

@@ -1,10 +1,10 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
 import com.gerantech.mmory.sfs.socials.LobbyRoom;
-import com.gt.utils.LobbyUtils;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
-import com.gt.towers.constants.MessageTypes;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.constants.MessageTypes;
 import com.smartfoxserver.v2.core.ISFSEvent;
 import com.smartfoxserver.v2.core.SFSEventParam;
 import com.smartfoxserver.v2.core.SFSEventType;

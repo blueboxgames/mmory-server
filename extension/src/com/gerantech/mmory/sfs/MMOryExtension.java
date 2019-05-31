@@ -20,11 +20,11 @@ import com.gerantech.mmory.sfs.quests.QuestInitializeHandler;
 import com.gerantech.mmory.sfs.quests.QuestRewardCollectHandler;
 import com.gerantech.mmory.sfs.socials.handlers.*;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
-import com.gt.Commands;
-import com.gt.utils.BanUtils;
-import com.gt.utils.DBUtils;
-import com.gt.utils.LobbyUtils;
-import com.gt.utils.UtilBase;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.BanUtils;
+import com.gerantech.mmory.libs.utils.DBUtils;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
+import com.gerantech.mmory.libs.utils.UtilBase;
 import com.smartfoxserver.v2.core.SFSEventType;
 import com.smartfoxserver.v2.extensions.SFSExtension;
 

@@ -1,7 +1,7 @@
-package com.gerantech.libs;
+package com.gerantech.mmory.libs;
 
-import com.gt.towers.Game;
-import com.gt.towers.constants.MessageTypes;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.constants.MessageTypes;
 import com.smartfoxserver.bitswarm.sessions.ISession;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.api.CreateRoomSettings;

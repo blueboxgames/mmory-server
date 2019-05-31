@@ -1,11 +1,11 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
-import com.gt.BBGClientRequestHandler;
-import com.gt.Commands;
-import com.gt.data.LobbySFS;
-import com.gt.towers.Game;
-import com.gt.towers.constants.MessageTypes;
-import com.gt.utils.LobbyUtils;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.data.LobbySFS;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;

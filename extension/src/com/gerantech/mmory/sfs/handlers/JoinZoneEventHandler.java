@@ -1,8 +1,8 @@
 package com.gerantech.mmory.sfs.handlers;
 
-import com.gt.utils.LobbyUtils;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.buddylist.BuddyList;
 import com.smartfoxserver.v2.buddylist.SFSBuddyVariable;

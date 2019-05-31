@@ -1,13 +1,13 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
-import com.gt.BBGRoom;
-import com.gt.Commands;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
-import com.gt.utils.BanUtils;
-import com.gt.utils.BattleUtils;
-import com.gt.utils.InboxUtils;
-import com.gt.utils.OneSignalUtils;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.libs.utils.BanUtils;
+import com.gerantech.mmory.libs.utils.BattleUtils;
+import com.gerantech.mmory.libs.utils.InboxUtils;
+import com.gerantech.mmory.libs.utils.OneSignalUtils;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -33,7 +33,7 @@ public class BuddyBattleRequestHandler extends BaseClientRequestHandler
             User objectUser = getParentExtension().getParentZone().getUserManager().getUserByName(objectUserId + "");
             if( objectUser != null )
             {
-                BBGRoom room = BattleUtils.getInstance().make((Class) getParentExtension().getParentZone().getProperty("battleClass"), sender, params.getInt("m"), 0, 2);
+                BBGRoom room = BattleUtils.getInstance().make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), sender, params.getInt("m"), 0, 2);
                 BattleUtils.getInstance().join(room, sender, "");
                 params.putInt("bid", room.getId());
                 params.putInt("s", player.id);

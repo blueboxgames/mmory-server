@@ -1,10 +1,10 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.libs.data.SFSDataModel;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
-import com.gt.towers.constants.MessageTypes;
-import com.gt.towers.others.Quest;
+import com.gerantech.mmory.libs.data.SFSDataModel;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.others.Quest;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;

@@ -3,16 +3,16 @@ package com.gerantech.mmory.sfs.battle.bots;
 import java.util.Map;
 
 import com.gerantech.mmory.sfs.battle.BattleRoom;
-import com.gt.towers.Player;
-import com.gt.towers.battle.BattleField;
-import com.gt.towers.battle.GameObject;
-import com.gt.towers.battle.units.Unit;
-import com.gt.towers.constants.CardTypes;
-import com.gt.towers.constants.ResourceType;
-import com.gt.towers.constants.StickerType;
-import com.gt.towers.scripts.ScriptEngine;
-import com.gt.towers.socials.Challenge;
-import com.gt.towers.utils.CoreUtils;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.battle.BattleField;
+import com.gerantech.mmory.core.battle.GameObject;
+import com.gerantech.mmory.core.battle.units.Unit;
+import com.gerantech.mmory.core.constants.CardTypes;
+import com.gerantech.mmory.core.constants.ResourceType;
+import com.gerantech.mmory.core.constants.StickerType;
+import com.gerantech.mmory.core.scripts.ScriptEngine;
+import com.gerantech.mmory.core.socials.Challenge;
+import com.gerantech.mmory.core.utils.CoreUtils;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 

@@ -1,12 +1,12 @@
 package com.gerantech.mmory.sfs.battle.factories;
 
 import com.gerantech.mmory.sfs.battle.BattleRoom;
-import com.gt.towers.Game;
-import com.gt.towers.constants.ExchangeType;
-import com.gt.towers.constants.ResourceType;
-import com.gt.towers.exchanges.ExchangeItem;
-import com.gt.towers.others.Arena;
-import com.gt.towers.utils.maps.IntIntMap;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.constants.ExchangeType;
+import com.gerantech.mmory.core.constants.ResourceType;
+import com.gerantech.mmory.core.exchanges.ExchangeItem;
+import com.gerantech.mmory.core.others.Arena;
+import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import java.util.ArrayList;
 import java.util.List;
 

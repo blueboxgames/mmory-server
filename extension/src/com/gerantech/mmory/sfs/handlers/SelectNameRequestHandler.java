@@ -2,11 +2,11 @@ package com.gerantech.mmory.sfs.handlers;
 
 import java.sql.SQLException;
 
-import com.gt.Commands;
-import com.gt.utils.ExchangeUtils;
-import com.gt.towers.Game;
-import com.gt.towers.constants.ExchangeType;
-import com.gt.towers.constants.MessageTypes;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.ExchangeUtils;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.constants.ExchangeType;
+import com.gerantech.mmory.core.constants.MessageTypes;
 import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;

@@ -1,8 +1,8 @@
 package com.gerantech.mmory.sfs.administration.ban;
 
-import com.gt.Commands;
-import com.gt.utils.BanUtils;
-import com.gt.towers.Game;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.BanUtils;
+import com.gerantech.mmory.core.Game;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;

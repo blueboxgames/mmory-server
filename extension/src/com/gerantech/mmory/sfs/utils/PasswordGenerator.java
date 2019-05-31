@@ -1,5 +1,5 @@
 package com.gerantech.mmory.sfs.utils;
-import com.gt.utils.DBUtils;
+import com.gerantech.mmory.libs.utils.DBUtils;
 import net.sf.json.JSONObject;
 
 import java.time.Instant;

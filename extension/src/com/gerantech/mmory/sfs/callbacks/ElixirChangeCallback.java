@@ -1,8 +1,8 @@
 package com.gerantech.mmory.sfs.callbacks;
 
 import com.gerantech.mmory.sfs.battle.BattleRoom;
-import com.gt.callbacks.MapChangeCallback;
-import com.gt.Commands;
+import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
+import com.gerantech.mmory.libs.Commands;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
 public class ElixirChangeCallback extends MapChangeCallback

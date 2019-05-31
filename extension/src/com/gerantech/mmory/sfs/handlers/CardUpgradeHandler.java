@@ -1,11 +1,11 @@
 package com.gerantech.mmory.sfs.handlers;
 
-import com.gt.Commands;
-import com.gt.utils.DBUtils;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
-import com.gt.towers.battle.units.Card;
-import com.gt.callbacks.MapChangeCallback;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.DBUtils;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.battle.units.Card;
+import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;

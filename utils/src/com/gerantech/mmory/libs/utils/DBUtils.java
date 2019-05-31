@@ -1,13 +1,13 @@
-package com.gerantech.libs.utils;
+package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.libs.data.RankData;
-import com.gt.towers.Game;
-import com.gt.towers.LoginData;
-import com.gt.towers.Player;
-import com.gt.towers.constants.ExchangeType;
-import com.gt.towers.constants.MessageTypes;
-import com.gt.towers.constants.ResourceType;
-import com.gt.towers.utils.maps.IntIntMap;
+import com.gerantech.mmory.libs.data.RankData;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.LoginData;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.constants.ExchangeType;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.constants.ResourceType;
+import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;

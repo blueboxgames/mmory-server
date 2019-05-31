@@ -1,7 +1,7 @@
-package com.gerantech.libs.data;
+package com.gerantech.mmory.libs.data;
 
-import com.gt.towers.utils.lists.IntList;
-import com.gt.towers.utils.maps.IntIntMap;
+import com.gerantech.mmory.core.utils.lists.IntList;
+import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;

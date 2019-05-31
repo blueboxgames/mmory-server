@@ -4,16 +4,16 @@ import com.gerantech.mmory.sfs.socials.handlers.LobbyEditHandler;
 import com.gerantech.mmory.sfs.socials.handlers.LobbyInfoHandler;
 import com.gerantech.mmory.sfs.socials.handlers.LobbyModerationHandler;
 import com.gerantech.mmory.sfs.socials.handlers.LobbyRoomServerEventsHandler;
-import com.gt.BBGRoom;
-import com.gt.Commands;
-import com.gt.data.LobbySFS;
-import com.gt.towers.Game;
-import com.gt.towers.Player;
-import com.gt.towers.constants.MessageTypes;
-import com.gt.utils.BanUtils;
-import com.gt.utils.BattleUtils;
-import com.gt.utils.InboxUtils;
-import com.gt.utils.LobbyUtils;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.data.LobbySFS;
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.libs.utils.BanUtils;
+import com.gerantech.mmory.libs.utils.BattleUtils;
+import com.gerantech.mmory.libs.utils.InboxUtils;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.smartfoxserver.v2.core.SFSEventType;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
@@ -105,7 +105,7 @@ public class LobbyRoom extends BaseLobbyRoom
             if( params.getInt("st") > 0 )
                 return;
 
-            BBGRoom room = battleUtils.make((Class) getParentZone().getProperty("battleClass"), sender, params.containsKey("bt")?1:0, 0, 1);
+            BBGRoom room = battleUtils.make((Class<?>) getParentZone().getProperty("battleClass"), sender, params.containsKey("bt")?1:0, 0, 1);
             lobby.setProperty(room.getName(), true);
             battleUtils.join(room, sender, "");
             params.putInt("bid", room.getId());

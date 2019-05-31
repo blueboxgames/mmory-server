@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.battle.handlers;
 
 import com.gerantech.mmory.sfs.battle.BattleRoom;
-import com.gt.utils.BattleUtils;
+import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
