@@ -13,6 +13,8 @@ public class BattleStickerRequestHandler extends BaseClientRequestHandler
 {
     public void handleClientRequest(User sender, ISFSObject params)
     {
-        ((BattleRoom) BattleUtils.getInstance().rooms.get(params.getInt("r"))).sendSticker(sender, params);
+			try {
+				((BattleRoom) BattleUtils.getInstance().rooms.get(params.getInt("r"))).sendSticker(sender, params);
+			} catch (Exception | Error e) { e.printStackTrace(); };
     }
 }

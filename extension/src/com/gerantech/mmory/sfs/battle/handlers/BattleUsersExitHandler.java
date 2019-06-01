@@ -19,6 +19,7 @@ public class BattleUsersExitHandler extends BaseServerEventHandler
 {
     public void handleServerEvent(ISFSEvent arg) throws SFSException
     {
+        
         User user = (User) arg.getParameter(SFSEventParam.USER);
         if( user.getBuddyProperties().getState() == "Available" )
             return;

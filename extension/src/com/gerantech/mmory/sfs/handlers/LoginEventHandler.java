@@ -43,6 +43,7 @@ public class LoginEventHandler extends BaseServerEventHandler
 
 	public void handleServerEvent(ISFSEvent event)
 	{
+try {
 		String name = (String) event.getParameter(SFSEventParam.LOGIN_NAME);
 		String password = (String) event.getParameter(SFSEventParam.LOGIN_PASSWORD);
 		ISFSObject inData = (ISFSObject) event.getParameter(SFSEventParam.LOGIN_IN_DATA);
@@ -83,12 +84,11 @@ public class LoginEventHandler extends BaseServerEventHandler
 			return;
 		}
 
-		try {
-			if( inData.getInt("id") < 0 )
-				createPlayer(session, name, password, inData, outData, loginData);
-			else
-				loadPlayer(session, name, password, inData, outData, loginData);
-		} catch (Exception e) { e.printStackTrace();}
+		if( inData.getInt("id") < 0 )
+			createPlayer(session, name, password, inData, outData, loginData);
+		else
+			loadPlayer(session, name, password, inData, outData, loginData);
+} catch (Exception | Error e) { e.printStackTrace();}
 	}
 
 	private void createPlayer(ISession session, String name, String password, ISFSObject inData, ISFSObject outData, LoginData loginData) throws SFSException
