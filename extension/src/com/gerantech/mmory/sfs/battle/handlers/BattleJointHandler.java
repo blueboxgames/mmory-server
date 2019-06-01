@@ -35,17 +35,25 @@ public class BattleJointHandler extends BaseServerEventHandler {
 	private BattleRoom room;
 
 	public void handleServerEvent(ISFSEvent arg) {
-		user = (User) arg.getParameter(SFSEventParam.USER);
-		if (!arg.getParameter(SFSEventParam.ROOM).getClass().getSimpleName().equals("BattleRoom"))
-			return;
-		room = (BattleRoom) arg.getParameter(SFSEventParam.ROOM);
-		if (!arg.getType().equals(SFSEventType.USER_JOIN_ROOM) || room == null)
-			return;
-		if (room.isSpectator(user)) {
-			sendBattleData(user);
-			return;
-		}
+		try {
+			user = (User) arg.getParameter(SFSEventParam.USER);
+			if (!arg.getParameter(SFSEventParam.ROOM).getClass().getSimpleName().equals("BattleRoom"))
+				return;
 
+			room = (BattleRoom) arg.getParameter(SFSEventParam.ROOM);
+			if (!arg.getType().equals(SFSEventType.USER_JOIN_ROOM) || room == null)
+				return;
+
+			if (room.isSpectator(user)) {
+				sendBattleData(user);
+				return;
+			}
+
+			join();
+		} catch (Error | Exception e) { e.printStackTrace(); }
+	}
+
+	private void join() {
 		// Rejoin to previous room
 		if (room.getPropertyAsInt("state") == BattleField.STATE_2_STARTED) {
 			List<User> players = room.getPlayersList();
@@ -62,6 +70,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			}
 			return;
 		}
+
 		if (room.isFull()) {
 			sendStartBattleResponse(false);
 			return;
@@ -79,13 +88,13 @@ public class BattleJointHandler extends BaseServerEventHandler {
 					cancel();
 					room.autoJoinTimer.cancel(true);
 					room.setMaxUsers(1);
-					sendStartBattleResponse(true);
+					try { sendStartBattleResponse(true); } catch (Error | Exception e) { e.printStackTrace(); }
 				}
 			}, delay, TimeUnit.MILLISECONDS);
 		}
 	}
 
-	private void sendStartBattleResponse(Boolean opponentNotFound) {
+	private void sendStartBattleResponse(Boolean opponentNotFound){
 		room.setProperty("startAt", (int) Instant.now().getEpochSecond());
 		room.createGame(opponentNotFound);
 

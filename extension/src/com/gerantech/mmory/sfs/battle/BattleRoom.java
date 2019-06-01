@@ -51,14 +51,14 @@ import java.util.stream.Collectors;
 
 public class BattleRoom extends BBGRoom
 {
-	public ScheduledFuture<?> autoJoinTimer;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
+	public ScheduledFuture<?> autoJoinTimer;
 
 	private BattleBot bot;
 	private boolean singleMode;
-	private double buildingsUpdatedAt;
 	private ScheduledFuture<?> timer;
+	private double buildingsUpdatedAt;
 	private List<Integer> reservedUnitIds;
 	private BattleEventCallback eventCallback;
 
@@ -82,11 +82,7 @@ public class BattleRoom extends BBGRoom
 		// reserve player data
 		List<Game> registeredPlayers = new ArrayList<>();
 		for (User u: players)
-		{
-			Game g = (Game)u.getSession().getProperty("core");
-//			g.inBattleChallengMode = (int) u.getSession().getProperty("challengeType");
-			registeredPlayers.add(g);
-		}
+			registeredPlayers.add((Game)u.getSession().getProperty("core"));
 
 		if( this.singleMode )
 		{
@@ -98,8 +94,7 @@ public class BattleRoom extends BBGRoom
 			botGame.init(data);
 			registeredPlayers.add( botGame );
 		}
-        this.setProperty("registeredPlayers", registeredPlayers);
-
+		this.setProperty("registeredPlayers", registeredPlayers);
 
 		int mode = this.getPropertyAsInt("mode");
 		trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
@@ -144,11 +139,7 @@ public class BattleRoom extends BBGRoom
 					battleField.update((int) (Instant.now().toEpochMilli() - battleField.now));
 					checkEnding(battleDuration);
 				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-
+				catch (Error | Exception e) { e.printStackTrace(); }
 			}
 		}, 0, BattleField.DELTA_TIME, TimeUnit.MILLISECONDS);
 

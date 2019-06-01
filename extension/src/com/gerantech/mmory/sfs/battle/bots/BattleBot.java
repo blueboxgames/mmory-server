@@ -2,7 +2,6 @@ package com.gerantech.mmory.sfs.battle.bots;
 
 import java.util.Map;
 
-import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.battle.GameObject;
@@ -13,6 +12,7 @@ import com.gerantech.mmory.core.constants.StickerType;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.CoreUtils;
+import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
@@ -105,6 +105,7 @@ public class BattleBot
                 skipCard(cardType);
                 return;
             }
+
             if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) )// waiting for more elixir to create waves
             {
                 trace("wait for", battleField.elixirUpdater.bars.__get(1), CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5), battleField.difficulty);
@@ -175,12 +176,12 @@ public class BattleBot
 
     private int getCandidateCardIndex(int type)
     {
-        haxe.root.Array candidates = (haxe.root.Array) ScriptEngine.get(-3, type, 0);
+        haxe.root.Array<?> candidates = (haxe.root.Array<?>) ScriptEngine.get(-3, type, 0);
         int len = candidates.length;
         for (int i = defaultIndex; i < len; i++)
         {
             int index = battleField.decks.get(1).queue_indexOf((int) candidates.__get(i));
-            //trace("queue_indexOf", i, candidates.__get(i), index);
+            trace("queue_indexOf", i, candidates.__get(i), index);
             if( index > 0 && index < 4 )
                 return index;
         }
@@ -196,7 +197,7 @@ public class BattleBot
         if( chatParams.getDouble("ready") > battleField.now || Math.random() > 0.1 )
             return;
 
-        //trace(this.battleRatio, battleRatio);
+        trace(this.battleRatio, battleRatio);
         if( battleRatio != this.battleRatio )
         {
             chatParams.putInt("t", StickerType.getRandomStart(battleRatio, battleField.games.__get(0)));
@@ -233,6 +234,6 @@ public class BattleBot
     private void trace(Object... args)
     {
         if( DEBUG_MODE )
-            trace(args);
+            battleRoom.trace(args);
     }
 }
