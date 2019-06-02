@@ -57,7 +57,7 @@ try {
             return;
         }
         this.joinUser(sender);
-} catch (Exception | Error e) { e.printStackTrace(); };
+} catch (Exception | Error e) { e.printStackTrace(); }
     }
  
 	private void joinUser(User user)

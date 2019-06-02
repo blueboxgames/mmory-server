@@ -43,7 +43,7 @@ try {
 
 		// Init buddy data and link invitees to user
 		initBuddy(user, room);
-} catch (Exception | Error e) { e.printStackTrace(); };
+} catch (Exception | Error e) { e.printStackTrace(); }
 	}
 
 	private Room rejoinToLastLobbyRoom(User user, Player player)

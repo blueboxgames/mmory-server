@@ -72,9 +72,6 @@ try {
 		if( inData.containsKey("appver") && inData.getInt("appver") < loginData.forceVersion )
 		{
 			outData.putInt("forceVersion", loginData.forceVersion);
-			//try {
-			//	LoginErrors.dispatch (LoginErrors.LOGIN_FORCE_UPDATE, "Force Update", new String[]{loginData.forceVersion+""});
-			//} catch (Exception e) { trace(inData.getInt("appver") + " needs " + e.getMessage() + " to " + loginData.forceVersion); }
 			return;
 		}
 
