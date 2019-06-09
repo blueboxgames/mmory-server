@@ -4,6 +4,7 @@ import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.sfs.socials.handlers.LobbyReportHandler;
 import com.gerantech.mmory.sfs.socials.handlers.PublicMessageHandler;
 import com.gerantech.mmory.libs.data.LobbySFS;
+import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.smartfoxserver.v2.entities.Room;
@@ -11,6 +12,7 @@ import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.SFSExtension;
+import com.smartfoxserver.v2.util.filters.FilteredMessage;
 
 import java.time.Instant;
 
@@ -39,7 +41,7 @@ public class BaseLobbyRoom extends SFSExtension
             if( requestId.equals(Commands.LOBBY_PUBLIC_MESSAGE) )
                 organizeMessage(sender, params, true);
             super.handleClientRequest(requestId, sender, params);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception | Error e) { e.printStackTrace(); }
     }
 
     protected void organizeMessage(User sender, ISFSObject params, boolean alreadyAdd)
@@ -54,6 +56,17 @@ public class BaseLobbyRoom extends SFSExtension
         }
 
         params.putInt("u", (int) Instant.now().getEpochSecond());
+                
+        // filter bad words
+        FilteredMessage fm = BanUtils.getInstance().filterBadWords(params.getUtfString("t"), false);
+        if( fm != null && fm.getOccurrences() > 0 )
+        {
+            BanUtils.getInstance().immediateBan(game.player.id, params.getInt("u"), params.getUtfString("t"));
+            params.putBool("x", false);
+            getApi().disconnectUser(sender);
+            return;
+        }
+
         if( !params.containsKey("m") )
             params.putInt("m", MessageTypes.M0_TEXT);
         mode = params.getInt("m");

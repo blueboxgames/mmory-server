@@ -23,7 +23,7 @@ import java.util.List;
 public class BanHandler extends BBGClientRequestHandler
 {
 	public void handleClientRequest(User sender, ISFSObject params)
-    {
+	{
 		Game game = ((Game)sender.getSession().getProperty("core"));
 		if( !game.player.admin )
 			return;
@@ -40,11 +40,7 @@ public class BanHandler extends BBGClientRequestHandler
 			return;
 		}
 
-		// get udid
-		String udid = DBUtils.getInstance().getUDID(params.getInt("id"));
-
-		long now = Instant.now().getEpochSecond();
-		BanUtils.getInstance().warnOrBan(db, params.getInt("id"), udid, params.getInt("mode"), now, params.getInt("len"), params.getText("msg"));
+		BanUtils.getInstance().warnOrBan(params.getInt("id"), DBUtils.getInstance().getUDID(params.getInt("id")), params.getInt("mode"), (int)Instant.now().getEpochSecond(), params.getInt("len"), params.getText("msg"));
 		send(Commands.BAN, MessageTypes.RESPONSE_SUCCEED, params, sender);
 
 		if( params.getInt("mode") >= 2 )
@@ -56,7 +52,7 @@ public class BanHandler extends BBGClientRequestHandler
 				for (Room p : publics) {
 					SFSObject msg = new SFSObject();
 					msg.putInt("m",  MessageTypes.M18_COMMENT_BAN);
-					msg.putUtfString("s", "KOOT");
+					msg.putUtfString("s", "ادمین");
 					msg.putUtfString("o", players.getSFSObject(0).getUtfString("name"));
 					msg.putInt("p",  -1);
 					getApi().sendExtensionResponse(Commands.LOBBY_PUBLIC_MESSAGE, msg, p.getUserList(), p, false);
