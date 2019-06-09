@@ -1,5 +1,4 @@
 package com.gerantech.mmory.sfs.handlers;
-import com.gerantech.mmory.sfs.utils.HttpTool;
 import com.gerantech.mmory.sfs.utils.LoginErrors;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.gerantech.mmory.libs.BBGRoom;
@@ -203,6 +202,8 @@ try {
 		// Retrieve player data from db
 		outData.putInt("id", id);
 		outData.putText("name", userData.getText("name"));
+		// outData.putInt("createAt", Math.toIntExact(userData.getLong("create_at") / 1000));
+		// outData.putInt("lastLogin", Math.toIntExact(userData.getLong("last_login")/ 1000));
 		outData.putInt("sessionsCount", userData.getInt("sessions_count"));
 		outData.putSFSArray("resources", dbUtils.getResources(id));
 		outData.putSFSArray("operations", dbUtils.getOperations(id));
@@ -241,6 +242,9 @@ try {
 			initData.appVersion = inData.containsKey("appver") ? inData.getInt("appver") : 0;
 			initData.market = inData.containsKey("market") ? inData.getText("market") : "none";
 		}
+
+		// initData.createAt = outData.getInt("createAt");
+		// initData.lastLogin = outData.getInt("lastLogin");
 		initData.sessionsCount = outData.getInt("sessionsCount");
 
 		// create resources init data
@@ -306,7 +310,7 @@ try {
 		// load script
 		if( ScriptEngine.script == null )
 		{
-			HttpTool.Data _data = HttpTool.post("http://localhost:8080/maps/features.js", null, false);
+			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/maps/features.js", null, false);
 			if( _data.statusCode != HttpStatus.SC_OK )
 			{
 				outData.putInt("umt", 15);
@@ -317,8 +321,8 @@ try {
 				ScriptEngine.initialize(_data.text);
 				trace("http://localhost:8080/maps/features.js loaded.");
 			}
-        }
-        outData.putText("script", ScriptEngine.script);
+		}
+		outData.putText("script", ScriptEngine.script);
 
 		// init core
 		Game game = new Game();
@@ -358,10 +362,15 @@ try {
 		addExchangeItem(game, exchanges, ExchangeType.C12_SOFT, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.softToHard(5000) * 1.0, 	ResourceType.R3_CURRENCY_SOFT + ":5000",		0, 0, true);
 		addExchangeItem(game, exchanges, ExchangeType.C13_SOFT, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.softToHard(50000) * 0.9,	ResourceType.R3_CURRENCY_SOFT + ":50000"	,	0, 0, true);
 
-		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- MONEY -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+		// -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- TICKETS -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 		addExchangeItem(game, exchanges, ExchangeType.C71_TICKET, ResourceType.R4_CURRENCY_HARD + ":10",		ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(10)     * 1.00,    0, 0, true);
 		addExchangeItem(game, exchanges, ExchangeType.C72_TICKET, ResourceType.R4_CURRENCY_HARD + ":50",		ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(50)     * 1.20,    0, 0, true);
 		addExchangeItem(game, exchanges, ExchangeType.C73_TICKET, ResourceType.R4_CURRENCY_HARD + ":100",	ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(100)    * 1.40,    0, 0, true);
+
+		// -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- EMOTES -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+		/* addExchangeItem(game, exchanges, ExchangeType.C81_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"0:1",    0, 0, true);
+		addExchangeItem(game, exchanges, ExchangeType.C82_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"1:1",    0, 0, true);
+		addExchangeItem(game, exchanges, ExchangeType.C83_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"2:1",    0, 0, true); */
 
 		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- OTHER -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 		if( !game.exchanger.items.exists(ExchangeType.C42_RENAME) )

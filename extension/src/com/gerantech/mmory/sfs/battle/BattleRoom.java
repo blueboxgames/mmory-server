@@ -8,7 +8,6 @@ import com.gerantech.mmory.sfs.battle.factories.TouchDownEndCalculator;
 import com.gerantech.mmory.sfs.callbacks.BattleEventCallback;
 import com.gerantech.mmory.sfs.callbacks.ElixirChangeCallback;
 import com.gerantech.mmory.sfs.callbacks.HitUnitCallback;
-import com.gerantech.mmory.sfs.utils.HttpTool;
 import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.libs.data.LobbySFS;
@@ -27,6 +26,7 @@ import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
+import com.gerantech.mmory.libs.utils.HttpUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.gerantech.mmory.libs.utils.RankingUtils;
 import com.smartfoxserver.v2.SmartFoxServer;
@@ -99,7 +99,7 @@ public class BattleRoom extends BBGRoom
 		int mode = this.getPropertyAsInt("mode");
 		trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
 		if( !BattleUtils.getInstance().maps.containsKey(mode) )
-			BattleUtils.getInstance().maps.put(mode, HttpTool.post("http://localhost:8080/maps/map-" + mode + ".json", null, false).text);
+			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/maps/map-" + mode + ".json", null, false).text);
 
 		Instant instant = Instant.now();
 		this.battleField.initialize(registeredPlayers.get(0), registeredPlayers.get(1), new FieldData(mode, BattleUtils.getInstance().maps.get(mode), "60,120,180,240"), 0, instant.getEpochSecond(), instant.toEpochMilli(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
