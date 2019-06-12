@@ -156,7 +156,7 @@ public class BanUtils extends UtilBase
 
 		bannedUsers.getSFSObject(0).putLong("until", bannedUsers.getSFSObject(0).getLong("expire_at") / 1000 - now);
 		bannedUsers.getSFSObject(0).removeElement("expire_at");
-		trace(bannedUsers.getSFSObject(0).getDump());
+		// trace(bannedUsers.getSFSObject(0).getDump());
 		return bannedUsers.getSFSObject(0);
 	}
 
@@ -203,6 +203,8 @@ public class BanUtils extends UtilBase
 	
 	public FilteredMessage filterBadWords(String message, boolean replaceBads)
 	{
+		if( message == null || message == "" )
+			return null;
 		if( this.patterns == null )
 		{
 			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/maps/bad-words.txt", null, false);
@@ -227,14 +229,13 @@ public class BanUtils extends UtilBase
 			} catch (IOException e) { e.printStackTrace(); }
 		}
 
-		FilteredMessage filteredMessage = new FilteredMessage();
 		Matcher matcher;
+		int occurrences = 0;
+		StringBuilder buffer = new StringBuilder(message);
+		FilteredMessage filteredMessage = new FilteredMessage();
 		for( Pattern pattern : this.patterns ) 
 		{
-			StringBuilder buffer = new StringBuilder(message);
 			matcher = pattern.matcher(buffer);
-
-			int occurrences = 0;
 			while( matcher.find() ) 
 			{
 				occurrences ++;
