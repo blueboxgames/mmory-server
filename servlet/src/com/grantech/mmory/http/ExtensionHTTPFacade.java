@@ -1,14 +1,15 @@
-package com.grantech.towers.http;
+package com.grantech.mmory.http;
 
-import com.smartfoxserver.v2.SmartFoxServer;
-import com.smartfoxserver.v2.extensions.ISFSExtension;
+import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
+
+import com.smartfoxserver.v2.SmartFoxServer;
+import com.smartfoxserver.v2.extensions.ISFSExtension;
 
 @SuppressWarnings("serial")
 public class ExtensionHTTPFacade extends HttpServlet
@@ -27,7 +28,7 @@ public class ExtensionHTTPFacade extends HttpServlet
     @Override
     public void init() throws ServletException
     {
-        myExtension = SmartFoxServer.getInstance().getZoneManager().getZoneByName("towers").getExtension();
+        myExtension = SmartFoxServer.getInstance().getZoneManager().getZoneByName("mmory").getExtension();
     }
 
     @Override
