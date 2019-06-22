@@ -33,6 +33,9 @@ public class LobbyRoomServerEventsHandler extends BaseServerEventHandler
 				if( r.getGroupId() == "lobbies" )
 					empties.add(r);
 			}
+			if( empties.size() <= 0 )
+				return;
+			
 			SmartFoxServer.getInstance().getTaskScheduler().schedule(new TimerTask() {
 				@Override
 				public void run() {
@@ -64,7 +67,6 @@ public class LobbyRoomServerEventsHandler extends BaseServerEventHandler
 			lobbyClass.sendComment( MessageTypes.M11_COMMENT_LEAVE, player, "", -1);
 			LobbyUtils.getInstance().removeUser(lobbyClass.getData(), player.id);
 			LobbyUtils.getInstance().removeEmptyRoom(lobby);
-
 		}
 	}
 }

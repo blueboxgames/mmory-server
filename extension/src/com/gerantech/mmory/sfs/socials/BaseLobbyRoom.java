@@ -6,6 +6,7 @@ import com.gerantech.mmory.sfs.socials.handlers.PublicMessageHandler;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
@@ -58,13 +59,17 @@ public class BaseLobbyRoom extends SFSExtension
         params.putInt("u", (int) Instant.now().getEpochSecond());
                 
         // filter bad words
-        FilteredMessage fm = BanUtils.getInstance().filterBadWords(params.getUtfString("t"), false);
+        boolean isAdmin = Player.isAdmin(game.player.id);
+        FilteredMessage fm = BanUtils.getInstance().filterBadWords(params.getUtfString("t"), isAdmin);
         if( fm != null && fm.getOccurrences() > 0 )
         {
-            BanUtils.getInstance().immediateBan(game.player.id, params.getInt("u"), params.getUtfString("t"));
-            params.putBool("x", false);
-            getApi().disconnectUser(sender);
-            return;
+            if( !isAdmin )
+            {
+                BanUtils.getInstance().immediateBan(game.player.id, params.getInt("u"), params.getUtfString("t"));
+                params.putBool("x", false);
+                return;
+            }
+            params.putUtfString("t", fm.getMessage());
         }
 
         if( !params.containsKey("m") )
