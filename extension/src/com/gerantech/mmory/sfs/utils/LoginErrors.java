@@ -71,8 +71,9 @@ public enum LoginErrors implements IErrorCode
     {
         //trace(ExtensionLogLevel.WARN, "SQL Failed: " + e.toString());
         SFSErrorData errData = new SFSErrorData(errorCode);
-        for (int i = 0; i <params.length ; i++)
-            errData.addParameter(params[i]);
+        if (params != null)
+            for (int i = 0; i <params.length ; i++)
+                errData.addParameter(params[i]);
         throw new SFSLoginException(message, errData);
     }
 }
