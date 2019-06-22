@@ -105,7 +105,7 @@ public class LobbyRoom extends BaseLobbyRoom
             if( params.getInt("st") > 0 )
                 return;
 
-            BBGRoom room = battleUtils.make((Class<?>) getParentZone().getProperty("battleClass"), sender, params.containsKey("bt")?1:0, 0, 1);
+            BBGRoom room = battleUtils.make((Class<?>) getParentZone().getProperty("battleClass"), sender, 0, params.containsKey("bt")?1:0, 0, 1);
             lobby.setProperty(room.getName(), true);
             battleUtils.join(room, sender, "");
             params.putInt("bid", room.getId());

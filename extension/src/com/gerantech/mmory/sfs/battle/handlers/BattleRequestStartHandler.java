@@ -1,20 +1,21 @@
 package com.gerantech.mmory.sfs.battle.handlers;
 
-import com.gerantech.mmory.sfs.handlers.LoginEventHandler;
-import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.core.Game;
-import com.gerantech.mmory.core.battle.BattleField;
-import com.gerantech.mmory.core.constants.MessageTypes;
-import com.gerantech.mmory.core.socials.Challenge;
-import com.gerantech.mmory.libs.utils.BattleUtils;
-import com.smartfoxserver.v2.entities.User;
-import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
-
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.battle.BattleField;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.scripts.ScriptEngine;
+import com.gerantech.mmory.core.utils.maps.IntIntMap;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.BattleUtils;
+import com.gerantech.mmory.sfs.handlers.LoginEventHandler;
+import com.smartfoxserver.v2.entities.User;
+import com.smartfoxserver.v2.entities.data.ISFSObject;
+import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
 public class BattleRequestStartHandler extends BaseClientRequestHandler
 {
@@ -47,10 +48,11 @@ try {
         Game game = (Game)sender.getSession().getProperty("core");
         this.friendlyMode = params.containsKey("friendlyMode") ? params.getInt("friendlyMode") : 0;
         this.league = game.player.get_arena(0);
-        this.type = Challenge.getType(index);
-        this.mode = Challenge.getMode(index);
+        this.mode = ScriptEngine.getInt(ScriptEngine.T41_CHALLENGE_MODE, this.index, game.player.id);
+        this.type = ScriptEngine.getInt(ScriptEngine.T42_CHALLENGE_TYPE, this.index, 1);
+        IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, this.type, 1));
 
-        if( !game.player.has(Challenge.getRunRequiements(index)) )
+        if( !game.player.has(cost) )
         {
             params.putInt("response", MessageTypes.RESPONSE_NOT_ENOUGH_REQS);
             send(Commands.BATTLE_START, params, sender);
@@ -71,7 +73,7 @@ try {
             room = findWaitingBattleRoom(user);
 
         if( room == null )
-            room = bu.make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), user, mode, type, friendlyMode);
+            room = bu.make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), user, this.index, this.mode, this.type, this.friendlyMode);
 
         bu.join(room, user, "");
     }

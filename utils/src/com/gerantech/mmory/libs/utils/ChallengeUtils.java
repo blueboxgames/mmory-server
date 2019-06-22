@@ -1,20 +1,16 @@
 package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.mmory.libs.data.ChallengeSFS;
-import com.gerantech.mmory.core.Player;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.socials.Challenge;
+import com.gerantech.mmory.libs.data.ChallengeSFS;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
-import com.smartfoxserver.v2.entities.data.SFSObject;
-
-import java.sql.SQLException;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by ManJav on 8/2/2018.
@@ -67,7 +63,7 @@ public class ChallengeUtils extends UtilBase
             return null;
         return all.get(challengeId);
     }
-    @SuppressWarnings("unchecked")
+    /* @SuppressWarnings("unchecked")
     private ChallengeSFS getAvailabled(int type, int now)
     {
         ConcurrentHashMap<Integer, ChallengeSFS> availables = (ConcurrentHashMap<Integer, ChallengeSFS>) ext.getParentZone().getProperty("availabledChallenges");
@@ -75,23 +71,25 @@ public class ChallengeUtils extends UtilBase
         if( !availables.containsKey(type) || !availables.get(type).isAvailabled(now) )
             availables.put(type, create(type, now));
         return availables.get(type);
-    }
-
-    private ChallengeSFS create(int type, int now)
+    } 
+    
+    private ChallengeSFS create(int index, int playerId, int now)
     {
-        int startAt = now + Challenge.getWaitTime(type);
-        int mode = Challenge.getMode(type);
+        int mode = ScriptEngine.getInt(ScriptEngine.T41_CHALLENGE_MODE, index, playerId);
+        int type = ScriptEngine.getInt(ScriptEngine.T42_CHALLENGE_TYPE, index, 1);
+        int startAt = now + ScriptEngine.getInt(ScriptEngine.T45_CHALLENGE_WAITTIME, type, 1);
         ChallengeSFS challenge = new ChallengeSFS(-1, type, mode, startAt, null);
         String query = "INSERT INTO challenges (type, mode, start_at, attendees) VALUES (" + type + ", " + mode + ", FROM_UNIXTIME(" + startAt + "), ?);";
         try {
             challenge.setId(Math.toIntExact((Long) ext.getParentZone().getDBManager().executeInsert(query, new Object[]{challenge.getAttendeesBytes()})));
         } catch (SQLException e) {  e.printStackTrace(); }
-
+        
         getAll().put(challenge.base.id, challenge);
         return  challenge;
     }
+    */
 
-    public ChallengeSFS join(int type, int playerId, String playerName, int now)
+    /* public ChallengeSFS join(int type, int playerId, String playerName, int now)
     {
         return join(getAvailabled(type, now), playerId, playerName, now);
     }
@@ -108,7 +106,7 @@ public class ChallengeUtils extends UtilBase
         challenge.getAttendees().addSFSObject(attendee);
         save(challenge);
         return challenge;
-    }
+    } */
 
     private void save(ChallengeSFS challenge)
     {
@@ -120,7 +118,7 @@ public class ChallengeUtils extends UtilBase
     }
 
 
-    public ISFSArray getChallengesOfAttendee(int type, Player player, boolean createIfNotExists)
+    /* public ISFSArray getChallengesOfAttendee(int type, Player player, boolean createIfNotExists)
     {
         ISFSObject attendee;
         int arena = player.get_arena(0);
@@ -146,14 +144,14 @@ public class ChallengeUtils extends UtilBase
         if( createIfNotExists )
         {
             int now = (int) Instant.now().getEpochSecond();
-            if( Challenge.getUnlockAt(Challenge.TYPE_1_REWARD) <= arena )
+            if( ScriptEngine.getInt(ScriptEngine.T43_CHALLENGE_UNLOCKAT, Challenge.TYPE_1_REWARD, 1) <= arena )
                 ret.addSFSObject(getAvailabled(Challenge.TYPE_1_REWARD, now));
-            if( Challenge.getUnlockAt(Challenge.TYPE_2_RANKING) <= arena && !founds.containsKey(Challenge.TYPE_2_RANKING) )
+            if( ScriptEngine.getInt(ScriptEngine.T43_CHALLENGE_UNLOCKAT, Challenge.TYPE_2_RANKING, 1) <= arena && !founds.containsKey(Challenge.TYPE_2_RANKING) )
                 ret.addSFSObject(getAvailabled(Challenge.TYPE_2_RANKING, now));
         }
 
         return ret;
-    }
+    } */
 
 
     public int collectReward(int challengeId, int playerId, int now)

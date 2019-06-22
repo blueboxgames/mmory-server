@@ -8,6 +8,7 @@ import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.exchanges.ExchangeItem;
+import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.maps.IntCardMap;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
@@ -114,11 +115,13 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		SFSObject params = new SFSObject();
 
 		// reduce battle cost
-		if (room.battleField.friendlyMode == 0) {
-			IntIntMap cost = Challenge.getRunRequiements(room.getPropertyAsInt("mode"));
+		if (room.battleField.friendlyMode == 0)
+		{
+			IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, room.getPropertyAsInt("type"), 1));
 			ExchangeItem exItem = Challenge.getExchangeItem(room.getPropertyAsInt("mode"), cost, game.player.get_arena(0));
 			int response = ExchangeUtils.getInstance().process(game, exItem, 0, 0);
-			if (response != MessageTypes.RESPONSE_SUCCEED) {
+			if (response != MessageTypes.RESPONSE_SUCCEED)
+			{
 				params.putInt("response", response);
 				send(Commands.BATTLE_START, params, user);
 				return;
@@ -131,6 +134,8 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		params.putInt("userType", room.getUserType(user));
 		params.putDouble("now", room.battleField.now);
 		params.putText("map", room.battleField.field.mapData);
+		params.putInt("index", room.getPropertyAsInt("index"));
+		params.putInt("type", room.getPropertyAsInt("type"));
 		params.putInt("mode", room.getPropertyAsInt("mode"));
 		params.putInt("friendlyMode", room.battleField.friendlyMode);
 		params.putBool("singleMode", room.getPropertyAsBool("singleMode"));

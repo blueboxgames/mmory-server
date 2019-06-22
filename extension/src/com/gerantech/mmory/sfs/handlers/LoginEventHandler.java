@@ -173,7 +173,7 @@ try {
 			if( deviceUDID != null )
 				dbManager.executeInsert("INSERT INTO devices (`player_id`, `model`, `udid`) VALUES ('" + playerId + "', '" + deviceModel + "', '" + deviceUDID + "');", new Object[] {});
 		} catch (SQLException e) { e.printStackTrace(); }
-        initiateCore(session, inData, outData, loginData);
+		initiateCore(session, inData, outData, loginData);
 	}
 
 	private void loadPlayer(ISession session, String name, String password, ISFSObject inData, ISFSObject outData, LoginData loginData) throws SFSException
@@ -310,7 +310,7 @@ try {
 		// load script
 		if( ScriptEngine.script == null )
 		{
-			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/maps/features.js", null, false);
+			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/maps/script-data.cs", null, false);
 			if( _data.statusCode != HttpStatus.SC_OK )
 			{
 				outData.putInt("umt", 15);
@@ -319,7 +319,7 @@ try {
 			else
 			{
 				ScriptEngine.initialize(_data.text);
-				trace("http://localhost:8080/maps/features.js loaded.");
+				trace("http://localhost:8080/maps/script-data.cs loaded.");
 			}
 		}
 		outData.putText("script", ScriptEngine.script);
@@ -422,8 +422,7 @@ try {
 		element.putInt("num_exchanges", 0);
 		element.putInt("expired_at", 1);
 		element.putText("outcome", "");
-		//newExchanges.addSFSObject( element );
-		exchanges.addSFSObject( element );
+		exchanges.addSFSObject(element);
 	}
 
 	private void addExchangeItem(Game game, ISFSArray exchanges, int type, String reqsStr, String outsStr, int numExchanges, int expiredAt, boolean addSFS)

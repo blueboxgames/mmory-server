@@ -37,14 +37,14 @@ public class BattleUtils extends UtilBase
     public ConcurrentHashMap<Integer, String> maps = new ConcurrentHashMap<>();
     public ConcurrentHashMap<Integer, BBGRoom> rooms = new ConcurrentHashMap<>();
 
-    public BBGRoom make(Class<?> roomClass, User owner, int mode, int type, int friendlyMode)
+    public BBGRoom make(Class<?> roomClass, User owner, int index, int mode, int type, int friendlyMode)
     {
         // temp solution
         /*long now = Instant.now().getEpochSecond();
         List<Room> rList = ext.getParentZone().getRoomListFromGroup("battles");
         for (Room r : rList)
+        // trace(">>>>>>>", r.containsProperty("startAt"), now );
         {
-            // trace(">>>>>>>", r.containsProperty("startAt"), now );
             if ( r.containsProperty("startAt") && now - (Integer)r.getProperty("startAt") > 400 )
             {
                 trace("WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY!!!    BATTLE KHARAB SHOOOOOD!!!!");
@@ -57,6 +57,7 @@ public class BattleUtils extends UtilBase
         boolean singleMode = league == 0;
 
         Map<Object, Object> roomProperties = new HashMap<>();
+        roomProperties.put("index", index);
         roomProperties.put("mode", mode);
         roomProperties.put("type", type);
         roomProperties.put("league", league);// F===> is temp
