@@ -18,6 +18,9 @@ public class TouchDownEndCalculator extends EndCalculator
     @Override
     public boolean check()
     {
+        if( super.check() )
+            return true;
+        
         Unit unit = checkUnitPassed();
         if( unit == null )
             return false;
@@ -26,10 +29,6 @@ public class TouchDownEndCalculator extends EndCalculator
         scores[unit.side] ++;
         room.battleField.requestReset();
         room.sendNewRoundResponse(unit.side, unit.id);
-        for (int s : scores)
-            if( s > 2 )
-                return true;
-
         return false;
     }
 

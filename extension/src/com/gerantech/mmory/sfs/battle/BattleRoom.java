@@ -1,19 +1,18 @@
 package com.gerantech.mmory.sfs.battle;
 
-import com.gerantech.mmory.sfs.battle.bots.BattleBot;
-import com.gerantech.mmory.sfs.battle.factories.EndCalculator;
-import com.gerantech.mmory.sfs.battle.factories.HeadquarterEndCalculator;
-import com.gerantech.mmory.sfs.battle.factories.Outcome;
-import com.gerantech.mmory.sfs.battle.factories.TouchDownEndCalculator;
-import com.gerantech.mmory.sfs.callbacks.BattleEventCallback;
-import com.gerantech.mmory.sfs.callbacks.ElixirChangeCallback;
-import com.gerantech.mmory.sfs.callbacks.HitUnitCallback;
-import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.libs.data.LobbySFS;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.InitData;
 import com.gerantech.mmory.core.battle.BattleField;
+import com.gerantech.mmory.core.battle.Outcome;
 import com.gerantech.mmory.core.battle.fieldes.FieldData;
 import com.gerantech.mmory.core.battle.units.Card;
 import com.gerantech.mmory.core.battle.units.Unit;
@@ -24,11 +23,20 @@ import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.HttpUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.gerantech.mmory.libs.utils.RankingUtils;
+import com.gerantech.mmory.sfs.battle.bots.BattleBot;
+import com.gerantech.mmory.sfs.battle.factories.EndCalculator;
+import com.gerantech.mmory.sfs.battle.factories.TouchDownEndCalculator;
+import com.gerantech.mmory.sfs.callbacks.BattleEventCallback;
+import com.gerantech.mmory.sfs.callbacks.ElixirChangeCallback;
+import com.gerantech.mmory.sfs.callbacks.HitUnitCallback;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
@@ -39,15 +47,6 @@ import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSRoomVariable;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TimerTask;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class BattleRoom extends BBGRoom
 {
@@ -97,7 +96,7 @@ public class BattleRoom extends BBGRoom
 		this.setProperty("registeredPlayers", registeredPlayers);
 
 		int mode = this.getPropertyAsInt("mode");
-		trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
+		// trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
 		if( !BattleUtils.getInstance().maps.containsKey(mode) )
 			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/maps/map-" + mode + ".json", null, false).text);
 
@@ -109,7 +108,7 @@ public class BattleRoom extends BBGRoom
 		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
 			endCalculator = new TouchDownEndCalculator(this);
 		else
-			endCalculator = new HeadquarterEndCalculator(this);
+			endCalculator = new EndCalculator(this);
 
 		if( singleMode )
 		{
@@ -157,7 +156,7 @@ public class BattleRoom extends BBGRoom
 			ISFSObject units = new SFSObject();
 			units.putIntArray("keys", reservedUnitIds);
 
-/*			List<String> testData = new ArrayList<>();
+			/*List<String> testData = new ArrayList<>();
 			for ( int k:reservedUnitIds )
 			{
 				Unit unit = this.battleField.units.get(k);
@@ -337,17 +336,17 @@ public class BattleRoom extends BBGRoom
 
 	private void checkEnding(double battleDuration)
 	{
-		if( getState() > BattleField.STATE_2_STARTED || battleDuration < 3 )
+		if( this.getState() > BattleField.STATE_2_STARTED || battleDuration < 3 )
 			return;
 
-		//endCalculator.scores[0] = 3;
+		// this.endCalculator.scores[0] = 3;
 		boolean haveWinner = endCalculator.check();
 		if( haveWinner )
-			end(battleDuration);
-		else if( battleDuration > this.battleField.getTime(2) && (endCalculator.ratio() != 1 || this.battleField.field.isOperation()) )
-			end(battleDuration);
-		else if( ( battleDuration > this.battleField.getTime(3) && !battleField.field.isOperation()) )
-			end(battleDuration);
+			this.end(battleDuration);
+		else if( battleDuration > this.battleField.getTime(2) && (this.endCalculator.ratio() != 1 || this.battleField.field.isOperation()) )
+			this.end(battleDuration);
+		else if( ( battleDuration > this.battleField.getTime(3) && !this.battleField.field.isOperation()) )
+			this.end(battleDuration);
 		//trace("duration:" + battleDuration, "t2:" + this.battleField.getTime(2), "t3:" + this.battleField.getTime(3), "ratio:" + endCalculator.ratio());
 	}
 
@@ -367,8 +366,8 @@ public class BattleRoom extends BBGRoom
 		int now = (int) Instant.now().getEpochSecond();
 
 		IntIntMap[] outcomesList = new IntIntMap[battleField.games.length];
-	    for (int i=0; i < this.battleField.games.length; i++)
-	    {
+		for (int i=0; i < this.battleField.games.length; i++)
+		{
 			Game game = this.battleField.games.__get(i);
 
 			SFSObject outcomeSFS = new SFSObject();
@@ -376,7 +375,7 @@ public class BattleRoom extends BBGRoom
 			outcomeSFS.putText("name", game.player.nickName);
 			outcomeSFS.putInt("score", endCalculator.scores[i]);
 
-			outcomesList[i] = Outcome.get( game, this, endCalculator.scores[i], (float)endCalculator.scores[i] / (float)endCalculator.scores[i==0?1:0], now );
+			outcomesList[i] = Outcome.get(game, this.getPropertyAsInt("type"), this.getPropertyAsInt("mode"), this.getPropertyAsInt("friendlyMode"), endCalculator.scores[i], (float)endCalculator.scores[i] / (float)endCalculator.scores[i==0?1:0], now);
 			//trace("i:", i, "scores:"+scores[i], "ratio:"+(float)numBuildings[i] / (float)numBuildings[i==0?1:0] );
 
 			IntIntMap insertMap = new IntIntMap();
