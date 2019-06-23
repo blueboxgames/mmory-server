@@ -88,9 +88,8 @@ public class BattleBot
             }
         }
 
-        double y = Math.random() * (BattleField.HEIGHT * 0.3);
-
         int cardType;
+        double y = Math.random() * (BattleField.HEIGHT * 0.3);
         if( playerHeader == null )
         {
             cardType = battleField.decks.get(1).queue_get(defaultIndex);
@@ -176,7 +175,7 @@ public class BattleBot
 
     private int getCandidateCardIndex(int type)
     {
-        haxe.root.Array<?> candidates = (haxe.root.Array<?>) ScriptEngine.get(-3, type, 0);
+        haxe.root.Array<?> candidates = (haxe.root.Array<?>) ScriptEngine.get(-3, type, null, null, null);
         int len = candidates.length;
         for (int i = defaultIndex; i < len; i++)
         {

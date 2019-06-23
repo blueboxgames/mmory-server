@@ -48,9 +48,9 @@ try {
         Game game = (Game)sender.getSession().getProperty("core");
         this.friendlyMode = params.containsKey("friendlyMode") ? params.getInt("friendlyMode") : 0;
         this.league = game.player.get_arena(0);
-        this.mode = ScriptEngine.getInt(ScriptEngine.T41_CHALLENGE_MODE, this.index, game.player.id);
-        this.type = ScriptEngine.getInt(ScriptEngine.T42_CHALLENGE_TYPE, this.index, 1);
-        IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, this.type, 1));
+        this.mode = ScriptEngine.getInt(ScriptEngine.T41_CHALLENGE_MODE, this.index, game.player.id, null, null);
+        this.type = ScriptEngine.getInt(ScriptEngine.T42_CHALLENGE_TYPE, this.index, null, null, null);
+        IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, this.type, null, null, null));
 
         if( !game.player.has(cost) )
         {

@@ -34,10 +34,10 @@ public class ChallengeSFS extends SFSDataModel {
         setMode(mode);
         setStartAt(startAt);
         // setUnlockAt(ScriptEngine.getInt(ScriptEngine.T43_CHALLENGE_UNLOCKAT, type, 1));
-        setDuration(ScriptEngine.getInt(ScriptEngine.T46_CHALLENGE_DURATION, type, 1));
-        setCapacity(ScriptEngine.getInt(ScriptEngine.T44_CHALLENGE_CAPACITY, type, 1));
-        setRequirements(0, new IntIntMap((String)ScriptEngine.get(ScriptEngine.T51_CHALLENGE_JOIN_REQS, type, 1)));
-        setRequirements(1, new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, type, 1)));
+        setDuration(ScriptEngine.getInt(ScriptEngine.T46_CHALLENGE_DURATION, type, null, null, null));
+        setCapacity(ScriptEngine.getInt(ScriptEngine.T44_CHALLENGE_CAPACITY, type, null, null, null));
+        setRequirements(0, new IntIntMap((String)ScriptEngine.get(ScriptEngine.T51_CHALLENGE_JOIN_REQS, type, null, null, null)));
+        setRequirements(1, new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, type, null, null, null)));
         setRewards(Challenge.getRewards(type));
         setAttendees(attendees);
     }

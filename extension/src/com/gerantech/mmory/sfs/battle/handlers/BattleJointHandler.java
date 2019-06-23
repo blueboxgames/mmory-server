@@ -117,7 +117,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		// reduce battle cost
 		if (room.battleField.friendlyMode == 0)
 		{
-			IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, room.getPropertyAsInt("type"), 1));
+			IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, room.getPropertyAsInt("type"), null, null, null));
 			ExchangeItem exItem = Challenge.getExchangeItem(room.getPropertyAsInt("mode"), cost, game.player.get_arena(0));
 			int response = ExchangeUtils.getInstance().process(game, exItem, 0, 0);
 			if (response != MessageTypes.RESPONSE_SUCCEED)
