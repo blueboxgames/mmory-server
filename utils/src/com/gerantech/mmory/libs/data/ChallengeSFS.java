@@ -119,7 +119,7 @@ public class ChallengeSFS extends SFSDataModel {
             sfs.putInt("key", keys[i]);
             sfs.putInt("min", rewards.get(keys[i]).min);
             sfs.putInt("max", rewards.get(keys[i]).max);
-            sfs.putInt("prize", rewards.get(keys[i]).minWinStreak);
+            sfs.putInt("prize", rewards.get(keys[i]).minWinRate);
             ret.addSFSObject(sfs);
             i ++;
         }

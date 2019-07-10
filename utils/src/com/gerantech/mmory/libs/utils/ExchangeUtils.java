@@ -53,7 +53,7 @@ public class ExchangeUtils extends UtilBase
         int response = -10;
         try {
             response = game.exchanger.exchange(item, now, hardsConfimed);
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception | Error e) { e.printStackTrace(); }
         game.player.resources.changeCallback = null;
         if( response != MessageTypes.RESPONSE_SUCCEED )
             return response;

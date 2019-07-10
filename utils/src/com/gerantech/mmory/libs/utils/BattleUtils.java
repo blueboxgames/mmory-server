@@ -1,5 +1,6 @@
 package com.gerantech.mmory.libs.utils;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,18 +41,16 @@ public class BattleUtils extends UtilBase
     public BBGRoom make(Class<?> roomClass, User owner, int index, int mode, int type, int friendlyMode)
     {
         // temp solution
-        /*long now = Instant.now().getEpochSecond();
-        List<Room> rList = ext.getParentZone().getRoomListFromGroup("battles");
-        for (Room r : rList)
-        // trace(">>>>>>>", r.containsProperty("startAt"), now );
+        long now = Instant.now().getEpochSecond();
+        Set<Map.Entry<Integer, BBGRoom>> entries = rooms.entrySet();
+        for( Map.Entry<Integer, BBGRoom> entry : entries )
         {
-            if ( r.containsProperty("startAt") && now - (Integer)r.getProperty("startAt") > 400 )
+            if ( entry.getValue().containsProperty("startAt") && now - entry.getValue().getPropertyAsInt("startAt") > 500 )
             {
                 trace("WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY!!!    BATTLE KHARAB SHOOOOOD!!!!");
-                removeRoom(r);
-                trace("** battle removed", r.getName(), now-(Integer)r.getProperty("startAt"));
+                remove(entry.getValue());
             }
-        }*/
+        }
 
         int league = ((Game)owner.getSession().getProperty("core")).player.get_arena(0);
         boolean singleMode = league == 0;

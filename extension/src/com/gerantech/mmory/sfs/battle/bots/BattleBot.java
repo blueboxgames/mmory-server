@@ -59,7 +59,7 @@ public class BattleBot
 
     private void summonCard()
     {
-        if( player.get_battleswins() < 1 )
+        if( player.get_battleswins() < 1 && this.battleField.field.mode == 0 )
             return;
 
         if( lastSummonTime == 0 )
