@@ -3,6 +3,7 @@
  */
 package com.gerantech.mmory.libs.data;
 
+import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Attendee;
 import com.gerantech.mmory.core.socials.Challenge;
@@ -23,12 +24,12 @@ public class ChallengeSFS extends SFSDataModel {
 
     public ChallengeSFS() {
         super();
-        base = new Challenge(0, 0);
+        base = new Challenge(null, 0, 0, 0);
     }
 
-    public ChallengeSFS(int id, int type, int mode, int startAt, byte[] attendees) {
+    public ChallengeSFS(Game game, int id, int type, int mode, int startAt, byte[] attendees) {
         super();
-        base = new Challenge(0, 0);
+        base = new Challenge(game, 0, 0, 0);
         setId(id);
         setType(type);
         setMode(mode);

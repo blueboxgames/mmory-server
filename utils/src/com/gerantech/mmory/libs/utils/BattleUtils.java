@@ -53,8 +53,8 @@ public class BattleUtils extends UtilBase
         }
 
         int league = ((Game)owner.getSession().getProperty("core")).player.get_arena(0);
-        boolean singleMode = league == 0;
 
+        boolean singleMode = league == 0;
         Map<Object, Object> roomProperties = new HashMap<>();
         roomProperties.put("index", index);
         roomProperties.put("mode", mode);

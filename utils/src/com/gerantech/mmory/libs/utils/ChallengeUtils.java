@@ -39,7 +39,7 @@ public class ChallengeUtils extends UtilBase
         for( int i=0; i<challenges.size(); i++ )
         {
             ch = challenges.getSFSObject(i);
-            challengeSFS = new ChallengeSFS(ch.getInt("id"), ch.getInt("type"), 0, Math.toIntExact(ch.getLong("start_at") / 1000), ch.getByteArray("attendees"));
+            challengeSFS = new ChallengeSFS(null, ch.getInt("id"), ch.getInt("type"), 0, Math.toIntExact(ch.getLong("start_at") / 1000), ch.getByteArray("attendees"));
             allChallenges.put(ch.getInt("id"), challengeSFS);
 
             if( challengeSFS.isAvailabled(now) )
