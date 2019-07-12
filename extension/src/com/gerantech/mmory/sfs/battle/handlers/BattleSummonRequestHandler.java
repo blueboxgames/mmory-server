@@ -13,7 +13,7 @@ public class BattleSummonRequestHandler extends BaseClientRequestHandler
 	{
 		try {
 			BattleRoom room = (BattleRoom) BattleUtils.getInstance().rooms.get(params.getInt("r"));
-			if( room.getState() < BattleField.STATE_1_CREATED || room.getState() > BattleField.STATE_2_STARTED )
+			if( room.getState() < BattleField.STATE_1_CREATED || room.getState() > BattleField.STATE_3_PAUSED )
 				return;
 			int side = room.getPlayerGroup(sender);
 		room.summonUnit(side, params.getInt("t"), params.getDouble("x"), params.getDouble("y"));

@@ -200,7 +200,7 @@ public class BattleRoom extends BBGRoom
 	{
 		if( getState() == BattleField.STATE_1_CREATED )
 			setState( BattleField.STATE_2_STARTED );
-		if( getState() != BattleField.STATE_2_STARTED )
+		if( getState() > BattleField.STATE_3_PAUSED )
 			return MessageTypes.RESPONSE_NOT_ALLOWED;
 		int id = this.battleField.summonUnit(type, side, x, y);
 

@@ -1,8 +1,12 @@
 package com.gerantech.mmory.sfs.battle.handlers;
 
-import com.gerantech.mmory.sfs.battle.BattleRoom;
-import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.libs.data.UnitData;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
@@ -10,9 +14,11 @@ import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Challenge;
-import com.gerantech.mmory.core.utils.maps.IntCardMap;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.data.UnitData;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
+import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.buddylist.SFSBuddyVariable;
 import com.smartfoxserver.v2.core.ISFSEvent;
@@ -22,14 +28,6 @@ import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.exceptions.SFSBuddyListException;
 import com.smartfoxserver.v2.extensions.BaseServerEventHandler;
-
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 public class BattleJointHandler extends BaseServerEventHandler {
 	private User user;
@@ -115,7 +113,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		SFSObject params = new SFSObject();
 
 		// reduce battle cost
-		if (room.battleField.friendlyMode == 0)
+		if( room.battleField.friendlyMode == 0 && game.player.get_battleswins() > 4 )
 		{
 			IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, room.getPropertyAsInt("type"), null, null, null));
 			ExchangeItem exItem = Challenge.getExchangeItem(room.getPropertyAsInt("mode"), cost, game.player.get_arena(0));
@@ -143,23 +141,21 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		boolean isSpectator = room.isSpectator(user);
 		ArrayList<?> registeredPlayers = (ArrayList<?>) room.getProperty("registeredPlayers");
 		int i = 0;
-		for (Object o : registeredPlayers) {
+		for (Object o : registeredPlayers)
+		{
 			Player player = ((Game) o).player;
 			SFSObject p = new SFSObject();
 			p.putInt("xp", player.get_xp());
 			p.putInt("point", player.get_point());
 			p.putUtfString("name", player.nickName);
-			if (game.appVersion >= 1700) {
-				String deck = "";
-				Iterator<Object> iter = room.battleField.decks.get(i)._queue.iterator();
-				while (iter.hasNext()) {
-					int type = (int) iter.next();
-					deck += (type + ":" + room.battleField.decks.get(i).get(type).level + (iter.hasNext() ? "," : ""));
-				}
-				p.putText("deck", deck);
-			} else {
-				p.putIntArray("deck", getdeckQueue(room.battleField.decks.get(i)));
+
+			String deck = "";
+			Iterator<Object> iter = room.battleField.decks.get(i)._queue.iterator();
+			while (iter.hasNext()) {
+				int type = (int) iter.next();
+				deck += (type + ":" + room.battleField.decks.get(i).get(type).level + (iter.hasNext() ? "," : ""));
 			}
+			p.putText("deck", deck);
 			p.putInt("score", room.endCalculator.scores[i]);
 			params.putSFSObject(i == 0 ? "p0" : "p1", p);
 
@@ -174,16 +170,10 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			user.getBuddyProperties().setVariable(new SFSBuddyVariable("$point", user.getVariable("point").getIntValue()));
 
 			try {
-				getParentExtension().getBuddyApi().setBuddyVariables(user, user.getBuddyProperties().getVariables(), true,
-						true);
+				getParentExtension().getBuddyApi().setBuddyVariables(user, user.getBuddyProperties().getVariables(), true, true);
 			} catch (SFSBuddyListException e) {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private Collection<Integer> getdeckQueue(IntCardMap deck) {
-		return (List<Integer>) (List<?>) deck._queue;
 	}
 }
