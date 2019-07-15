@@ -7,14 +7,14 @@ public class EndCalculator
 	protected final BattleRoom room;
 	public int[] scores = new int[2];
 
-	public EndCalculator(BattleRoom roomClass)
+	public EndCalculator(BattleRoom room)
 	{
-		this.room = roomClass;
+		this.room = room;
 	}
 
 	public boolean check()
 	{
-		for (int s : scores)
+		for (int s : this.scores)
 			if (s > 2)
 				return true;
 		return false;
@@ -22,8 +22,8 @@ public class EndCalculator
 
 	public float ratio()
 	{
-		if( scores[0] == 0 && scores[1] == 0 )
+		if( this.scores[0] == 0 && this.scores[1] == 0 )
 			return 1;
-		return (float) scores[0] / (float) scores[1];
+		return (float) this.scores[0] / (float) this.scores[1];
 	}
 }

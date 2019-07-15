@@ -24,9 +24,13 @@ public class TouchDownEndCalculator extends EndCalculator
         Unit unit = checkUnitPassed();
         if( unit == null )
             return false;
+        
         room.trace("unit passed " + unit.id);
         round ++;
         scores[unit.side] ++;
+        if( scores[unit.side] > 2 )
+            return true;
+
         room.battleField.requestReset();
         room.sendNewRoundResponse(unit.side, unit.id);
         return false;

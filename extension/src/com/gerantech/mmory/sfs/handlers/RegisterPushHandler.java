@@ -18,7 +18,7 @@ public class RegisterPushHandler extends BaseClientRequestHandler
 	public RegisterPushHandler() {}
 
 	public void handleClientRequest(User sender, ISFSObject params)
-    {
+	{
 		IDBManager dbManager = getParentExtension().getParentZone().getDBManager();
 
 		try{

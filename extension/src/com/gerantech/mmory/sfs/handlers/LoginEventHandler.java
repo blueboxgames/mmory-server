@@ -318,7 +318,7 @@ try {
 			}
 			else
 			{
-				ScriptEngine.initialize(_data.text);
+				ScriptEngine.initialize(_data.text, inData.getInt("appver"));
 				trace("http://localhost:8080/maps/script-data.cs loaded.");
 			}
 		}

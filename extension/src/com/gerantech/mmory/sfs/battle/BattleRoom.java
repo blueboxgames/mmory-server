@@ -341,6 +341,7 @@ public class BattleRoom extends BBGRoom
 
 		// this.endCalculator.scores[0] = 3;
 		boolean haveWinner = endCalculator.check();
+		// trace("state:" + this.getState() + " haveWinner " + haveWinner + " scores[0]:" + endCalculator.scores[0] + " scores[1]:" + endCalculator.scores[1] );
 		if( haveWinner )
 			this.end(battleDuration);
 		else if( battleDuration > this.battleField.getTime(2) && (this.endCalculator.ratio() != 1 || this.battleField.field.isOperation()) )
