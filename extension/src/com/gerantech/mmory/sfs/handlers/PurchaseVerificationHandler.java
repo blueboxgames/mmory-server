@@ -32,7 +32,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 {
 
 	private static String packageName = "air.com.grantech.k2k";
-	private static String accessToken_cafebazaar = "riN8RxzQMsC9x05kCz8EWscxwjSu7r";
+	private static String accessToken_cafebazaar = "**********";
 
 	public PurchaseVerificationHandler() {}
 
@@ -40,7 +40,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
     {
         // Get the client parameters
 		String productID = params.getText("productID");//com.grantech.towers.item_x
-		String purchaseToken = params.getText("purchaseToken");//SDu10PZdud5JoToeZs
+		String purchaseToken = params.getText("purchaseToken");//**********
 		if( params.containsKey("consume") )
 		{
 			consume(purchaseToken);
@@ -181,9 +181,9 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 	{
 		List<NameValuePair> argus = new ArrayList<>();
 		argus.add(new BasicNameValuePair("grant_type", "authorization_code"));
-		argus.add(new BasicNameValuePair("code", "OerQgUmJk5U2ASq8UqiGA98nPyDlHq"));
-		argus.add(new BasicNameValuePair("client_id", "1PsJN4ZdDKrolOyuDRLKQZaYKhTnIrmbSkaHK40L"));
-		argus.add(new BasicNameValuePair("client_secret", "C1nYSNSzbP72dK9J0VysZzbS8bo55AjB0UKl7X6hiCLdYACizDEeyLHoVKZt"));
+		argus.add(new BasicNameValuePair("code", "**********"));
+		argus.add(new BasicNameValuePair("client_id", "**********"));
+		argus.add(new BasicNameValuePair("client_secret", "**********"));
 		argus.add(new BasicNameValuePair("redirect_uri", "http://www.gerantech.com/tanks/test.php?a=b"));
 		Data data = HttpTool.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/", argus, true);
 		trace("request_AccessToken", data.statusCode, data.text);
@@ -204,9 +204,9 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 	{
 		List<NameValuePair> argus = new ArrayList<>();
 		argus.add(new BasicNameValuePair("grant_type", "refresh_token"));
-		argus.add(new BasicNameValuePair("client_id", "1PsJN4ZdDKrolOyuDRLKQZaYKhTnIrmbSkaHK40L"));
-		argus.add(new BasicNameValuePair("client_secret", "C1nYSNSzbP72dK9J0VysZzbS8bo55AjB0UKl7X6hiCLdYACizDEeyLHoVKZt"));
-		argus.add(new BasicNameValuePair("refresh_token", "7Q3ZAgkZyDTd5Iftdpbvq09IPF2iyh"));
+		argus.add(new BasicNameValuePair("client_id", "**********"));
+		argus.add(new BasicNameValuePair("client_secret", "**********"));
+		argus.add(new BasicNameValuePair("refresh_token", "**********"));
 		Data data = HttpTool.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/", argus, true);
 		trace("refresh_token", data.statusCode, data.text);
 		if(data.statusCode != HttpStatus.SC_OK || !data.json.containsKey("access_token") )
@@ -231,7 +231,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		// set headers
 		Map<String, String> headers = new HashMap<>();
 		if( market.equals("myket") )
-			headers.put("X-Access-Token", "4cc2d302-836c-460e-a3a7-e72c8cd9c666");
+			headers.put("X-Access-Token", "**********");
 
 		String url = null;
 		// set url
