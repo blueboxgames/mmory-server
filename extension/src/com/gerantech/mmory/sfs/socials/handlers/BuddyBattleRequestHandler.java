@@ -33,7 +33,7 @@ public class BuddyBattleRequestHandler extends BaseClientRequestHandler
             User objectUser = getParentExtension().getParentZone().getUserManager().getUserByName(objectUserId + "");
             if( objectUser != null )
             {
-                BBGRoom room = BattleUtils.getInstance().make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), sender, params.getInt("m"), 0, 2);
+                BBGRoom room = BattleUtils.getInstance().make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), sender, 0, params.getInt("m"), 0, 2);
                 BattleUtils.getInstance().join(room, sender, "");
                 params.putInt("bid", room.getId());
                 params.putInt("s", player.id);

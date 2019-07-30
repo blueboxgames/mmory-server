@@ -59,7 +59,7 @@ public class BattleBot
 
     private void summonCard()
     {
-        if( player.get_battleswins() < 1 )
+        if( player.get_battleswins() < 1 && this.battleField.field.mode == 0 )
             return;
 
         if( lastSummonTime == 0 )
@@ -72,7 +72,7 @@ public class BattleBot
         double x = BattleField.WIDTH * Math.random();
         for( Map.Entry<Object, Unit> entry : battleField.units._map.entrySet() )
         {
-            if( !CardTypes.isTroop((Integer) entry.getKey()) || entry.getValue().state < GameObject.STATE_2_MORTAL )
+            if( !CardTypes.isTroop((int)entry.getKey()) || entry.getValue().state < GameObject.STATE_2_MORTAL )
                 continue;
             if( entry.getValue().side == 0 )
             {
@@ -88,9 +88,8 @@ public class BattleBot
             }
         }
 
-        double y = Math.random() * (BattleField.HEIGHT * 0.3);
-
         int cardType;
+        double y = Math.random() * (BattleField.HEIGHT * 0.3);
         if( playerHeader == null )
         {
             cardType = battleField.decks.get(1).queue_get(defaultIndex);
@@ -176,7 +175,7 @@ public class BattleBot
 
     private int getCandidateCardIndex(int type)
     {
-        haxe.root.Array<?> candidates = (haxe.root.Array<?>) ScriptEngine.get(-3, type, 0);
+        haxe.root.Array<?> candidates = (haxe.root.Array<?>) ScriptEngine.get(-3, type, null, null, null);
         int len = candidates.length;
         for (int i = defaultIndex; i < len; i++)
         {

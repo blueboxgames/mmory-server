@@ -13,7 +13,8 @@ import java.util.Set;
 
 public class BattleRequestCancelHandler extends BaseClientRequestHandler
 {
-	public void handleClientRequest(User sender, ISFSObject params) {
+    public void handleClientRequest(User sender, ISFSObject params)
+    {
         Set<Map.Entry<Integer, BBGRoom>> entries = BattleUtils.getInstance().rooms.entrySet();
         BBGRoom foundRoom = null;
         for (Map.Entry<Integer, BBGRoom> entry : entries)

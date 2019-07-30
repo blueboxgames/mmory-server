@@ -1,5 +1,6 @@
 package com.gerantech.mmory.libs.utils;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,26 +38,25 @@ public class BattleUtils extends UtilBase
     public ConcurrentHashMap<Integer, String> maps = new ConcurrentHashMap<>();
     public ConcurrentHashMap<Integer, BBGRoom> rooms = new ConcurrentHashMap<>();
 
-    public BBGRoom make(Class<?> roomClass, User owner, int mode, int type, int friendlyMode)
+    public BBGRoom make(Class<?> roomClass, User owner, int index, int mode, int type, int friendlyMode)
     {
         // temp solution
-        /*long now = Instant.now().getEpochSecond();
-        List<Room> rList = ext.getParentZone().getRoomListFromGroup("battles");
-        for (Room r : rList)
+        long now = Instant.now().getEpochSecond();
+        Set<Map.Entry<Integer, BBGRoom>> entries = rooms.entrySet();
+        for( Map.Entry<Integer, BBGRoom> entry : entries )
         {
-            // trace(">>>>>>>", r.containsProperty("startAt"), now );
-            if ( r.containsProperty("startAt") && now - (Integer)r.getProperty("startAt") > 400 )
+            if ( entry.getValue().containsProperty("startAt") && now - entry.getValue().getPropertyAsInt("startAt") > 500 )
             {
                 trace("WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY!!!    BATTLE KHARAB SHOOOOOD!!!!");
-                removeRoom(r);
-                trace("** battle removed", r.getName(), now-(Integer)r.getProperty("startAt"));
+                remove(entry.getValue());
             }
-        }*/
+        }
 
         int league = ((Game)owner.getSession().getProperty("core")).player.get_arena(0);
-        boolean singleMode = league == 0;
 
+        boolean singleMode = league == 0;
         Map<Object, Object> roomProperties = new HashMap<>();
+        roomProperties.put("index", index);
         roomProperties.put("mode", mode);
         roomProperties.put("type", type);
         roomProperties.put("league", league);// F===> is temp

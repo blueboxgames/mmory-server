@@ -3,6 +3,8 @@
  */
 package com.gerantech.mmory.libs.data;
 
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Attendee;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.maps.IntArenaMap;
@@ -12,33 +14,32 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.protocol.serialization.DefaultSFSDataSerializer;
+
 import haxe.root.Array;
 
-public class ChallengeSFS extends SFSDataModel
-{
+public class ChallengeSFS extends SFSDataModel {
 
     public Challenge base;
     public int saveRequests = 0;
 
-    public ChallengeSFS()
-    {
+    public ChallengeSFS() {
         super();
-        base = new Challenge(0, 0);
+        base = new Challenge(null, 0, 0, 0);
     }
-    public ChallengeSFS(int id, int type, int mode, int startAt, byte[] attendees)
-    {
+
+    public ChallengeSFS(Game game, int id, int type, int mode, int startAt, byte[] attendees) {
         super();
-        base = new Challenge(0, 0);
+        base = new Challenge(game, 0, 0, 0);
         setId(id);
         setType(type);
         setMode(mode);
         setStartAt(startAt);
-        setUnlockAt(Challenge.getUnlockAt(type));
-        setDuration(Challenge.getDuration(type));
-        setCapacity(Challenge.getCapacity(type));
+        // setUnlockAt(ScriptEngine.getInt(ScriptEngine.T43_CHALLENGE_UNLOCKAT, type, 1));
+        setDuration(ScriptEngine.getInt(ScriptEngine.T46_CHALLENGE_DURATION, type, null, null, null));
+        setCapacity(ScriptEngine.getInt(ScriptEngine.T44_CHALLENGE_CAPACITY, type, null, null, null));
+        setRequirements(0, new IntIntMap((String)ScriptEngine.get(ScriptEngine.T51_CHALLENGE_JOIN_REQS, type, null, null, null)));
+        setRequirements(1, new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, type, null, null, null)));
         setRewards(Challenge.getRewards(type));
-        setRequirements(0, Challenge.getJoinRequiements(type));
-        setRequirements(1, Challenge.getRunRequiements(type));
         setAttendees(attendees);
     }
 
@@ -85,12 +86,12 @@ public class ChallengeSFS extends SFSDataModel
     /**
      * UnlockAt
      * @return
-     */
     private void setUnlockAt(int unlockAt)
     {
         putInt("unlock_at", unlockAt);
         base.unlockAt = unlockAt;
     }
+    */
 
     /**
      * Duration
@@ -119,7 +120,7 @@ public class ChallengeSFS extends SFSDataModel
             sfs.putInt("key", keys[i]);
             sfs.putInt("min", rewards.get(keys[i]).min);
             sfs.putInt("max", rewards.get(keys[i]).max);
-            sfs.putInt("prize", rewards.get(keys[i]).minWinStreak);
+            sfs.putInt("prize", rewards.get(keys[i]).minWinRate);
             ret.addSFSObject(sfs);
             i ++;
         }

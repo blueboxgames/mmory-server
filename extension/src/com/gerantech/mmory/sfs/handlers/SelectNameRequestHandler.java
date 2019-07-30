@@ -3,6 +3,7 @@ package com.gerantech.mmory.sfs.handlers;
 import java.sql.SQLException;
 
 import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.ExchangeType;
@@ -11,6 +12,7 @@ import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
+import com.smartfoxserver.v2.util.filters.FilteredMessage;
 
 /**
  * @author ManJav
@@ -34,8 +36,9 @@ public class SelectNameRequestHandler extends BaseClientRequestHandler
 			return;
 		}
 
-		// forbidden characters ...
-		if( name.indexOf("'") > -1 )
+		// forbidden things ...
+		FilteredMessage fm = BanUtils.getInstance().filterBadWords(name, false);
+		if( (fm != null && fm.getOccurrences() > 0) || name.indexOf("'") > -1 )
 		{
 			params.putInt("response", MessageTypes.RESPONSE_NOT_ALLOWED);
 			send(Commands.SELECT_NAME, params, sender);

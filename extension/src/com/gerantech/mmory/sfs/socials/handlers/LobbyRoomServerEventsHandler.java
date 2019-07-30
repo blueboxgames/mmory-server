@@ -5,6 +5,7 @@ import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.constants.MessageTypes;
+import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.core.ISFSEvent;
 import com.smartfoxserver.v2.core.SFSEventParam;
 import com.smartfoxserver.v2.core.SFSEventType;
@@ -12,7 +13,11 @@ import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.extensions.BaseServerEventHandler;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class LobbyRoomServerEventsHandler extends BaseServerEventHandler
 {
@@ -21,13 +26,24 @@ public class LobbyRoomServerEventsHandler extends BaseServerEventHandler
 		if( arg.getType().equals(SFSEventType.USER_DISCONNECT) )
 		{
 			LinkedList<?> joinedRooms = (LinkedList<?>) arg.getParameter(SFSEventParam.JOINED_ROOMS);
+			List<Room> empties = new ArrayList<>();
 			for ( Object o : joinedRooms )
 			{
 				Room r = (Room)o;
 				if( r.getGroupId() == "lobbies" )
-					LobbyUtils.getInstance().removeEmptyRoom(r);
-
+					empties.add(r);
 			}
+			if( empties.size() <= 0 )
+				return;
+			
+			SmartFoxServer.getInstance().getTaskScheduler().schedule(new TimerTask() {
+				@Override
+				public void run() {
+					cancel();
+					for ( Room l : empties )
+						LobbyUtils.getInstance().removeEmptyRoom(l);
+				}
+			}, 10, TimeUnit.MILLISECONDS);
 			return;
 		}
 
@@ -51,7 +67,6 @@ public class LobbyRoomServerEventsHandler extends BaseServerEventHandler
 			lobbyClass.sendComment( MessageTypes.M11_COMMENT_LEAVE, player, "", -1);
 			LobbyUtils.getInstance().removeUser(lobbyClass.getData(), player.id);
 			LobbyUtils.getInstance().removeEmptyRoom(lobby);
-
 		}
 	}
 }

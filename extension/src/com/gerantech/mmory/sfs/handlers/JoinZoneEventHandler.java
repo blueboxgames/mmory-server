@@ -28,6 +28,7 @@ public class JoinZoneEventHandler extends BaseServerEventHandler
 {
 	public void handleServerEvent(ISFSEvent event) throws SFSException
 	{
+try {
 		User user = (User) event.getParameter(SFSEventParam.USER);
 		Game game = ((Game) user.getSession().getProperty("core"));
 		if( game == null )
@@ -35,15 +36,14 @@ public class JoinZoneEventHandler extends BaseServerEventHandler
 
 		// Update player data
 		String query = "UPDATE `players` SET `app_version`='" + game.appVersion + "', `sessions_count`='" + (game.sessionsCount+1) + "', `last_login`='" + Timestamp.from(Instant.now()) + "' WHERE `id`=" + game.player.id + ";";
-		try {
-			getParentExtension().getParentZone().getDBManager().executeUpdate(query, new Object[] {});
-		} catch (SQLException e) { e.printStackTrace(); }
+		getParentExtension().getParentZone().getDBManager().executeUpdate(query, new Object[] {});
 
 		// Find last joined lobby room
 		Room room = rejoinToLastLobbyRoom(user, game.player);
 
 		// Init buddy data and link invitees to user
 		initBuddy(user, room);
+} catch (Exception | Error e) { e.printStackTrace(); }
 	}
 
 	private Room rejoinToLastLobbyRoom(User user, Player player)
@@ -57,7 +57,7 @@ public class JoinZoneEventHandler extends BaseServerEventHandler
 		return lobby;
 	}
 
-	private void initBuddy(User user, Room room) throws SFSBuddyListException {
+	private void initBuddy(User user, Room room) {
 		try {
 			SmartFoxServer.getInstance().getAPIManager().getBuddyApi().initBuddyList(user, true);
 			user.setProperty("hasBuddyList", true);
@@ -66,7 +66,9 @@ public class JoinZoneEventHandler extends BaseServerEventHandler
 		Game game = ((Game)user.getSession().getProperty("core"));
 		user.getBuddyProperties().setNickName(game.player.nickName);
 		user.getBuddyProperties().setVariable(new SFSBuddyVariable("$point", game.player.get_point()));
-		getParentExtension().getBuddyApi().setBuddyVariables(user, user.getBuddyProperties().getVariables(), true, true);
+		try {
+			getParentExtension().getBuddyApi().setBuddyVariables(user, user.getBuddyProperties().getVariables(), true, true);
+		} catch (SFSBuddyListException e1) { e1.printStackTrace(); }
 
 		// add buddy that added user before
 		if( room != null )
@@ -76,7 +78,7 @@ public class JoinZoneEventHandler extends BaseServerEventHandler
 		ISFSArray result = null;
 		try {
 			result = getParentExtension().getParentZone().getDBManager().executeQuery("SELECT invitee_id FROM friendship WHERE inviter_id=" + game.player.id + " AND has_reward=" + 0, new Object[]{});
-		} catch (SQLException e) { e.printStackTrace(); }
+		} catch (SQLException e2) { e2.printStackTrace(); }
 
 		if( result == null )
 			return;
@@ -84,8 +86,10 @@ public class JoinZoneEventHandler extends BaseServerEventHandler
 		for (int i=0; i<result.size(); i++)
 		{
 			String inviteeName = result.getSFSObject(i).getInt("invitee_id").toString();
-			if ( !buddies.containsBuddy(inviteeName) )
-				getParentExtension().getBuddyApi().addBuddy(user, inviteeName, false, true, false);
+			try {
+				if ( !buddies.containsBuddy(inviteeName) )
+					getParentExtension().getBuddyApi().addBuddy(user, inviteeName, false, true, false);
+			} catch (SFSBuddyListException e1) { e1.printStackTrace(); }
 		}
 	}
 }

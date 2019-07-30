@@ -1,5 +1,4 @@
 package com.gerantech.mmory.sfs.handlers;
-import com.gerantech.mmory.sfs.utils.HttpTool;
 import com.gerantech.mmory.sfs.utils.LoginErrors;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.gerantech.mmory.libs.BBGRoom;
@@ -43,6 +42,7 @@ public class LoginEventHandler extends BaseServerEventHandler
 
 	public void handleServerEvent(ISFSEvent event)
 	{
+try {
 		String name = (String) event.getParameter(SFSEventParam.LOGIN_NAME);
 		String password = (String) event.getParameter(SFSEventParam.LOGIN_PASSWORD);
 		ISFSObject inData = (ISFSObject) event.getParameter(SFSEventParam.LOGIN_IN_DATA);
@@ -71,9 +71,6 @@ public class LoginEventHandler extends BaseServerEventHandler
 		if( inData.containsKey("appver") && inData.getInt("appver") < loginData.forceVersion )
 		{
 			outData.putInt("forceVersion", loginData.forceVersion);
-			//try {
-			//	LoginErrors.dispatch (LoginErrors.LOGIN_FORCE_UPDATE, "Force Update", new String[]{loginData.forceVersion+""});
-			//} catch (Exception e) { trace(inData.getInt("appver") + " needs " + e.getMessage() + " to " + loginData.forceVersion); }
 			return;
 		}
 
@@ -83,12 +80,11 @@ public class LoginEventHandler extends BaseServerEventHandler
 			return;
 		}
 
-		try {
-			if( inData.getInt("id") < 0 )
-				createPlayer(session, name, password, inData, outData, loginData);
-			else
-				loadPlayer(session, name, password, inData, outData, loginData);
-		} catch (Exception e) { e.printStackTrace();}
+		if( inData.getInt("id") < 0 )
+			createPlayer(session, name, password, inData, outData, loginData);
+		else
+			loadPlayer(session, name, password, inData, outData, loginData);
+} catch (Exception | Error e) { e.printStackTrace();}
 	}
 
 	private void createPlayer(ISession session, String name, String password, ISFSObject inData, ISFSObject outData, LoginData loginData) throws SFSException
@@ -177,7 +173,7 @@ public class LoginEventHandler extends BaseServerEventHandler
 			if( deviceUDID != null )
 				dbManager.executeInsert("INSERT INTO devices (`player_id`, `model`, `udid`) VALUES ('" + playerId + "', '" + deviceModel + "', '" + deviceUDID + "');", new Object[] {});
 		} catch (SQLException e) { e.printStackTrace(); }
-        initiateCore(session, inData, outData, loginData);
+		initiateCore(session, inData, outData, loginData);
 	}
 
 	private void loadPlayer(ISession session, String name, String password, ISFSObject inData, ISFSObject outData, LoginData loginData) throws SFSException
@@ -206,6 +202,8 @@ public class LoginEventHandler extends BaseServerEventHandler
 		// Retrieve player data from db
 		outData.putInt("id", id);
 		outData.putText("name", userData.getText("name"));
+		// outData.putInt("createAt", Math.toIntExact(userData.getLong("create_at") / 1000));
+		// outData.putInt("lastLogin", Math.toIntExact(userData.getLong("last_login")/ 1000));
 		outData.putInt("sessionsCount", userData.getInt("sessions_count"));
 		outData.putSFSArray("resources", dbUtils.getResources(id));
 		outData.putSFSArray("operations", dbUtils.getOperations(id));
@@ -244,6 +242,9 @@ public class LoginEventHandler extends BaseServerEventHandler
 			initData.appVersion = inData.containsKey("appver") ? inData.getInt("appver") : 0;
 			initData.market = inData.containsKey("market") ? inData.getText("market") : "none";
 		}
+
+		// initData.createAt = outData.getInt("createAt");
+		// initData.lastLogin = outData.getInt("lastLogin");
 		initData.sessionsCount = outData.getInt("sessionsCount");
 
 		// create resources init data
@@ -309,7 +310,7 @@ public class LoginEventHandler extends BaseServerEventHandler
 		// load script
 		if( ScriptEngine.script == null )
 		{
-			HttpTool.Data _data = HttpTool.post("http://localhost:8080/maps/features.js", null, false);
+			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/maps/script-data.cs", null, false);
 			if( _data.statusCode != HttpStatus.SC_OK )
 			{
 				outData.putInt("umt", 15);
@@ -317,11 +318,11 @@ public class LoginEventHandler extends BaseServerEventHandler
 			}
 			else
 			{
-				ScriptEngine.initialize(_data.text);
-				trace("http://localhost:8080/maps/features.js loaded.");
+				ScriptEngine.initialize(_data.text, inData.getInt("appver"));
+				trace("http://localhost:8080/maps/script-data.cs loaded.");
 			}
-        }
-        outData.putText("script", ScriptEngine.script);
+		}
+		outData.putText("script", ScriptEngine.script);
 
 		// init core
 		Game game = new Game();
@@ -361,10 +362,15 @@ public class LoginEventHandler extends BaseServerEventHandler
 		addExchangeItem(game, exchanges, ExchangeType.C12_SOFT, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.softToHard(5000) * 1.0, 	ResourceType.R3_CURRENCY_SOFT + ":5000",		0, 0, true);
 		addExchangeItem(game, exchanges, ExchangeType.C13_SOFT, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.softToHard(50000) * 0.9,	ResourceType.R3_CURRENCY_SOFT + ":50000"	,	0, 0, true);
 
-		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- MONEY -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+		// -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- TICKETS -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 		addExchangeItem(game, exchanges, ExchangeType.C71_TICKET, ResourceType.R4_CURRENCY_HARD + ":10",		ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(10)     * 1.00,    0, 0, true);
 		addExchangeItem(game, exchanges, ExchangeType.C72_TICKET, ResourceType.R4_CURRENCY_HARD + ":50",		ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(50)     * 1.20,    0, 0, true);
 		addExchangeItem(game, exchanges, ExchangeType.C73_TICKET, ResourceType.R4_CURRENCY_HARD + ":100",	ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(100)    * 1.40,    0, 0, true);
+
+		// -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- EMOTES -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+		/* addExchangeItem(game, exchanges, ExchangeType.C81_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"0:1",    0, 0, true);
+		addExchangeItem(game, exchanges, ExchangeType.C82_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"1:1",    0, 0, true);
+		addExchangeItem(game, exchanges, ExchangeType.C83_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"2:1",    0, 0, true); */
 
 		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- OTHER -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 		if( !game.exchanger.items.exists(ExchangeType.C42_RENAME) )
@@ -416,8 +422,7 @@ public class LoginEventHandler extends BaseServerEventHandler
 		element.putInt("num_exchanges", 0);
 		element.putInt("expired_at", 1);
 		element.putText("outcome", "");
-		//newExchanges.addSFSObject( element );
-		exchanges.addSFSObject( element );
+		exchanges.addSFSObject(element);
 	}
 
 	private void addExchangeItem(Game game, ISFSArray exchanges, int type, String reqsStr, String outsStr, int numExchanges, int expiredAt, boolean addSFS)
