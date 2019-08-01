@@ -147,36 +147,24 @@ public class BattleRoom extends BBGRoom
 
 	private void updateReservesData()
 	{
-		List<RoomVariable> listOfVars = new ArrayList<>();
 
 		int[] keys = getChangedUints();
 		if( keys != null )
 		{
 			reservedUnitIds = Arrays.stream(keys).boxed().collect(Collectors.toList());
 			ISFSObject units = new SFSObject();
-			units.putIntArray("keys", reservedUnitIds);
+			//units.putIntArray("keys", reservedUnitIds);
 
-			/*List<String> testData = new ArrayList<>();
+			List<String> testData = new ArrayList<>();
 			for ( int k:reservedUnitIds )
 			{
 				Unit unit = this.battleField.units.get(k);
 				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
 			}
-			units.putUtfStringArray("testData", testData);*/
+			units.putUtfStringArray("testData", testData);
+			send("u", units, getUserList());
 
-			listOfVars.add(new SFSRoomVariable("units", units));
 		}
-
-		// set elixir bars
-		SFSObject bars = new SFSObject();
-
-		try {
-			bars.putInt("0", (int) Math.floor((double) this.battleField.elixirUpdater.bars.__get(0)));
-			bars.putInt("1", (int) Math.floor((double) this.battleField.elixirUpdater.bars.__get(1)));
-		}catch(Exception e){ trace(e.getMessage()); }
-		listOfVars.add(new SFSRoomVariable("bars", bars));
-
-		//sfsApi.setRoomVariables(null, room, listOfVars);
 	}
 
 	private int[] getChangedUints()
