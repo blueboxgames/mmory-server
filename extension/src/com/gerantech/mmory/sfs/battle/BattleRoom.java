@@ -57,7 +57,7 @@ public class BattleRoom extends BBGRoom
 	private BattleBot bot;
 	private boolean singleMode;
 	private ScheduledFuture<?> timer;
-	private double buildingsUpdatedAt;
+	private double unitsUpdatedAt;
 	private List<Integer> reservedUnitIds;
 	private BattleEventCallback eventCallback;
 
@@ -128,12 +128,12 @@ public class BattleRoom extends BBGRoom
 					return;
 				try {
 					double battleDuration = battleField.getDuration();
-					if( battleField.now - buildingsUpdatedAt >= 500 )
+					if( battleField.now - unitsUpdatedAt >= 500 )
 					{
 						updateReservesData();
 						if( singleMode && battleDuration > 4 )
 							pokeBot();
-						buildingsUpdatedAt = battleField.now;
+						unitsUpdatedAt = battleField.now;
 					}
 					battleField.update((int) (Instant.now().toEpochMilli() - battleField.now));
 					checkEnding(battleDuration);
@@ -153,7 +153,7 @@ public class BattleRoom extends BBGRoom
 		{
 			reservedUnitIds = Arrays.stream(keys).boxed().collect(Collectors.toList());
 			ISFSObject units = new SFSObject();
-			//units.putIntArray("keys", reservedUnitIds);
+			units.putIntArray("keys", reservedUnitIds);
 
 			List<String> testData = new ArrayList<>();
 			for ( int k:reservedUnitIds )
@@ -163,7 +163,6 @@ public class BattleRoom extends BBGRoom
 			}
 			units.putUtfStringArray("testData", testData);
 			send("u", units, getUserList());
-
 		}
 	}
 
