@@ -45,8 +45,6 @@ import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-import com.smartfoxserver.v2.entities.variables.RoomVariable;
-import com.smartfoxserver.v2.entities.variables.SFSRoomVariable;
 
 public class BattleRoom extends BBGRoom
 {
@@ -148,13 +146,17 @@ public class BattleRoom extends BBGRoom
 	private void updateReservesData()
 	{
 
-		int[] keys = getChangedUints();
+		int[] keys = getChangedUnits();
 		if( keys != null )
 		{
 			reservedUnitIds = Arrays.stream(keys).boxed().collect(Collectors.toList());
 			ISFSObject units = new SFSObject();
-			//units.putIntArray("keys", reservedUnitIds);
+			units.putIntArray("keys", reservedUnitIds);
 
+			/**
+			 * TEST_FLAG: Code bellow sneds some test information about changed units.
+			 */
+			/*
 			List<String> testData = new ArrayList<>();
 			for ( int k:reservedUnitIds )
 			{
@@ -162,12 +164,12 @@ public class BattleRoom extends BBGRoom
 				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
 			}
 			units.putUtfStringArray("testData", testData);
-			send("u", units, getUserList());
-
+			*/
+			send("uc", units, getUserList());
 		}
 	}
 
-	private int[] getChangedUints()
+	private int[] getChangedUnits()
 	{
 		int[] keys = this.battleField.units.keys();
 		if( reservedUnitIds == null )
