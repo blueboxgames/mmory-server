@@ -48,6 +48,7 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 
 public class BattleRoom extends BBGRoom
 {
+	static boolean DEBUG_MODE = false;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
 	public ScheduledFuture<?> autoJoinTimer;
@@ -145,7 +146,6 @@ public class BattleRoom extends BBGRoom
 
 	private void updateReservesData()
 	{
-
 		int[] keys = getChangedUnits();
 		if( keys != null )
 		{
@@ -156,17 +156,18 @@ public class BattleRoom extends BBGRoom
 			/**
 			 * TEST_FLAG: Code bellow sneds some test information about changed units.
 			 */
-			/*
-			List<String> testData = new ArrayList<>();
-			for ( int k:reservedUnitIds )
-			{
-				Unit unit = this.battleField.units.get(k);
-				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
-			}
-			units.putUtfStringArray("testData", testData);
-			*/
-			send("uc", units, getUserList());
 
+			if( DEBUG_MODE )
+			{
+				List<String> testData = new ArrayList<>();
+				for ( int k:reservedUnitIds )
+				{
+					Unit unit = this.battleField.units.get(k);
+					testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
+				}
+				units.putUtfStringArray("testData", testData);
+			}
+			send("u", units, getUserList());
 		}
 	}
 
@@ -176,7 +177,7 @@ public class BattleRoom extends BBGRoom
 		if( reservedUnitIds == null )
 			return keys;
 
-		if( reservedUnitIds.size() != keys.length )
+		if( !DEBUG_MODE && reservedUnitIds.size() != keys.length || DEBUG_MODE )
 			return keys;
 
 		for( int i=0; i < keys.length; i ++ )
