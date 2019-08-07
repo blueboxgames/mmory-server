@@ -117,11 +117,11 @@ public class DBUtils extends UtilBase
     }
 
     // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-   EXCHANGES  -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-    public ISFSArray getExchanges(int playerId)
+    public ISFSArray getExchanges(int playerId, int now)
     {
         ISFSArray ret = null;
         try {
-            ret = db.executeQuery("SELECT id, type, num_exchanges, expired_at, outcome, reqs FROM exchanges WHERE player_id=" + playerId + " OR player_id=10000", new Object[]{});
+            ret = db.executeQuery("SELECT id, type, num_exchanges, expired_at, outcome, reqs FROM exchanges WHERE player_id=" + playerId + " OR (player_id=10000 AND expired_at > " + now + ")", new Object[]{});
         } catch (SQLException e) { e.printStackTrace(); }
         return ret;
     }
