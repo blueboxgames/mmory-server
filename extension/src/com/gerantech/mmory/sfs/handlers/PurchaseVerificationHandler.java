@@ -120,7 +120,9 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		if( data.statusCode == HttpStatus.SC_UNAUTHORIZED )
 		{
 			if( refreshAccessToken() )
+			{
 				sendResult(sender, productID, purchaseToken);
+			}
 			else
 			{
 				resObj.putBool("success", false);
@@ -137,7 +139,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 
 	private void sendSuccessResult(User sender, Game game, String productID, String purchaseToken, int consumptionState, int purchaseState, String developerPayload, long purchaseTime) {
 		ISFSObject resObj = SFSObject.newInstance();
-		if (purchaseState != 0)
+		if( purchaseState != 0 )
 		{
 			resObj.putBool("success", false);
 			resObj.putText("message", "error in verification");
@@ -170,12 +172,11 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		resObj.putLong("purchaseTime", purchaseTime);
 		insertToDB(game, productID, purchaseToken, purchaseState, purchaseTime, beforePurchaseData, afterPurchaseData);
 		send("verify", resObj, sender);
-		trace("Purchase Succeed --playerId:", game.player.id, "--market:", game.market, "--productID:", productID,
-				"--purchaseToken:", purchaseToken, "--Hard Currency:", getHardOnDB(game.player.id));
+		trace("Purchase Succeed --playerId:", game.player.id, "--market:", game.market, "--productID:", productID, "--purchaseToken:", purchaseToken, "--Hard Currency:", getHardOnDB(game.player.id));
 	}
 
-	private void insertToDB(Game game, String id, String token, int state, long time, String beforePurchaseData,
-			String afterPurchaseData) {
+	private void insertToDB(Game game, String id, String token, int state, long time, String beforePurchaseData, String afterPurchaseData)
+	{
 		String query = "INSERT INTO purchases( player_id, id, market, token, consumed, state, time, old_res, new_res ) VALUES ("
 				+ game.player.id + ", '" + id + "', '" + game.market + "', '" + token + "', 1, " + state + ", FROM_UNIXTIME("
 				+ (time / 1000) + "), '" + beforePurchaseData + "', '" + afterPurchaseData
@@ -183,33 +184,29 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		trace(query);
 		try {
 			getParentExtension().getParentZone().getDBManager().executeInsert(query, new Object[] {});
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} catch (SQLException e) { e.printStackTrace(); }
 	}
 
-	private int getHardOnDB(int playerID) {
+	private int getHardOnDB(int playerID)
+	{
 		ISFSArray res = null;
 		try {
 			res = getParentExtension().getParentZone().getDBManager().executeQuery(
 					"SELECT count From resources WHERE player_id = " + playerID + " AND type = 1003", new Object[] {});
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} catch (SQLException e) { e.printStackTrace(); }
 
 		if (res != null && res.size() > 0)
 			return res.getSFSObject(0).getInt("count");
 		return 0;
 	}
 
-	private void consume(String token) {
+	private void consume(String token)
+	{
 		String query = "UPDATE `purchases` SET `consumed`=0 WHERE `token`='" + token + "'";
 		trace(query);
 		try {
 			getParentExtension().getParentZone().getDBManager().executeUpdate(query, new Object[] {});
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		} catch (SQLException e) { e.printStackTrace(); }
 	}
 
 	/**
@@ -290,8 +287,9 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 			headers.put("User-Agent", "Zarinpal REST");
 			headers.put("Content-Type", "application/json");
 		}
-		String url = null;
+		
 		// set url
+		String url = null;
 		if( market.equals("zarinpal") )
 		{
 			url = "https://www.zarinpal.com/pg/rest/WebGate/PaymentVerification.json";
