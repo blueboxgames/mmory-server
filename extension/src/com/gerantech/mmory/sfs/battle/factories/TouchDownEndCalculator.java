@@ -31,7 +31,7 @@ public class TouchDownEndCalculator extends EndCalculator
         if( scores[unit.side] > 2 )
             return true;
 
-        room.battleField.requestReset();
+        room.battleField.killPioneers(unit.side);
         room.sendNewRoundResponse(unit.side, unit.id);
         return false;
     }
