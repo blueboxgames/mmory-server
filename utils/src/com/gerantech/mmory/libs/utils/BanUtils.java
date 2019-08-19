@@ -1,5 +1,6 @@
 package com.gerantech.mmory.libs.utils;
 
+import com.gerantech.mmory.core.Player;
 import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -266,5 +267,14 @@ public class BanUtils extends UtilBase
 		for (int i = 0; i < len; i++)
 			buf.append("*");
 		return buf.toString();
+	}
+
+	public void report(ISFSObject params, String lobby, int reporterId)
+	{
+		String query = "INSERT INTO `infractions` (`reporter`, `offender`, `content`, `lobby`, `offend_at`, `report_at`) VALUES ('" + reporterId + "', '" + params.getInt("i") + "', '" + params.getUtfString("t") + "', '" + lobby + "', FROM_UNIXTIME(" + params.getInt("u") + "), FROM_UNIXTIME(" + Instant.now().getEpochSecond() + "));";
+		trace(query);
+		try {
+			ext.getParentZone().getDBManager().executeInsert(query , new Object[]{});
+		} catch (SQLException e) { e.printStackTrace(); }
 	}
 }

@@ -65,7 +65,7 @@ public class BaseLobbyRoom extends SFSExtension
         {
             if( !isAdmin )
             {
-                BanUtils.getInstance().immediateBan(game.player.id, params.getInt("u"), params.getUtfString("t"));
+                BanUtils.getInstance().report(params, lobby.getName(), 10000);
                 params.putBool("x", false);
                 return;
             }

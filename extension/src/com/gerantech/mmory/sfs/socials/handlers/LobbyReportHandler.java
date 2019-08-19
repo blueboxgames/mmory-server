@@ -1,6 +1,7 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
 import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.constants.MessageTypes;
@@ -50,11 +51,7 @@ public class LobbyReportHandler extends BaseClientRequestHandler
         }
 
         // insert report
-        query = "INSERT INTO `infractions` (`reporter`, `offender`, `content`, `lobby`, `offend_at`, `report_at`) VALUES ('" + reporter.id + "', '" + params.getInt("i") + "', '" + params.getUtfString("t") + "', '" + lobby + "', FROM_UNIXTIME(" + params.getInt("u") + "), FROM_UNIXTIME(" + Instant.now().getEpochSecond() + "));";
-        //trace(query);
-        try {
-            db.executeInsert(query , new Object[]{});
-        } catch (SQLException e) { e.printStackTrace(); }
+        BanUtils.getInstance().report(params, lobby, reporter.id);
         send(sender, params, MessageTypes.RESPONSE_SUCCEED);
     }
 
