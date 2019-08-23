@@ -45,11 +45,10 @@ import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-import com.smartfoxserver.v2.entities.variables.RoomVariable;
-import com.smartfoxserver.v2.entities.variables.SFSRoomVariable;
 
 public class BattleRoom extends BBGRoom
 {
+	static boolean DEBUG_MODE = false;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
 	public ScheduledFuture<?> autoJoinTimer;
@@ -57,7 +56,7 @@ public class BattleRoom extends BBGRoom
 	private BattleBot bot;
 	private boolean singleMode;
 	private ScheduledFuture<?> timer;
-	private double buildingsUpdatedAt;
+	private double unitsUpdatedAt;
 	private List<Integer> reservedUnitIds;
 	private BattleEventCallback eventCallback;
 
@@ -128,12 +127,12 @@ public class BattleRoom extends BBGRoom
 					return;
 				try {
 					double battleDuration = battleField.getDuration();
-					if( battleField.now - buildingsUpdatedAt >= 500 )
+					if( battleField.now - unitsUpdatedAt >= 500 )
 					{
 						updateReservesData();
 						if( singleMode && battleDuration > 4 )
 							pokeBot();
-						buildingsUpdatedAt = battleField.now;
+						unitsUpdatedAt = battleField.now;
 					}
 					battleField.update((int) (Instant.now().toEpochMilli() - battleField.now));
 					checkEnding(battleDuration);
@@ -147,45 +146,38 @@ public class BattleRoom extends BBGRoom
 
 	private void updateReservesData()
 	{
-		List<RoomVariable> listOfVars = new ArrayList<>();
-
-		int[] keys = getChangedUints();
+		int[] keys = getChangedUnits();
 		if( keys != null )
 		{
 			reservedUnitIds = Arrays.stream(keys).boxed().collect(Collectors.toList());
 			ISFSObject units = new SFSObject();
 			units.putIntArray("keys", reservedUnitIds);
 
-			/*List<String> testData = new ArrayList<>();
-			for ( int k:reservedUnitIds )
+			/**
+			 * TEST_FLAG: Code bellow sneds some test information about changed units.
+			 */
+
+			if( DEBUG_MODE )
 			{
-				Unit unit = this.battleField.units.get(k);
-				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
+				List<String> testData = new ArrayList<>();
+				for ( int k:reservedUnitIds )
+				{
+					Unit unit = this.battleField.units.get(k);
+					testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
+				}
+				units.putUtfStringArray("testData", testData);
 			}
-			units.putUtfStringArray("testData", testData);*/
-
-			listOfVars.add(new SFSRoomVariable("units", units));
+			send("u", units, getUserList());
 		}
-
-		// set elixir bars
-		SFSObject bars = new SFSObject();
-
-		try {
-			bars.putInt("0", (int) Math.floor((double) this.battleField.elixirUpdater.bars.__get(0)));
-			bars.putInt("1", (int) Math.floor((double) this.battleField.elixirUpdater.bars.__get(1)));
-		}catch(Exception e){ trace(e.getMessage()); }
-		listOfVars.add(new SFSRoomVariable("bars", bars));
-
-		//sfsApi.setRoomVariables(null, room, listOfVars);
 	}
 
-	private int[] getChangedUints()
+	private int[] getChangedUnits()
 	{
 		int[] keys = this.battleField.units.keys();
 		if( reservedUnitIds == null )
 			return keys;
 
-		if( reservedUnitIds.size() != keys.length )
+		if( !DEBUG_MODE && reservedUnitIds.size() != keys.length || DEBUG_MODE )
 			return keys;
 
 		for( int i=0; i < keys.length; i ++ )

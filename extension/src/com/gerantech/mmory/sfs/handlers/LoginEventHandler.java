@@ -1,8 +1,9 @@
 package com.gerantech.mmory.sfs.handlers;
-import com.gerantech.mmory.sfs.utils.LoginErrors;
-import com.gerantech.mmory.sfs.utils.PasswordGenerator;
-import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.data.RankData;
+
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.InitData;
 import com.gerantech.mmory.core.LoginData;
@@ -12,10 +13,19 @@ import com.gerantech.mmory.core.constants.ExchangeType;
 import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.gerantech.mmory.core.exchanges.ExchangeUpdater;
-import com.gerantech.mmory.core.exchanges.Exchanger;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
-import com.gerantech.mmory.libs.utils.*;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.data.RankData;
+import com.gerantech.mmory.libs.utils.BanUtils;
+import com.gerantech.mmory.libs.utils.BattleUtils;
+import com.gerantech.mmory.libs.utils.DBUtils;
+import com.gerantech.mmory.libs.utils.ExchangeUtils;
+import com.gerantech.mmory.libs.utils.HttpUtils;
+import com.gerantech.mmory.libs.utils.QuestsUtils;
+import com.gerantech.mmory.libs.utils.RankingUtils;
+import com.gerantech.mmory.sfs.utils.LoginErrors;
+import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.smartfoxserver.bitswarm.sessions.ISession;
 import com.smartfoxserver.v2.core.ISFSEvent;
 import com.smartfoxserver.v2.core.SFSConstants;
@@ -27,11 +37,8 @@ import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.exceptions.SFSException;
 import com.smartfoxserver.v2.extensions.BaseServerEventHandler;
-import org.apache.http.HttpStatus;
 
-import java.sql.SQLException;
-import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
+import org.apache.http.HttpStatus;
 
 /**
  * @author ManJav
@@ -207,7 +214,7 @@ try {
 		outData.putInt("sessionsCount", userData.getInt("sessions_count"));
 		outData.putSFSArray("resources", dbUtils.getResources(id));
 		outData.putSFSArray("operations", dbUtils.getOperations(id));
-		outData.putSFSArray("exchanges", dbUtils.getExchanges(id));
+		outData.putSFSArray("exchanges", dbUtils.getExchanges(id, (int)Instant.now().getEpochSecond()));
 		outData.putSFSArray("quests", new SFSArray());
 		outData.putSFSArray("prefs", dbUtils.getPrefs(id, inData.getInt("appver")));
 		outData.putSFSArray("decks", dbUtils.getDecks(id));
@@ -218,8 +225,7 @@ try {
 		session.setProperty("joinedRoomId", joinedRoomId);
 		outData.putBool("inBattle", joinedRoomId > -1 );
 		//outData.putSFSArray("challenges", ChallengeUtils.getInstance().getChallengesOfAttendee(-1, game.player, false));
-
-        initiateCore(session, inData, outData, loginData);
+		initiateCore(session, inData, outData, loginData);
 	}
 
 	private void initiateCore(ISession session, ISFSObject inData, ISFSObject outData, LoginData loginData)
@@ -250,7 +256,7 @@ try {
 		// create resources init data
 		ISFSObject element;
 		ISFSArray resources = outData.getSFSArray("resources");
-		for(int i=0; i<resources.size(); i++)
+		for(int i = 0; i < resources.size(); i++)
 		{
 			element = resources.getSFSObject(i);
 			initData.resources.set(element.getInt("type"), element.getInt("count"));
@@ -259,7 +265,7 @@ try {
 		}
 
 		// create decks init data
-		for(int i=0; i<outData.getSFSArray("decks").size(); i++)
+		for(int i = 0; i < outData.getSFSArray("decks").size(); i++)
 		{
 			element = outData.getSFSArray("decks").getSFSObject(i);
 			if( !initData.decks.exists(element.getInt("deck_index")) )
@@ -269,7 +275,7 @@ try {
 
 		// create operations init data
 		ISFSArray operations = outData.getSFSArray("operations");
-		for(int i=0; i<operations.size(); i++)
+		for(int i = 0; i < operations.size(); i++)
 		{
 			element = operations.getSFSObject(i);
 			initData.operations.set(element.getInt("index"), element.getInt("score"));
@@ -278,34 +284,8 @@ try {
 		// create exchanges init data
 		ISFSArray exchanges = outData.getSFSArray("exchanges");
 		IntIntMap dbItems = new IntIntMap();
-		for(int i=0; i<exchanges.size(); i++)
+		for(int i = 0; i < exchanges.size(); i++)
 			dbItems.set(exchanges.getSFSObject(i).getInt("type"), exchanges.getSFSObject(i).getInt("id"));
-
-		boolean contained;
-		SFSArray newExchanges = new SFSArray();
-		for (int l=0; l<loginData.exchanges.size(); l++)
-		{
-			contained = false;
-			for(int i=0; i<exchanges.size(); i++)
-			{
-				element = exchanges.getSFSObject(i);
-				if( element.getInt("type") == loginData.exchanges.get(l) )
-				{
-					contained = true;
-					break;
-				}
-			}
-			if( !contained && ( initData.appVersion < 3200 || ExchangeType.getCategory(loginData.exchanges.get(l)) != ExchangeType.C20_SPECIALS || initData.resources.get(ResourceType.R2_POINT) > 100 ))// add special after arena 2
-				addExchangeToDB(loginData.exchanges.get(l), exchanges, newExchanges);
-		}
-
-		/*if( newExchanges.size() > 0 )
-		{
-			String query = "INSERT INTO exchanges (`type`, `player_id`, `num_exchanges`, `expired_at`, `outcome`) VALUES ";
-			for(int i=0; i<newExchanges.size(); i++)
-				query += "('" + newExchanges.getSFSObject(i).getInt("type") + "', '" + initData.id + "', '" + newExchanges.getSFSObject(i).getInt("num_exchanges") + "', '" +  newExchanges.getSFSObject(i).getInt("expired_at") + "', '" +  newExchanges.getSFSObject(i).getText("outcome") + "')" + ( i < newExchanges.size() - 1 ? ", " : ";" );
-			try { getParentExtension().getParentZone().getDBManager().executeInsert(query, new Object[] {}); } catch (SQLException e) { e.printStackTrace(); }
-		}*/
 
 		// load script
 		if( ScriptEngine.script == null )
@@ -324,71 +304,49 @@ try {
 		}
 		outData.putText("script", ScriptEngine.script);
 
-		// init core
+		// initial exchanges
+		boolean contained;
+		for (int l=0; l<loginData.exchanges.size(); l++)
+		{
+			contained = false;
+			for(int i=0; i<exchanges.size(); i++)
+			{
+				element = exchanges.getSFSObject(i);
+				if( element.getInt("type") == loginData.exchanges.get(l) )
+				{
+					contained = true;
+					break;
+				}
+			}
+			if( !contained && ( initData.appVersion < 3200 || ExchangeType.getCategory(loginData.exchanges.get(l)) != ExchangeType.C20_SPECIALS || initData.resources.get(ResourceType.R2_POINT) > 100 ))// add special after arena 2
+				addSFSExchange(loginData.exchanges.get(l), exchanges);
+		}
+
+		// initial core
 		Game game = new Game();
 		game.init(initData);
-		int arena = game.player.get_arena(0);
 		game.player.tutorialMode = outData.getInt("tutorialMode");
 		game.player.hasOperations = outData.getBool("hasOperations");
-		game.exchanger.updater = new ExchangeUpdater(game);
+		game.exchanger.updater = new ExchangeUpdater(game, now);
 		game.exchanger.dbItems = dbItems;
 
 		game.player.resourceIds = new ConcurrentHashMap<>();
-		for(int i=0; i<resources.size(); i++)
+		for(int i = 0; i < resources.size(); i++)
 		{
 			game.player.resourceIds.put(resources.getSFSObject(i).getInt("type"), resources.getSFSObject(i).getInt("id"));
 			resources.getSFSObject(i).removeElement("id");
 		}
 
-		for(int i=0; i<exchanges.size(); i++)
+		for(int i = 0; i < exchanges.size(); i++)
 		{
 			element = exchanges.getSFSObject(i);
-
-			element.putInt("num_exchanges", element.getInt("type") > 100 && element.getInt("type") < 104 && element.getInt("expired_at") < now ? 0 : element.getInt("num_exchanges"));
-			addExchangeItem(game, exchanges, element.getInt("type"), element.getText("reqs"), element.getText("outcome"), element.getInt("num_exchanges"), element.getInt("expired_at"), false);
+			game.exchanger.updater.add(element.getInt("type"), element.getInt("num_exchanges"), element.getInt("expired_at"), element.getText("reqs"), element.getText("outcome"));
 		}
 
-		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- GEM -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-		addExchangeItem(game, exchanges, ExchangeType.C0_HARD, ResourceType.R5_CURRENCY_REAL + ":1",			ResourceType.R4_CURRENCY_HARD + ":1"											   ,	0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C1_HARD, ResourceType.R5_CURRENCY_REAL + ":2000",		ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.realToHard(2000)		* 0.750,	0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C2_HARD, ResourceType.R5_CURRENCY_REAL + ":10000",		ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.realToHard(10000)		* 0.875,	0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C3_HARD, ResourceType.R5_CURRENCY_REAL + ":20000",		ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.realToHard(20000)		* 1.000,	0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C4_HARD, ResourceType.R5_CURRENCY_REAL + ":40000",		ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.realToHard(40000)		* 1.125,	0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C5_HARD, ResourceType.R5_CURRENCY_REAL + ":100000",	ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.realToHard(100000)	* 1.200,	0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C6_HARD, ResourceType.R5_CURRENCY_REAL + ":200000",	ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.realToHard(200000)	* 1.250,	0, 0, true);
-
-		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- MONEY -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-		addExchangeItem(game, exchanges, ExchangeType.C11_SOFT, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.softToHard(1000) * 1.2, 	ResourceType.R3_CURRENCY_SOFT + ":1000",		0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C12_SOFT, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.softToHard(5000) * 1.0, 	ResourceType.R3_CURRENCY_SOFT + ":5000",		0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C13_SOFT, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.softToHard(50000) * 0.9,	ResourceType.R3_CURRENCY_SOFT + ":50000"	,	0, 0, true);
-
-		// -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- TICKETS -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-		addExchangeItem(game, exchanges, ExchangeType.C71_TICKET, ResourceType.R4_CURRENCY_HARD + ":10",		ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(10)     * 1.00,    0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C72_TICKET, ResourceType.R4_CURRENCY_HARD + ":50",		ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(50)     * 1.20,    0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C73_TICKET, ResourceType.R4_CURRENCY_HARD + ":100",	ResourceType.R6_TICKET + ":" + Exchanger.hardToTicket(100)    * 1.40,    0, 0, true);
-
-		// -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- EMOTES -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-		/* addExchangeItem(game, exchanges, ExchangeType.C81_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"0:1",    0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C82_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"1:1",    0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C83_EMOTE, ResourceType.R5_CURRENCY_REAL + ":1000",	"2:1",    0, 0, true); */
-
-		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- OTHER -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-		if( !game.exchanger.items.exists(ExchangeType.C42_RENAME) )
-			addExchangeItem(game, exchanges, ExchangeType.C42_RENAME,	"",	"" ,				0, 0, true);
-		if( !game.exchanger.items.exists(ExchangeType.C43_ADS) )
-			addExchangeItem(game, exchanges, ExchangeType.C43_ADS,		"",	"51:" + arena,	0, 0, true);
-		if( !game.exchanger.items.exists(ExchangeType.C104_STARS) )
-			addExchangeItem(game, exchanges, ExchangeType.C104_STARS,	"",	"",				0,		now,	 true);
-
-		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_- MAGIC -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-		addExchangeItem(game, exchanges, ExchangeType.C121_MAGIC, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.fixedRound(Exchanger.toHard(Exchanger.estimateBookOutcome(ExchangeType.BOOK_55_PIRATE,	arena, game.player.splitTestCoef))),	ExchangeType.BOOK_55_PIRATE	+ ":" + arena, 0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C122_MAGIC, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.fixedRound(Exchanger.toHard(Exchanger.estimateBookOutcome(ExchangeType.BOOK_56_JUNGLE,	arena, game.player.splitTestCoef))),	ExchangeType.BOOK_56_JUNGLE	+ ":" + arena, 0, 0, true);
-		addExchangeItem(game, exchanges, ExchangeType.C123_MAGIC, ResourceType.R4_CURRENCY_HARD + ":" + Exchanger.fixedRound(Exchanger.toHard(Exchanger.estimateBookOutcome(ExchangeType.BOOK_58_AMBER,	arena, game.player.splitTestCoef))),	ExchangeType.BOOK_58_AMBER	+ ":" + arena, 0, 0, true);
-
-		session.setProperty("core", game);
+		game.exchanger.updater.addItems();
 
 		for( ExchangeItem item : game.exchanger.updater.changes )
-			DBUtils.getInstance().updateExchange(game, item.type, item.expiredAt, item.numExchanges, item.outcomesStr, item.requirementsStr);
+			DBUtils.getInstance().updateExchange(game, item.type, item.expiredAt, item.numExchanges, item.outcomes.toString(), item.requirements.toString());
 
 		// create exchange data
 		SFSArray _exchanges = new SFSArray();
@@ -397,8 +355,7 @@ try {
 			_exchanges.addSFSObject(ExchangeUtils.toSFS(game.exchanger.items.get(t)));
 		outData.putSFSArray("exchanges", _exchanges);
 
-
-		// init and update hazel data
+		// init and update in memory data base
 		ConcurrentHashMap<Integer, RankData> users = RankingUtils.getInstance().getUsers();
 		RankData rd = new RankData(game.player.nickName,  game.player.get_point());
 		if( users.containsKey(game.player.id))
@@ -413,9 +370,11 @@ try {
 		else
 			QuestsUtils.getInstance().insertNewQuests(game.player);
 		outData.putSFSArray("quests", QuestsUtils.toSFS(game.player.quests));
+
+		session.setProperty("core", game);
 	}
 
-	private void addExchangeToDB(int type, ISFSArray exchanges, SFSArray newExchanges)
+	private void addSFSExchange(int type, ISFSArray exchanges)
 	{
 		SFSObject element = new SFSObject();
 		element.putInt("type", type);
@@ -423,14 +382,5 @@ try {
 		element.putInt("expired_at", 1);
 		element.putText("outcome", "");
 		exchanges.addSFSObject(element);
-	}
-
-	private void addExchangeItem(Game game, ISFSArray exchanges, int type, String reqsStr, String outsStr, int numExchanges, int expiredAt, boolean addSFS)
-	{
-		ExchangeItem item = new ExchangeItem(type, numExchanges, expiredAt, reqsStr, outsStr);
-		game.exchanger.items.set(type, item);
-		game.exchanger.updater.update(item);
-		if( addSFS )
-			exchanges.addSFSObject( ExchangeUtils.toSFS(item) );
 	}
 }

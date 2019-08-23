@@ -28,11 +28,11 @@ public class TouchDownEndCalculator extends EndCalculator
         room.trace("unit passed " + unit.id);
         round ++;
         scores[unit.side] ++;
+        room.sendNewRoundResponse(unit.side, unit.id);
         if( scores[unit.side] > 2 )
             return true;
 
-        room.battleField.requestReset();
-        room.sendNewRoundResponse(unit.side, unit.id);
+        room.battleField.requestKillPioneers(unit.side);
         return false;
     }
 
