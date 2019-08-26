@@ -65,13 +65,14 @@ public class FCMUtils extends UtilBase {
                 con.setDoInput(true);
     
                 con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                con.setRequestProperty("Authorization", "$FCM_SERVER_KEY_CODE");
+                con.setRequestProperty("Authorization", "key=" + "$FCM_SERVER_AUTH");
                 con.setRequestMethod("POST");
     
                 String strJsonBody = "{"
                         +   "\"to\": \"" + pushId + "\", "
                         +   "\"notification\":"
-                        +   "{ \"body\": \"" + message + "\" }"
+                        +   "{ \"body\": \"" + message + "\""
+                        +     "\"sound\": \"default\" }"
                         + "}";
     
                 trace(strJsonBody);
@@ -80,6 +81,8 @@ public class FCMUtils extends UtilBase {
     
                 OutputStream outputStream = con.getOutputStream();
                 outputStream.write(sendBytes);
+                int httpResponse = con.getResponseCode();
+                System.out.println("httpResponse: " + httpResponse);
             } catch(Throwable t)
             {
                 t.printStackTrace();

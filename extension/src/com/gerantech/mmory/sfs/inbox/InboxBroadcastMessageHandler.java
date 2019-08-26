@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.inbox;
 
 import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.libs.utils.InboxUtils;
+//import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.gerantech.mmory.libs.utils.FCMUtils;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -21,8 +21,8 @@ public class InboxBroadcastMessageHandler extends BaseClientRequestHandler
         String data = params.containsKey("data") ? params.getText("data") : null;
 
         int delivered = 0;
-        for( int i = 0; i < receiverIds.length; i++ )
-            delivered += InboxUtils.getInstance().send(params.getInt("type"), params.getUtfString("text"), params.getInt("senderId"), receiverIds[i], data);
+        // for( int i = 0; i < receiverIds.length; i++ )
+        //     delivered += InboxUtils.getInstance().send(params.getInt("type"), params.getUtfString("text"), params.getInt("senderId"), receiverIds[i], data);
 
         if( params.getBool("isPush") )
             FCMUtils.getInstance().send(params.getUtfString("text"), data, receiverIds);
