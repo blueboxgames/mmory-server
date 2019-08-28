@@ -1,5 +1,6 @@
 package com.gerantech.mmory.sfs.handlers;
 
+import com.gerantech.mmory.libs.utils.ConfigUtils;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
 import com.gerantech.mmory.libs.utils.HttpUtils;
 import com.gerantech.mmory.core.Game;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author ManJav
@@ -30,10 +32,10 @@ import java.util.Map;
  */
 public class PurchaseVerificationHandler extends BaseClientRequestHandler
 {
-
 	private ExchangeItem item;
+	private static Properties props = new ConfigUtils().loadProps();
 	private static String packageName = "air.com.grantech.k2k";
-	private static String accessToken_cafebazaar = "riN8RxzQMsC9x05kCz8EWscxwjSu7r";
+	private static String accessToken_cafebazaar = props.getProperty("cafebazaarAccessToken");
 
 	public PurchaseVerificationHandler() { }
 	public void handleClientRequest(User sender, ISFSObject params)
@@ -226,9 +228,9 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 	{
 		List<NameValuePair> argus = new ArrayList<>();
 		argus.add(new BasicNameValuePair("grant_type", "authorization_code"));
-		argus.add(new BasicNameValuePair("code", "OerQgUmJk5U2ASq8UqiGA98nPyDlHq"));
-		argus.add(new BasicNameValuePair("client_id", "1PsJN4ZdDKrolOyuDRLKQZaYKhTnIrmbSkaHK40L"));
-		argus.add(new BasicNameValuePair("client_secret", "C1nYSNSzbP72dK9J0VysZzbS8bo55AjB0UKl7X6hiCLdYACizDEeyLHoVKZt"));
+		argus.add(new BasicNameValuePair("code", props.getProperty("cafebazaarAccessTokenCode")));
+		argus.add(new BasicNameValuePair("client_id", props.getProperty("cafebazaarAccessTokenClientID")));
+		argus.add(new BasicNameValuePair("client_secret", props.getProperty("cafebazaarAccessTokenClientSecret")));
 		argus.add(new BasicNameValuePair("redirect_uri", "http://www.gerantech.com/tanks/test.php?a=b"));
 		HttpUtils.Data data = HttpUtils.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/", argus, true);
 		trace("request_AccessToken", data.statusCode, data.text);
@@ -250,9 +252,9 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 	{
 		List<NameValuePair> argus = new ArrayList<>();
 		argus.add(new BasicNameValuePair("grant_type", "refresh_token"));
-		argus.add(new BasicNameValuePair("client_id", "1PsJN4ZdDKrolOyuDRLKQZaYKhTnIrmbSkaHK40L"));
-		argus.add(new BasicNameValuePair("client_secret", "C1nYSNSzbP72dK9J0VysZzbS8bo55AjB0UKl7X6hiCLdYACizDEeyLHoVKZt"));
-		argus.add(new BasicNameValuePair("refresh_token", "7Q3ZAgkZyDTd5Iftdpbvq09IPF2iyh"));
+		argus.add(new BasicNameValuePair("client_id", props.getProperty("cafebazaarAccessTokenClientID")));
+		argus.add(new BasicNameValuePair("client_secret", props.getProperty("cafebazaarAccessTokenClientSecret")));
+		argus.add(new BasicNameValuePair("refresh_token", props.getProperty("cafebazaarAccessTokenRefreshToken")));
 		HttpUtils.Data data = HttpUtils.post("https://pardakht.cafebazaar.ir/devapi/v2/auth/token/", argus, true);
 		trace("refresh_token", data.statusCode, data.text);
 		if (data.statusCode != HttpStatus.SC_OK || !data.json.containsKey("access_token"))
@@ -281,7 +283,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		Map<String, String> headers = new HashMap<>();
 		if( market.equals("myket") )
 		{
-			headers.put("X-Access-Token", "4cc2d302-836c-460e-a3a7-e72c8cd9c666");
+			headers.put("X-Access-Token", props.getProperty("myketAccessToken"));
 		}
 		else if( market.equals("zarinpal") )
 		{
@@ -295,7 +297,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		{
 			url = "https://www.zarinpal.com/pg/rest/WebGate/PaymentVerification.json";
 			List<NameValuePair> argus = new ArrayList<>();
-			argus.add(new BasicNameValuePair("MerchantID", "b37e90ce-b2bc-11e9-832c-000c29344814"));
+			argus.add(new BasicNameValuePair("MerchantID", props.getProperty("zarinpalMerchantID")));
 			argus.add(new BasicNameValuePair("Authority", purchaseToken));
 			argus.add(new BasicNameValuePair("Amount", amount));
 			HttpUtils.Data data = HttpUtils.post(url, argus, true, true);
