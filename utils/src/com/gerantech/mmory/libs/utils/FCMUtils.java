@@ -56,7 +56,6 @@ public class FCMUtils extends UtilBase {
         }
         
         for (String pushId : pushIds) {
-            trace("Try sending to pushID:" + pushId);
             try {
                 URL url = new URL("https://fcm.googleapis.com/fcm/send");
                 HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -74,8 +73,6 @@ public class FCMUtils extends UtilBase {
                         +   "{ \"body\": \"" + message + "\""
                         +     "\"sound\": \"default\" }"
                         + "}";
-    
-                trace(strJsonBody);
                 byte[] sendBytes = strJsonBody.getBytes("UTF-8");
                 con.setFixedLengthStreamingMode(sendBytes.length);
     
