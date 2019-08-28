@@ -6,6 +6,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 
@@ -56,6 +57,8 @@ public class FCMUtils extends UtilBase {
         }
         
         for (String pushId : pushIds) {
+            Properties props = new ConfigUtils().loadProps();
+            String fcmServerKey = props.getProperty("fcmServerKey");
             try {
                 URL url = new URL("https://fcm.googleapis.com/fcm/send");
                 HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -64,7 +67,7 @@ public class FCMUtils extends UtilBase {
                 con.setDoInput(true);
     
                 con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                con.setRequestProperty("Authorization", "key=" + "$FCM_SERVER_AUTH");
+                con.setRequestProperty("Authorization", "key=" + fcmServerKey);
                 con.setRequestMethod("POST");
     
                 String strJsonBody = "{"
