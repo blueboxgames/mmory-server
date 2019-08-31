@@ -9,8 +9,8 @@ import java.util.Properties;
  * ConfigUtils
  */
 public class ConfigUtils extends UtilBase {
-	String propertyFileName = "extensions/MMOry/mmory.properties";
-	public Properties loadProps() {
+	static String propertyFileName = "extensions/MMOry/mmory.properties";
+	static public Properties loadProps() {
 		Properties props = new Properties();
 	
 		try {
