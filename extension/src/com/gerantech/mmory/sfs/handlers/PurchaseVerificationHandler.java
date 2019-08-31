@@ -33,9 +33,9 @@ import java.util.Properties;
 public class PurchaseVerificationHandler extends BaseClientRequestHandler
 {
 	private ExchangeItem item;
-	private static Properties props = new ConfigUtils().loadProps();
+	private Properties props = ConfigUtils.getInstance().load(ConfigUtils.DEFAULT);
 	private static String packageName = "air.com.grantech.k2k";
-	private static String accessToken_cafebazaar = props.getProperty("cafebazaarAccessToken");
+	private String accessToken_cafebazaar = props.getProperty("cafebazaarAccessToken");
 
 	public PurchaseVerificationHandler() { }
 	public void handleClientRequest(User sender, ISFSObject params)

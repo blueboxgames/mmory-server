@@ -13,7 +13,7 @@ import java.util.Properties;
 public class ConfigUtils extends UtilBase
 {
 	
-	static String DEFAULT = "extensions/MMOry/default.properties";
+	public static String DEFAULT = "extensions/MMOry/default.properties";
 	static public ConfigUtils getInstance()
 	{
 		return (ConfigUtils)UtilBase.get(ConfigUtils.class);
