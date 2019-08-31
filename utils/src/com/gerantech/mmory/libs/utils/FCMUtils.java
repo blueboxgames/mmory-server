@@ -15,7 +15,7 @@ import com.smartfoxserver.v2.entities.data.ISFSArray;
  */
 public class FCMUtils extends UtilBase implements IPushUtils
 {
-
+    private static Properties props = new ConfigUtils().loadProps();
     public static FCMUtils getInstance()
     {
         return (FCMUtils)UtilBase.get(FCMUtils.class);
@@ -67,7 +67,6 @@ public class FCMUtils extends UtilBase implements IPushUtils
         
         for( String pushId : pushIds )
         {
-            Properties props = new ConfigUtils().loadProps();
             String fcmServerKey = props.getProperty("fcmServerKey");
             try
             {
