@@ -4,6 +4,7 @@ import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.libs.utils.BattleUtils;
+import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
@@ -30,7 +31,12 @@ public class BattleRequestCancelHandler extends BaseClientRequestHandler
         }
 
         if( foundRoom != null )
+        {
+            BattleRoom battle = (BattleRoom)foundRoom;
+            if( battle != null )
+                battle.autoJoinTimer.cancel(true);
             BattleUtils.getInstance().remove(foundRoom);
+        }
         send(Commands.BATTLE_CANCEL, null, sender);
     }
 }
