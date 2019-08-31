@@ -145,6 +145,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		{
 			Player player = ((Game) o).player;
 			SFSObject p = new SFSObject();
+			p.putInt("id", player.id);
 			p.putInt("xp", player.get_xp());
 			p.putInt("point", player.get_point());
 			p.putUtfString("name", player.nickName);
