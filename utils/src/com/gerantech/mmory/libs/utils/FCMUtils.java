@@ -15,7 +15,7 @@ import com.smartfoxserver.v2.entities.data.ISFSArray;
  */
 public class FCMUtils extends UtilBase implements IPushUtils
 {
-    private static Properties props = ConfigUtils.loadProps();
+    private Properties props = ConfigUtils.getInstance().load(ConfigUtils.DEFAULT);
     public static FCMUtils getInstance()
     {
         return (FCMUtils)UtilBase.get(FCMUtils.class);
