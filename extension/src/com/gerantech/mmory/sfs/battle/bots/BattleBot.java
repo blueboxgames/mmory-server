@@ -59,6 +59,7 @@ public class BattleBot
 
     private void summonCard()
     {
+        // Don't summon during tutorial of mode 0.
         if( player.get_battleswins() < 1 && this.battleField.field.mode == 0 )
             return;
 
@@ -76,6 +77,13 @@ public class BattleBot
                 continue;
             if( entry.getValue().side == 0 )
             {
+                if( entry.getValue().card.type == 102 || 
+                    entry.getValue().card.type == 107 ||
+                    entry.getValue().card.type == 115 ||
+                    entry.getValue().card.type == 118)
+                {
+                    startQueueForBuildingHitCard(entry.getValue().card.type, entry.getValue().x, entry.getValue().y);
+                }
                 // top of player troops
                 if( playerHeader == null || playerHeader.y > entry.getValue().y )
                     playerHeader = entry.getValue();
@@ -117,8 +125,9 @@ public class BattleBot
 
             double random = (Math.random() > 0.5 ? 33 : -33) * Math.random();
             x = Math.max(BattleField.PADDING, Math.min(BattleField.WIDTH - BattleField.PADDING, playerHeader.x + random));
-           // trace("playerHeader:"+ playerHeader.card.type, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirBar.get(1), "ratio:" + battleRoom.endCalculator.ratio());
             cardType = battleField.decks.get(1).queue_get(cardIndex);
+            // trace("playerHeader:"+ playerHeader.card.type, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirUpdater.bars.__get(1), "ratio:" + battleRoom.endCalculator.ratio());
+            // trace("cardType"+ cardType, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirUpdater.bars.__get(1), "ratio:" + battleRoom.endCalculator.ratio());
 
             if( CardTypes.isSpell(cardType) || playerHeader.y < BattleField.HEIGHT * 0.4 )// drop spell
             {
@@ -163,6 +172,15 @@ public class BattleBot
 //        // fake stronger bot
 //        if( player.get_battleswins() > 3 )
 //            battleField.elixirSpeeds.__set(1, battleRoom.endCalculator.ratio() > 1 ? 1 + battleField.difficulty * 0.04 : 1);
+    }
+
+    private void startQueueForBuildingHitCard(int cardType, double x, double y)
+    {
+        int cardIndex = getCandidateCardIndex(cardType);
+        cardType = battleField.decks.get(1).queue_get(cardIndex);
+        if( y-200 > (BattleField.HEIGHT * 0.5) )
+            y = (BattleField.HEIGHT*0.5 + 200);
+        battleRoom.summonUnit(1, cardType, x, y-200);
     }
 
     private void skipCard(int cardType)

@@ -38,12 +38,13 @@ public class TouchDownEndCalculator extends EndCalculator
 
     Unit checkUnitPassed()
     {
+        int threshold = 24;
         Unit u;
         Iterator<Map.Entry<Object, Unit>> iterator = room.battleField.units._map.entrySet().iterator();
         while( iterator.hasNext() )
         {
            u = iterator.next().getValue();
-           if( (u.side == 0 && u.y <= room.battleField.field.tileMap.tileHeight) || (u.side == 1 && u.y >= BattleField.HEIGHT - room.battleField.field.tileMap.tileHeight) )
+           if( (u.side == 0 && u.y <= threshold) || (u.side == 1 && u.y >= BattleField.HEIGHT - threshold) )
                return u;
         }
         return null;
