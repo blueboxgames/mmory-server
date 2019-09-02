@@ -68,8 +68,8 @@ public class BattleBot
             lastHelpTime = battleField.now + SUMMON_DELAY * 2;
         if( lastSummonTime > battleField.now )
             return;
+
         Unit playerHeader = null, botHeader = null;
-        double x = BattleField.WIDTH * Math.random();
         for( Map.Entry<Object, Unit> entry : battleField.units._map.entrySet() )
         {
             if( !CardTypes.isTroop((int)entry.getKey()) || entry.getValue().state < GameObject.STATE_2_MORTAL )
@@ -89,6 +89,7 @@ public class BattleBot
         }
 
         int cardType;
+        double x = BattleField.WIDTH * Math.random();
         double y = Math.random() * (BattleField.HEIGHT * 0.3);
         if( playerHeader == null )
         {

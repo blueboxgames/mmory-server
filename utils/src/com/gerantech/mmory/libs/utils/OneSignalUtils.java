@@ -13,7 +13,7 @@ import com.smartfoxserver.v2.entities.data.ISFSArray;
 /**
  * Created by ManJav on 8/20/2017.
  */
-public class OneSignalUtils extends UtilBase
+public class OneSignalUtils extends UtilBase implements IPushUtils
 {
     public static OneSignalUtils getInstance()
     {
