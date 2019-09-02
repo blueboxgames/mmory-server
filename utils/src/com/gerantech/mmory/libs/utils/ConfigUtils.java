@@ -39,15 +39,4 @@ public class ConfigUtils extends UtilBase
 		this.propertyList.put(name, properties);
 		return properties;
 	}
-	
-	public void save(Properties props)
-	{
-		try {
-			props.store(new FileOutputStream(DEFAULT), "");
-		}
-		catch (IOException e) {
-			// TODO: requires to log as error after 2203-logs branch merge.
-			// getLogger().error("Could not save config in: " + propertyFileName);
-		}
-	}
 }
