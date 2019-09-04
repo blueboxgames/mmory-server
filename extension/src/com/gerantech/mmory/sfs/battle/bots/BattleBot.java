@@ -21,21 +21,57 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
  */
 public class BattleBot
 {
-    static final private int SUMMON_DELAY = 3000;
-    static final private boolean DEBUG_MODE = false;
+    /** Time between each summon that bot commits. */
+    static final private int SUMMON_DELAY = 1060;
+    /** Debug flag. */
+    static final private boolean DEBUG_MODE = true;
+    /** Middle summon X position threshold. */
+    static final private double SUMMON_X_THRESHOLD = 200;
+    /** 
+     * Data which will decide on which unit type to select.
+     * Recieves an array containing coefficents on each parameter to decide.
+     */
+    static final private haxe.root.Array<?> PREF_COEFFICENTS = 
+        (haxe.root.Array<?>) ScriptEngine.get(ScriptEngine.T67_BATTLE_BOT_TARGET_PREFERENCE, null, null, null, null);
+    /** Know the player bot is playing with. */
     private Player player;
+    /** Current Server BattleRoom. */
     private BattleRoom battleRoom;
+    /** BattleField of the core data. */
     private BattleField battleField;
-    private double lastSummonTime = 0;
-    private double lastHelpTime = 0;
+    /** Last summon interval. */
+    private double lastSummonInterval = 0;
+    
+    // ---------------------------------
     private float battleRatio = 0;
     private SFSObject chatParams;
     private int defaultIndex = 0;
+    // ---------------------------------
 
+    // Bot select unit preferences coefficents.
+    private double positionCoefficent;
+    private double damageCoefficent;
+    private double healthCoefficent;
+    private double targetTypeCoefficent;
+    private double speedCoefficent;
+
+    // Bot summoning side preference. 0 -> Right; 1-> Left
+    private int sidePreference;
+
+    /**
+     * A trainable bot to play instead of player.
+     * @param battleRoom
+     */
     public BattleBot(BattleRoom battleRoom)
     {
+        this.positionCoefficent = (double) PREF_COEFFICENTS.__get(0);
+        this.damageCoefficent = (double) PREF_COEFFICENTS.__get(1);
+        this.healthCoefficent = (double) PREF_COEFFICENTS.__get(2);
+        this.targetTypeCoefficent = (double) PREF_COEFFICENTS.__get(3);
+        this.speedCoefficent = (double) PREF_COEFFICENTS.__get(4);
         this.battleRoom = battleRoom;
         this.battleField = battleRoom.battleField;
+        this.sidePreference = headOrTail();
 
         this.chatParams = new SFSObject();
         this.chatParams.putDouble("ready", battleField.now + 15000);
@@ -46,7 +82,7 @@ public class BattleBot
 
     public void reset()
     {
-        lastSummonTime = 0;
+        lastSummonInterval = 0;
     }
 
     public void update()
@@ -63,43 +99,73 @@ public class BattleBot
         if( player.get_battleswins() < 1 && this.battleField.field.mode == 0 )
             return;
 
-        if( lastSummonTime == 0 )
-            lastSummonTime = battleField.now + SUMMON_DELAY;
-        if( lastHelpTime == 0 )
-            lastHelpTime = battleField.now + SUMMON_DELAY * 2;
-        if( lastSummonTime > battleField.now )
+        // Don't rapid summon.
+        if( lastSummonInterval == 0 )
+            lastSummonInterval = battleField.now + SUMMON_DELAY;
+        if( lastSummonInterval > battleField.now )
             return;
-        Unit playerHeader = null, botHeader = null;
-        double x = BattleField.WIDTH * Math.random();
+
+        // Player and Bot Targets.
+        Unit playerHead = null;
+        Unit botHead = null;
+
+        // Current maximum bounty on player head card.
+        double playerHeadBounty = 0;
+
         for( Map.Entry<Object, Unit> entry : battleField.units._map.entrySet() )
         {
             if( !CardTypes.isTroop((int)entry.getKey()) || entry.getValue().state < GameObject.STATE_2_MORTAL )
                 continue;
+            
+            // Unit is part of player units.
             if( entry.getValue().side == 0 )
             {
-                if( entry.getValue().card.type == 102 || 
-                    entry.getValue().card.type == 107 ||
-                    entry.getValue().card.type == 115 ||
-                    entry.getValue().card.type == 118)
+                double bounty = calculateBounty(entry.getValue());
+                if( bounty > playerHeadBounty )
                 {
-                    startQueueForBuildingHitCard(entry.getValue().card.type, entry.getValue().x, entry.getValue().y);
+                    /**
+                     * If a new unit calculated bounty is higher than current
+                     * head bounty changes the current head and head bounty to
+                     * current unit and current unit bounty.
+                     */
+                    playerHead = entry.getValue();
+                    playerHeadBounty = bounty;
                 }
-                // top of player troops
-                if( playerHeader == null || playerHeader.y > entry.getValue().y )
-                    playerHeader = entry.getValue();
+                // Prioritize the ones in lead of 80% of field in touchdown.
+                if( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN && (playerHead != null && entry.getValue().y < playerHead.y) && entry.getValue().y < 0.2 * BattleField.HEIGHT )
+                    playerHead = entry.getValue();
             }
             else
             {
                 // bottom of bot troops
-                if( botHeader == null || botHeader.y < entry.getValue().y || botHeader.health > entry.getValue().health )
-                    botHeader = entry.getValue();
+                if( botHead == null || botHead.y < entry.getValue().y || botHead.health > entry.getValue().health )
+                    botHead = entry.getValue();
+                // Change side preference to bot.
+                sidePreference = BattleField.WIDTH * 0.5 > botHead.x ? 0 : 1;
             }
         }
 
+        // Start of bot card summoning unit.
         int cardType;
+        double x = BattleField.WIDTH * Math.random();
         double y = Math.random() * (BattleField.HEIGHT * 0.3);
-        if( playerHeader == null )
+        if( playerHead == null )
         {
+            // Choose summon position wisely.
+            if( battleField.field.mode == Challenge.MODE_0_HQ )
+            {
+                y = BattleField.HEIGHT * 0.45;
+                if( this.sidePreference < 1 )
+                    x = BattleField.WIDTH - ( Math.random() * BattleField.PADDING );
+                else
+                    x = Math.random() * BattleField.PADDING;
+            }
+            else if ( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
+            {
+                x = ( Math.random() * (2 * SUMMON_X_THRESHOLD)) + ((BattleField.WIDTH * 0.5) - SUMMON_X_THRESHOLD);
+                y = BattleField.HEIGHT * 0.35;
+            }
+
             cardType = battleField.decks.get(1).queue_get(defaultIndex);
             if( CardTypes.isSpell(cardType) && battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
             {
@@ -115,57 +181,48 @@ public class BattleBot
 
             if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) )// waiting for more elixir to create waves
             {
-                trace("wait for", battleField.elixirUpdater.bars.__get(1), CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5), battleField.difficulty);
+                // trace("wait for", battleField.elixirUpdater.bars.__get(1), CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5), battleField.difficulty);
                 return;
             }
         }
         else
         {
-            int cardIndex = getCandidateCardIndex(playerHeader.card.type);
-
-            double random = (Math.random() > 0.5 ? 33 : -33) * Math.random();
-            x = Math.max(BattleField.PADDING, Math.min(BattleField.WIDTH - BattleField.PADDING, playerHeader.x + random));
+            int cardIndex = getCandidateCardIndex(playerHead.card.type);
             cardType = battleField.decks.get(1).queue_get(cardIndex);
-            // trace("playerHeader:"+ playerHeader.card.type, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirUpdater.bars.__get(1), "ratio:" + battleRoom.endCalculator.ratio());
+            double summonDegree = Math.random() * 180;
+            x = isRanged(cardType) ? playerHead.x + ( Math.cos( summonDegree ) * battleField.decks.get(1)._map.get(cardType).bulletRangeMax ) : playerHead.x;
+            y = isRanged(cardType) ? playerHead.y + ( Math.sin( summonDegree ) * battleField.decks.get(1)._map.get(cardType).bulletRangeMax ) : playerHead.y;
+            // trace("playerHeader:"+ playerHead.card.type, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirUpdater.bars.__get(1), "ratio:" + battleRoom.endCalculator.ratio());
             // trace("cardType"+ cardType, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirUpdater.bars.__get(1), "ratio:" + battleRoom.endCalculator.ratio());
 
-            if( CardTypes.isSpell(cardType) || playerHeader.y < BattleField.HEIGHT * 0.4 )// drop spell
+            if( CardTypes.isSpell(cardType) || playerHead.y < BattleField.HEIGHT * 0.4 )// drop spell
             {
                 if( CardTypes.isSpell(cardType) )
-                    trace("isSpell", cardType);
-                y = playerHeader.y - (CardTypes.isTroop(playerHeader.card.type) && playerHeader.state == GameObject.STATE_4_MOVING ? 200 : 0);
+                    // trace("isSpell", cardType);
+                y = playerHead.y - (!CardTypes.isRanged(cardType) && playerHead.state == GameObject.STATE_4_MOVING ? 200 : 0);
             }
             else if( cardType == 109 )
             {
-                if( botHeader == null )
+                if( botHead == null )
                 {
                     skipCard(cardType);
                     return;
                 }
-                y = botHeader.y - 300;//summon healer for covering
-            }
-
-            // fake stronger bot
-            if( player.get_battleswins() > 4 && lastHelpTime < battleField.now && !CardTypes.isSpell(cardType) && playerHeader.y < BattleField.HEIGHT * 0.3 )
-            {
-                trace("help:", battleField.elixirUpdater.bars.__get(1), battleField.difficulty * 0.3);
-                battleField.elixirUpdater.bars.__set(1, (double)battleField.elixirUpdater.bars.__get(1) + battleField.difficulty * 0.3 );
-                lastHelpTime = battleField.now + SUMMON_DELAY * 2;
+                y = botHead.y - 300; //summon healer for covering
             }
         }
 
         // when battlefield is empty
-        if( botHeader == null && cardType == 109 )// skip spells and healer
+        if( botHead == null && cardType == 109 )// skip spells and healer
             return;
 
         if( defaultIndex  != 0 )
             defaultIndex = 0;
 
-        int id = battleRoom.summonUnit(1, cardType, x, y);
+        int id = battleRoom.summonUnit(1, cardType, validatedX(x), validatedY(y));
         if( id >= 0 )
         {
-            //trace("summonCard  type:", cardType, "id:", id, lastCardIndexUsed, player.cards.exists(cardType), xPosition );
-            lastSummonTime = battleField.now + SUMMON_DELAY;
+            lastSummonInterval = battleField.now + SUMMON_DELAY;
             return;
         }
 //
@@ -174,21 +231,12 @@ public class BattleBot
 //            battleField.elixirSpeeds.__set(1, battleRoom.endCalculator.ratio() > 1 ? 1 + battleField.difficulty * 0.04 : 1);
     }
 
-    private void startQueueForBuildingHitCard(int cardType, double x, double y)
-    {
-        int cardIndex = getCandidateCardIndex(cardType);
-        cardType = battleField.decks.get(1).queue_get(cardIndex);
-        if( y-200 > (BattleField.HEIGHT * 0.5) )
-            y = (BattleField.HEIGHT*0.5 + 200);
-        battleRoom.summonUnit(1, cardType, x, y-200);
-    }
-
     private void skipCard(int cardType)
     {
         defaultIndex ++;
         if( defaultIndex >= battleField.decks.get(1).keys().length )
             defaultIndex = 0;
-        trace("skipCard", cardType, "index:", defaultIndex);
+        // trace("skipCard", cardType, "index:", defaultIndex);
     }
 
     private int getCandidateCardIndex(int type)
@@ -198,7 +246,7 @@ public class BattleBot
         for (int i = defaultIndex; i < len; i++)
         {
             int index = battleField.decks.get(1).queue_indexOf((int) candidates.__get(i));
-            trace("queue_indexOf", i, candidates.__get(i), index);
+            // trace("queue_indexOf", i, candidates.__get(i), index);
             if( index > 0 && index < 4 )
                 return index;
         }
@@ -214,7 +262,7 @@ public class BattleBot
         if( chatParams.getDouble("ready") > battleField.now || Math.random() > 0.1 )
             return;
 
-        trace(this.battleRatio, battleRatio);
+        // trace(this.battleRatio, battleRatio);
         if( battleRatio != this.battleRatio )
         {
             chatParams.putInt("t", StickerType.getRandomStart(battleRatio, battleField.games.__get(0)));
@@ -237,6 +285,76 @@ public class BattleBot
         chatParams.putInt("tt", 1);
         chatParams.putInt("wait", 0);
         chatParams.putDouble("ready", battleField.now + Math.random() * 2500 + 2500);
+    }
+
+    /**
+     * A method to calculate a unit bounty.
+     */
+    private double calculateBounty(Unit unit)
+    {
+        // Closeness to target.
+        double closeness = Math.abs(unit.y - BattleField.HEIGHT) * this.positionCoefficent;
+        // Damage multiplier, Tasmanian Devil To kill faster.
+        double damageMult = unit.card.bulletDamage * this.damageCoefficent;
+        // Health multiplier, Bugs Bunny never dies, so does Firouz.
+        double healthMult = unit.health * this.healthCoefficent;
+        // Speed multiplier, Speedy Gonzales has to die faster before it reaches target!
+        double speedMult = unit.card.speed * this.speedCoefficent;
+        // Target type
+        double buildingFocusMult = (unit.card.focusUnit ? 1 : 0) * this.targetTypeCoefficent;
+        
+        // --- [Target Multiplier] ---
+        // We might need distance to target in future.
+        // double distanceToTarget = CoreUtils.getDistance(unit.x, unit.y, unit.target.x, unit.target.y);
+        return closeness + damageMult + healthMult + speedMult + buildingFocusMult;
+    }
+
+    /**
+     * Ranged unit validation.
+     * @param cardType
+     * @return
+     */
+    private boolean isRanged(int cardType)
+    {
+        return battleField.decks.get(1)._map.get(cardType).bulletRangeMax > 150 ? true : false;
+    }
+
+    /**
+     * Return a random 0 or 1
+     */
+    private int headOrTail()
+    {
+        if( Math.random() < 0.5 )
+            return 1;
+        return 0;
+    }
+
+    /**
+     * A method to validate calculated x
+     * @param x
+     * @return
+     */
+    private double validatedX(double x)
+    {
+        if( battleField.field.mode == Challenge.MODE_0_HQ )
+        {
+
+        }
+        return x;
+    }
+
+    /**
+     * A method to validate calculated y
+     * @param y
+     * @return
+     */
+    private double validatedY(double y)
+    {
+        if( battleField.field.mode == Challenge.MODE_0_HQ )
+            return y > BattleField.HEIGHT * 0.45 ? BattleField.HEIGHT * 0.45 : y;
+        else if ( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
+            return y > BattleField.HEIGHT * 0.35 ? BattleField.HEIGHT * 0.35 : y;
+        return y;
     }
 
     private void updateChatProcess()
