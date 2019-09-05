@@ -190,6 +190,29 @@ public class BattleBot
             int cardIndex = getCandidateCardIndex(playerHead.card.type);
             cardType = battleField.decks.get(1).queue_get(cardIndex);
             double summonDegree = Math.random() * 180;
+
+            if( !isRanged(cardType) )
+            {
+                if( battleField.field.mode == Challenge.MODE_0_HQ && playerHead.y > BattleField.HEIGHT * 0.45 || 
+                    battleField.field.mode == Challenge.MODE_1_TOUCHDOWN && playerHead.y > BattleField.HEIGHT * 0.35 )
+                {
+                    if( (double) battleField.elixirUpdater.bars.__get(1) > 8)
+                    {
+                        if( !(getRangedCandidateCardIndex() < 0) )
+                        {
+                            cardIndex = getRangedCandidateCardIndex();
+                            cardType = battleField.decks.get(1).queue_get(cardIndex);
+                            if( cardType == 109 )
+                            {
+                                skipCard(cardType);
+                                return;
+                            }
+                        }
+                    }
+                    else
+                        return;
+                }
+            }
             x = isRanged(cardType) ? playerHead.x + ( Math.cos( summonDegree ) * battleField.decks.get(1)._map.get(cardType).bulletRangeMax ) : playerHead.x;
             y = isRanged(cardType) ? playerHead.y + ( Math.sin( summonDegree ) * battleField.decks.get(1)._map.get(cardType).bulletRangeMax ) : playerHead.y;
             // trace("playerHeader:"+ playerHead.card.type, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirUpdater.bars.__get(1), "ratio:" + battleRoom.endCalculator.ratio());
@@ -199,11 +222,11 @@ public class BattleBot
             {
                 if( CardTypes.isSpell(cardType) )
                     // trace("isSpell", cardType);
-                y = playerHead.y - (!CardTypes.isRanged(cardType) && playerHead.state == GameObject.STATE_4_MOVING ? 200 : 0);
+                y = playerHead.y - (CardTypes.isTroop(playerHead.card.type) && playerHead.state == GameObject.STATE_4_MOVING ? 200 : 0);
             }
             else if( cardType == 109 )
             {
-                if( botHead == null )
+                if( botHead == null || CardTypes.isTroop(botHead.card.type) )
                 {
                     skipCard(cardType);
                     return;
@@ -213,7 +236,7 @@ public class BattleBot
         }
 
         // when battlefield is empty
-        if( botHead == null && cardType == 109 )// skip spells and healer
+        if( botHead == null && cardType == 109 || CardTypes.isTroop(botHead.card.type) && cardType == 109 )// skip spells and healer
             return;
 
         if( defaultIndex  != 0 )
@@ -251,6 +274,17 @@ public class BattleBot
                 return index;
         }
         return 0;
+    }
+
+    private int getRangedCandidateCardIndex()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            int index = (int) battleField.decks.get(1)._queue.get(i);
+            if( isRanged( battleField.decks.get(1)._map.get(index).type ) )
+                return i;
+        }
+        return -1;
     }
 
     public void chatStarting(float battleRatio)
