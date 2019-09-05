@@ -32,7 +32,7 @@ public class BattleBot
      * Recieves an array containing coefficents on each parameter to decide.
      */
     static final private haxe.root.Array<?> PREF_COEFFICENTS = 
-        (haxe.root.Array<?>) ScriptEngine.get(ScriptEngine.T67_BATTLE_BOT_TARGET_PREFERENCE, null, null, null, null);
+        (haxe.root.Array<?>) ScriptEngine.get(ScriptEngine.T67_BATTLE_BOT_BOUNTY, null, null, null, null);
     /** Know the player bot is playing with. */
     private Player player;
     /** Current Server BattleRoom. */
