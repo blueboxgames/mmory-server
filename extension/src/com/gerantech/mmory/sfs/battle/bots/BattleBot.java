@@ -111,6 +111,7 @@ public class BattleBot
 
         // Current maximum bounty on player head card.
         double playerHeadBounty = 0;
+        boolean shouldUseSpell = false;
 
         for( Map.Entry<Object, Unit> entry : battleField.units._map.entrySet() )
         {
@@ -134,6 +135,15 @@ public class BattleBot
                 // Prioritize the ones in lead of 80% of field in touchdown.
                 if( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN && (playerHead != null && entry.getValue().y < playerHead.y) && entry.getValue().y < 0.2 * BattleField.HEIGHT )
                     playerHead = entry.getValue();
+                
+                if( CardTypes.isHero(entry.getValue().card.type) )
+                {
+                    if( (entry.getValue().cardHealth / entry.getValue().health) > 0.2 )
+                    {
+                        shouldUseSpell = true;
+                        playerHead = entry.getValue();
+                    }
+                }
             }
             else
             {
@@ -187,7 +197,11 @@ public class BattleBot
         }
         else
         {
-            int cardIndex = getCandidateCardIndex(playerHead.card.type);
+            int cardIndex = 0;
+            if( shouldUseSpell )
+                cardIndex = getSpell() < 0 ? getCandidateCardIndex(playerHead.card.type) : getSpell();
+            else
+                cardIndex = getCandidateCardIndex(playerHead.card.type);
             cardType = battleField.decks.get(1).queue_get(cardIndex);
             double summonDegree = Math.random() * 180;
 
@@ -282,6 +296,17 @@ public class BattleBot
         {
             int index = (int) battleField.decks.get(1)._queue.get(i);
             if( isRanged( battleField.decks.get(1)._map.get(index).type ) )
+                return i;
+        }
+        return -1;
+    }
+
+    private int getSpell()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            int index = (int) battleField.decks.get(1)._queue.get(i);
+            if( CardTypes.isSpell( battleField.decks.get(1)._map.get(index).type ) )
                 return i;
         }
         return -1;
