@@ -156,9 +156,9 @@ public class BattleBot
             {
                 y = BattleField.HEIGHT * 0.45;
                 if( this.sidePreference < 1 )
-                    x = BattleField.WIDTH - ( Math.random() * BattleField.PADDING );
+                    x = (BattleField.WIDTH - ( Math.random() * BattleField.PADDING )) + BattleField.PADDING;
                 else
-                    x = Math.random() * BattleField.PADDING;
+                    x = (Math.random() * BattleField.PADDING) + BattleField.PADDING;
             }
             else if ( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
             {
