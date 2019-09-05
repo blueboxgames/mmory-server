@@ -314,5 +314,5 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		HttpUtils.Data data = HttpUtils.get(url, headers, true);
 		trace("verify", data.statusCode, data.text);
 		return data;
-	}
+	}	
 }
