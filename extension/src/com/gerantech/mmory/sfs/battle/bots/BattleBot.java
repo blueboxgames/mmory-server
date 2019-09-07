@@ -207,12 +207,9 @@ public class BattleBot
                 return;
             }
 
-            if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) && 
-                battleField.difficulty > 5 )// waiting for more elixir to create waves
+            if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) )// waiting for more elixir to create waves
             {
                 return;
-            } else {
-                lastSummonInterval = battleField.now + SUMMON_DELAY;
             }
         }
         else
