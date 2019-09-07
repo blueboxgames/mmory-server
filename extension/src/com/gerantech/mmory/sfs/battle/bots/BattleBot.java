@@ -420,10 +420,10 @@ public class BattleBot
      */
     private double validatedX(double x)
     {
-        if( battleField.field.mode == Challenge.MODE_0_HQ )
-        {
-
-        }
+        if ( x < 100 )
+            x = 120;
+        if ( x > 900 )
+            x = 800;
         return x;
     }
 
