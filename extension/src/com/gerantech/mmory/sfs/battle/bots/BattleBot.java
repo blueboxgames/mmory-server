@@ -58,6 +58,9 @@ public class BattleBot
     // Bot summoning side preference. 0 -> Right; 1-> Left
     private int sidePreference;
 
+    // Bot summoning random
+    private boolean shouldPlayRandom;
+
     /**
      * A trainable bot to play instead of player.
      * @param battleRoom
@@ -72,6 +75,7 @@ public class BattleBot
         this.battleRoom = battleRoom;
         this.battleField = battleRoom.battleField;
         this.sidePreference = headOrTail();
+        this.shouldPlayRandom = 1 - ( battleField.difficulty * 0.5 ) < Math.random();
 
         this.chatParams = new SFSObject();
         this.chatParams.putDouble("ready", battleField.now + 15000);
@@ -101,7 +105,19 @@ public class BattleBot
 
         // Don't rapid summon.
         if( lastSummonInterval == 0 )
-            lastSummonInterval = battleField.now + SUMMON_DELAY;
+        {
+            if( battleField.difficulty < 2 )
+                lastSummonInterval = battleField.now + SUMMON_DELAY + Math.random() * 4000;
+            else if( battleField.difficulty < 3 )
+                lastSummonInterval = battleField.now + SUMMON_DELAY + Math.random() * 3000;
+            else if( battleField.difficulty < 4 )
+                lastSummonInterval = battleField.now + SUMMON_DELAY + Math.random() * 2000;
+            else if( battleField.difficulty < 4 )
+                lastSummonInterval = battleField.now + SUMMON_DELAY + Math.random() * 1000;
+            else
+                lastSummonInterval = battleField.now + SUMMON_DELAY;
+
+        }
         if( lastSummonInterval > battleField.now )
             return;
 
@@ -133,12 +149,14 @@ public class BattleBot
                     playerHeadBounty = bounty;
                 }
                 // Prioritize the ones in lead of 80% of field in touchdown.
-                if( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN && (playerHead != null && entry.getValue().y < playerHead.y) && entry.getValue().y < 0.2 * BattleField.HEIGHT )
+                if( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN && 
+                    (playerHead != null && entry.getValue().y < playerHead.y) && 
+                    entry.getValue().y < 0.2 * BattleField.HEIGHT )
                     playerHead = entry.getValue();
                 
                 if( CardTypes.isHero(entry.getValue().card.type) )
                 {
-                    if( (entry.getValue().cardHealth / entry.getValue().health) > 0.2 )
+                    if( (entry.getValue().cardHealth / entry.getValue().health) > 0.2 && battleField.difficulty > 6 )
                     {
                         shouldUseSpell = true;
                         playerHead = entry.getValue();
@@ -165,8 +183,8 @@ public class BattleBot
             if( battleField.field.mode == Challenge.MODE_0_HQ )
             {
                 y = BattleField.HEIGHT * 0.45;
-                if( this.sidePreference < 1 )
-                    x = (BattleField.WIDTH - ( Math.random() * BattleField.PADDING )) + BattleField.PADDING;
+                if( this.sidePreference < 1 && battleField.difficulty > 3 )
+                    x = (BattleField.WIDTH - ( Math.random() * BattleField.PADDING )) - BattleField.PADDING;
                 else
                     x = (Math.random() * BattleField.PADDING) + BattleField.PADDING;
             }
@@ -183,25 +201,34 @@ public class BattleBot
                 return;
             }
 
-            if( cardType == 109 )
+            if( cardType == 109 && battleField.difficulty > 1 )
             {
                 skipCard(cardType);
                 return;
             }
 
-            if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) )// waiting for more elixir to create waves
+            if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) && 
+                battleField.difficulty > 5 )// waiting for more elixir to create waves
             {
-                // trace("wait for", battleField.elixirUpdater.bars.__get(1), CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5), battleField.difficulty);
                 return;
+            } else {
+                lastSummonInterval = battleField.now + SUMMON_DELAY;
             }
         }
         else
         {
             int cardIndex = 0;
-            if( shouldUseSpell )
+            if( shouldUseSpell && battleField.difficulty > 1 )
+            {
                 cardIndex = getSpell() < 0 ? getCandidateCardIndex(playerHead.card.type) : getSpell();
+            }
             else
-                cardIndex = getCandidateCardIndex(playerHead.card.type);
+            {
+                if( shouldPlayRandom )
+                    cardIndex = getCandidateCardIndex(playerHead.card.type);
+                else
+                    cardIndex = (int) Math.floor(Math.random()*4.5);
+            }
             cardType = battleField.decks.get(1).queue_get(cardIndex);
             double summonDegree = Math.random() * 180;
 
@@ -210,8 +237,9 @@ public class BattleBot
                 if( battleField.field.mode == Challenge.MODE_0_HQ && playerHead.y > BattleField.HEIGHT * 0.45 || 
                     battleField.field.mode == Challenge.MODE_1_TOUCHDOWN && playerHead.y > BattleField.HEIGHT * 0.35 )
                 {
-                    if( (double) battleField.elixirUpdater.bars.__get(1) > 8)
+                    if( (double) battleField.elixirUpdater.bars.__get(1) > 8 )
                     {
+                        // Selects a ranged card from deck.
                         if( !(getRangedCandidateCardIndex() < 0) )
                         {
                             cardIndex = getRangedCandidateCardIndex();
@@ -250,7 +278,7 @@ public class BattleBot
         }
 
         // when battlefield is empty
-        if( botHead == null && cardType == 109 || CardTypes.isTroop(botHead.card.type) && cardType == 109 )// skip spells and healer
+        if( botHead == null && cardType == 109 )// skip spells and healer
             return;
 
         if( defaultIndex  != 0 )
