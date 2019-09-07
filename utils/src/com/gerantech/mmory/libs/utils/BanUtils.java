@@ -1,6 +1,5 @@
 package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.mmory.core.Player;
 import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
