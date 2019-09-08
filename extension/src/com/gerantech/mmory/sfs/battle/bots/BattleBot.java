@@ -1,7 +1,5 @@
 package com.gerantech.mmory.sfs.battle.bots;
 
-import java.util.Map;
-
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.battle.GameObject;
@@ -88,7 +86,7 @@ public class BattleBot
     {
         lastSummonInterval = 0;
     }
-
+`
     public void update()
     {
         if( battleField.state < BattleField.STATE_2_STARTED && (player.get_battleswins() < 3 || Math.random() < 0.3) )
@@ -126,18 +124,21 @@ public class BattleBot
         Unit botHead = null;
 
         // Current maximum bounty on player head card.
+        Unit u = null;
         double playerHeadBounty = 0;
         boolean shouldUseSpell = false;
+        int[] keys = battleField.units.keys();
 
-        for( Map.Entry<Object, Unit> entry : battleField.units._map.entrySet() )
+        for (int k : keys)
         {
-            if( !CardTypes.isTroop((int)entry.getKey()) || entry.getValue().state < GameObject.STATE_2_MORTAL )
+            u = battleField.units.get(k);
+            if( !CardTypes.isTroop(k) || u.state < GameObject.STATE_2_MORTAL )
                 continue;
             
             // Unit is part of player units.
-            if( entry.getValue().side == 0 )
+            if( u.side == 0 )
             {
-                double bounty = calculateBounty(entry.getValue());
+                double bounty = calculateBounty(u);
                 if( bounty > playerHeadBounty )
                 {
                     /**
@@ -145,29 +146,29 @@ public class BattleBot
                      * head bounty changes the current head and head bounty to
                      * current unit and current unit bounty.
                      */
-                    playerHead = entry.getValue();
+                    playerHead = u;
                     playerHeadBounty = bounty;
                 }
                 // Prioritize the ones in lead of 80% of field in touchdown.
                 if( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN && 
-                    (playerHead != null && entry.getValue().y < playerHead.y) && 
-                    entry.getValue().y < 0.2 * BattleField.HEIGHT )
-                    playerHead = entry.getValue();
+                    (playerHead != null && u.y < playerHead.y) && 
+                    u.y < 0.2 * BattleField.HEIGHT )
+                    playerHead = u;
                 
-                if( CardTypes.isHero(entry.getValue().card.type) )
+                if( CardTypes.isHero(u.card.type) )
                 {
-                    if( (entry.getValue().cardHealth / entry.getValue().health) > 0.2 && battleField.difficulty > 6 )
+                    if( (u.cardHealth / u.health) > 0.2 && battleField.difficulty > 6 )
                     {
                         shouldUseSpell = true;
-                        playerHead = entry.getValue();
+                        playerHead = u;
                     }
                 }
             }
             else
             {
                 // bottom of bot troops
-                if( botHead == null || botHead.y < entry.getValue().y || botHead.health > entry.getValue().health )
-                    botHead = entry.getValue();
+                if( botHead == null || botHead.y < u.y || botHead.health > u.health )
+                    botHead = u;
                 // Change side preference to bot.
                 sidePreference = BattleField.WIDTH * 0.5 > botHead.x ? 0 : 1;
             }
@@ -188,7 +189,7 @@ public class BattleBot
                 else
                     x = (Math.random() * BattleField.PADDING) + BattleField.PADDING;
             }
-            else if ( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
+            else if( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
             {
                 x = ( Math.random() * (2 * SUMMON_X_THRESHOLD)) + ((BattleField.WIDTH * 0.5) - SUMMON_X_THRESHOLD);
                 y = BattleField.HEIGHT * 0.35;

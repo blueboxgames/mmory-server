@@ -27,7 +27,8 @@ public class ChallengeSFS extends SFSDataModel {
         base = new Challenge(null, 0, 0, 0);
     }
 
-    public ChallengeSFS(Game game, int id, int type, int mode, int startAt, byte[] attendees) {
+    public ChallengeSFS(Game game, int id, int type, int mode, int startAt, byte[] attendees)
+    {
         super();
         base = new Challenge(game, 0, 0, 0);
         setId(id);

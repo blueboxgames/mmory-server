@@ -5,24 +5,18 @@ import com.gerantech.mmory.core.utils.maps.IntUnitMap;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-import java.util.Iterator;
-import java.util.Map;
-
-public class UnitData
-{
+public class UnitData {
     public double x;
     public double y;
     public double health;
 
-    public UnitData(double x, double y, double health)
-    {
+    public UnitData(double x, double y, double health) {
         this.x = x;
         this.y = y;
         this.health = health;
     }
 
-    public static SFSObject toSFS(Unit unit)
-    {
+    public static SFSObject toSFS(Unit unit) {
         SFSObject ret = new SFSObject();
         ret.putInt("i", unit.id);
         ret.putInt("s", unit.side);
@@ -34,13 +28,12 @@ public class UnitData
         return ret;
     }
 
-
     public static SFSArray toSFSArray(IntUnitMap unitMap)
     {
         SFSArray ret = new SFSArray();
-        Iterator<Map.Entry<Object, Unit>> iterator = unitMap._map.entrySet().iterator();
-        while( iterator.hasNext() )
-            ret.addSFSObject(toSFS(iterator.next().getValue()));
+        int[] keys = unitMap.keys();
+        for (int i = 0; i < keys.length; i++)
+            ret.addSFSObject(toSFS(unitMap.get(keys[i])));
         return ret;
     }
 }

@@ -1,16 +1,13 @@
 package com.gerantech.mmory.sfs.callbacks;
 
-import com.gerantech.mmory.sfs.battle.BattleRoom;
+import java.util.Objects;
+
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.battle.GameObject;
-import com.gerantech.mmory.core.battle.units.Unit;
 import com.gerantech.mmory.core.events.BattleEvent;
 import com.gerantech.mmory.core.events.EventCallback;
 import com.gerantech.mmory.core.socials.Challenge;
-import haxe.root.Array;
-
-import java.util.Map;
-import java.util.Objects;
+import com.gerantech.mmory.sfs.battle.BattleRoom;
 
 public class BattleEventCallback implements EventCallback
 {
@@ -20,8 +17,9 @@ public class BattleEventCallback implements EventCallback
     public BattleEventCallback(BattleRoom battleRoom)
     {
         this.battleRoom = battleRoom;
-        for (Map.Entry<Object, Unit> unitEntry : battleRoom.battleField.units._map.entrySet())
-            unitEntry.getValue().eventCallback = this;
+        int[] keys = battleRoom.battleField.units.keys();
+        for (int k : keys)
+            battleRoom.battleField.units.get(k).eventCallback = this;
     }
 
     @Override
@@ -45,55 +43,5 @@ public class BattleEventCallback implements EventCallback
                 battleRoom.sendNewRoundResponse(other, 0);
             }
         }
-    }
-
-    @Override
-    public Object __hx_getField(String arg0, boolean arg1, boolean arg2, boolean arg3) {
-        return null;
-    }
-
-    @Override
-    public double __hx_getField_f(String arg0, boolean arg1, boolean arg2) {
-        return 0;
-    }
-
-    @Override
-    public void __hx_getFields(Array<String> arg0) {
-
-    }
-
-    @Override
-    public Object __hx_invokeField(String arg0, Object[] arg1) {
-        return null;
-    }
-
-    @Override
-    public Object __hx_lookupField(String arg0, boolean arg1, boolean arg2) {
-        return null;
-    }
-
-    @Override
-    public double __hx_lookupField_f(String arg0, boolean arg1) {
-        return 0;
-    }
-
-    @Override
-    public Object __hx_lookupSetField(String arg0, Object arg1) {
-        return null;
-    }
-
-    @Override
-    public double __hx_lookupSetField_f(String arg0, double arg1) {
-        return 0;
-    }
-
-    @Override
-    public Object __hx_setField(String arg0, Object arg1, boolean arg2) {
-        return null;
-    }
-
-    @Override
-    public double __hx_setField_f(String arg0, double arg1, boolean arg2) {
-        return 0;
     }
 }
