@@ -40,10 +40,10 @@ public class TouchDownEndCalculator extends EndCalculator
     {
         int threshold = 24;
         Unit u;
-        Iterator<Map.Entry<Object, Unit>> iterator = room.battleField.units._map.entrySet().iterator();
-        while( iterator.hasNext() )
+        int[] keys = room.battleField.units.keys();
+        for (int k : keys)
         {
-           u = iterator.next().getValue();
+           u = room.battleField.units.get(k);
            if( (u.side == 0 && u.y <= threshold) || (u.side == 1 && u.y >= BattleField.HEIGHT - threshold) )
                return u;
         }

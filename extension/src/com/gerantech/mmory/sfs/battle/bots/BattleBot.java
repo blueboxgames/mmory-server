@@ -14,6 +14,8 @@ import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
+import haxe.root.Array;
+
 /**
  * Created by ManJav on 9/30/2018.
  */
@@ -25,12 +27,6 @@ public class BattleBot
     static final private boolean DEBUG_MODE = true;
     /** Middle summon X position threshold. */
     static final private double SUMMON_X_THRESHOLD = 200;
-    /** 
-     * Data which will decide on which unit type to select.
-     * Recieves an array containing coefficents on each parameter to decide.
-     */
-    static final private haxe.root.Array<?> PREF_COEFFICENTS = 
-        (haxe.root.Array<?>) ScriptEngine.get(ScriptEngine.T67_BATTLE_BOT_BOUNTY, null, null, null, null);
     /** Know the player bot is playing with. */
     private Player player;
     /** Current Server BattleRoom. */
@@ -65,11 +61,16 @@ public class BattleBot
      */
     public BattleBot(BattleRoom battleRoom)
     {
-        this.positionCoefficent = (double) PREF_COEFFICENTS.__get(0);
-        this.damageCoefficent = (double) PREF_COEFFICENTS.__get(1);
-        this.healthCoefficent = (double) PREF_COEFFICENTS.__get(2);
-        this.targetTypeCoefficent = (double) PREF_COEFFICENTS.__get(3);
-        this.speedCoefficent = (double) PREF_COEFFICENTS.__get(4);
+    /** 
+     * Data which will decide on which unit type to select.
+     * Recieves an array containing coefficents on each parameter to decide.
+     */
+        Array<?> scriptRef = (haxe.root.Array<?>) ScriptEngine.get(ScriptEngine.T67_BATTLE_BOT_BOUNTY, null, null, null, null);
+        this.positionCoefficent = (double) scriptRef.__get(0);
+        this.damageCoefficent = (double) scriptRef.__get(1);
+        this.healthCoefficent = (double) scriptRef.__get(2);
+        this.targetTypeCoefficent = (double) scriptRef.__get(3);
+        this.speedCoefficent = (double) scriptRef.__get(4);
         this.battleRoom = battleRoom;
         this.battleField = battleRoom.battleField;
         this.sidePreference = headOrTail();
@@ -86,7 +87,7 @@ public class BattleBot
     {
         lastSummonInterval = 0;
     }
-`
+
     public void update()
     {
         if( battleField.state < BattleField.STATE_2_STARTED && (player.get_battleswins() < 3 || Math.random() < 0.3) )
@@ -195,7 +196,7 @@ public class BattleBot
                 y = BattleField.HEIGHT * 0.35;
             }
 
-            cardType = battleField.decks.get(1).queue_get(defaultIndex);
+            cardType = battleField.decks.get(1)._queue[defaultIndex];
             if( CardTypes.isSpell(cardType) && battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
             {
                 skipCard(cardType);
@@ -230,7 +231,7 @@ public class BattleBot
                 else
                     cardIndex = (int) Math.floor(Math.random()*4.5);
             }
-            cardType = battleField.decks.get(1).queue_get(cardIndex);
+            cardType = battleField.decks.get(1)._queue[cardIndex];
             double summonDegree = Math.random() * 180;
 
             if( !isRanged(cardType) )
@@ -244,7 +245,7 @@ public class BattleBot
                         if( !(getRangedCandidateCardIndex() < 0) )
                         {
                             cardIndex = getRangedCandidateCardIndex();
-                            cardType = battleField.decks.get(1).queue_get(cardIndex);
+                            cardType = battleField.decks.get(1)._queue[cardIndex];
                             if( cardType == 109 )
                             {
                                 skipCard(cardType);
@@ -256,8 +257,8 @@ public class BattleBot
                         return;
                 }
             }
-            x = isRanged(cardType) ? playerHead.x + ( Math.cos( summonDegree ) * battleField.decks.get(1)._map.get(cardType).bulletRangeMax ) : playerHead.x;
-            y = isRanged(cardType) ? playerHead.y + ( Math.sin( summonDegree ) * battleField.decks.get(1)._map.get(cardType).bulletRangeMax ) : playerHead.y;
+            x = isRanged(cardType) ? playerHead.x + ( Math.cos( summonDegree ) * battleField.decks.get(1).get(cardType).bulletRangeMax ) : playerHead.x;
+            y = isRanged(cardType) ? playerHead.y + ( Math.sin( summonDegree ) * battleField.decks.get(1).get(cardType).bulletRangeMax ) : playerHead.y;
             // trace("playerHeader:"+ playerHead.card.type, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirUpdater.bars.__get(1), "ratio:" + battleRoom.endCalculator.ratio());
             // trace("cardType"+ cardType, "x:"+ x, "y:"+ y, "e:"+ battleField.elixirUpdater.bars.__get(1), "ratio:" + battleRoom.endCalculator.ratio());
 
@@ -323,8 +324,8 @@ public class BattleBot
     {
         for (int i = 0; i < 4; i++)
         {
-            int index = (int) battleField.decks.get(1)._queue.get(i);
-            if( isRanged( battleField.decks.get(1)._map.get(index).type ) )
+            int index = battleField.decks.get(1)._queue[i];
+            if( isRanged( battleField.decks.get(1).get(index).type ) )
                 return i;
         }
         return -1;
@@ -334,8 +335,8 @@ public class BattleBot
     {
         for (int i = 0; i < 4; i++)
         {
-            int index = (int) battleField.decks.get(1)._queue.get(i);
-            if( CardTypes.isSpell( battleField.decks.get(1)._map.get(index).type ) )
+            int index = battleField.decks.get(1)._queue[i];
+            if( CardTypes.isSpell( battleField.decks.get(1).get(index).type ) )
                 return i;
         }
         return -1;
@@ -404,7 +405,7 @@ public class BattleBot
      */
     private boolean isRanged(int cardType)
     {
-        return battleField.decks.get(1)._map.get(cardType).bulletRangeMax > 150 ? true : false;
+        return battleField.decks.get(1).get(cardType).bulletRangeMax > 150 ? true : false;
     }
 
     /**

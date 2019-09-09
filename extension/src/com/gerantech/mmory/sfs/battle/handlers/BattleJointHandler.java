@@ -2,7 +2,6 @@ package com.gerantech.mmory.sfs.battle.handlers;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -151,11 +150,13 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			p.putUtfString("name", player.nickName);
 
 			String deck = "";
-			Iterator<Object> iter = room.battleField.decks.get(i)._queue.iterator();
-			while (iter.hasNext()) {
-				int type = (int) iter.next();
-				deck += (type + ":" + room.battleField.decks.get(i).get(type).level + (iter.hasNext() ? "," : ""));
+			int qlen = room.battleField.decks.get(i)._queue.length;
+			for (int k = 0; k <qlen; k++)
+			{
+				int t = room.battleField.decks.get(i)._queue[k];
+				deck += (t + ":" + room.battleField.decks.get(i).get(t).level + (k<qlen-1 ? "," : ""));
 			}
+			
 			p.putText("deck", deck);
 			p.putInt("score", room.endCalculator.scores[i]);
 			params.putSFSObject(i == 0 ? "p0" : "p1", p);
