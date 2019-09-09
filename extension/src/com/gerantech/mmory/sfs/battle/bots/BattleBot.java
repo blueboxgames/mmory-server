@@ -209,12 +209,9 @@ public class BattleBot
                 return;
             }
 
-            if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) && 
-                battleField.difficulty > 5 )// waiting for more elixir to create waves
+            if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) )// waiting for more elixir to create waves
             {
                 return;
-            } else {
-                lastSummonInterval = battleField.now + SUMMON_DELAY;
             }
         }
         else
@@ -425,10 +422,10 @@ public class BattleBot
      */
     private double validatedX(double x)
     {
-        if( battleField.field.mode == Challenge.MODE_0_HQ )
-        {
-
-        }
+        if ( x < 100 )
+            x = 120;
+        if ( x > 900 )
+            x = 800;
         return x;
     }
 
