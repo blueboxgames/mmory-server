@@ -78,9 +78,11 @@ public class QuestsUtils extends UtilBase
         int questIndex = game.player.getQuestIndexById(questId);
         if( questIndex == -1 )
             return MessageTypes.RESPONSE_NOT_FOUND;
-
+        
         Quest quest = game.player.quests.__get(questIndex);
         quest.current = Quest.getCurrent(game.player, quest.type, quest.key);
+        quest.nextStep = Quest.getNextStep(game.player, quest.type, quest.key);
+        // trace("old ==> " + quest.toString());
 
         // exchange
         int response = ExchangeUtils.getInstance().process(game, Quest.getExchangeItem(quest.type, quest.nextStep), 0, 0);
@@ -90,6 +92,7 @@ public class QuestsUtils extends UtilBase
         fill(game.player);
         quest = game.player.quests.__get(game.player.quests.length - 1);
         quest.id = questId;
+        // trace("new ==> " + quest.toString());
 
         // update DB
         String query = "UPDATE quests SET `type`=" + quest.type + ", `key`=" + quest.key + ", step=" + quest.nextStep + " WHERE `id`=" + quest.id;
@@ -109,31 +112,34 @@ public class QuestsUtils extends UtilBase
         if( player.get_battleswins() < 3 )
             return;
 
-        if( player.quests.length == 0 && player.get_battleswins() < 10 )
+        // initialize first quests
+        if( player.quests.length == 0 )
         {
-            player.quests.push( Quest.instantiate(Quest.TYPE_3_BATTLES,		player) );
-            player.quests.push( Quest.instantiate(Quest.TYPE_7_CARD_COLLECT,	player) );
-            player.quests.push( Quest.instantiate(Quest.TYPE_8_CARD_UPGRADE,	player) );
-            player.quests.push( Quest.instantiate(Quest.TYPE_9_BOOK_OPEN,		player) );
+            player.quests.push( Quest.instantiate(player, Quest.TYPE_3_BATTLES) );
+            player.quests.push( Quest.instantiate(player, Quest.TYPE_7_CARD_COLLECT) );
+            player.quests.push( Quest.instantiate(player, Quest.TYPE_8_CARD_UPGRADE) );
+            player.quests.push( Quest.instantiate(player, Quest.TYPE_9_BOOK_OPEN) );
         }
 
-        if( player.quests.length >= Quest.MAX_QUESTS )
+        if( player.quests.length >= Quest.MAX_QUESTS ) // check quests is full
             return;
 
-        int i = player.quests.length > 0 ? player.quests.__get(player.quests.length - 1).type : -1;
-        if( i == 9 )
-            i = 0;
+        // fill quests after a quest acomplished 
+        int type = player.quests.length > 0 ? player.quests.__get(player.quests.length - 1).type : -1;
+        if( type == Quest.TYPE_9_BOOK_OPEN ) // loop to finding new type 
+            type = Quest.TYPE_0_LEVELUP;
         else
-            i ++;
-        while( i < 10 )
+            type ++;
+        
+        while( type < 10 )
         {
-            if( player.getQuestIndexByType(i) == -1 && i != 2 )
+            if( type != 2 && player.getQuestIndexByType(type) == -1 ) // not an operation and not exists
             {
-                player.quests.push( Quest.instantiate(i, player));
+                player.quests.push( Quest.instantiate(player, type));
                 fill(player);
                 return;
             }
-            i ++;
+            type ++;
         }
     }
 
