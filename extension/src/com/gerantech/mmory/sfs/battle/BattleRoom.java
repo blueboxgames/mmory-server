@@ -14,6 +14,8 @@ import com.gerantech.mmory.core.InitData;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.battle.Outcome;
 import com.gerantech.mmory.core.battle.fieldes.FieldData;
+import com.gerantech.mmory.core.battle.tilemap.Tile;
+import com.gerantech.mmory.core.battle.tilemap.TileMap;
 import com.gerantech.mmory.core.battle.units.Card;
 import com.gerantech.mmory.core.battle.units.Unit;
 import com.gerantech.mmory.core.constants.CardTypes;
@@ -22,6 +24,7 @@ import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.gerantech.mmory.core.socials.Challenge;
+import com.gerantech.mmory.core.utils.CoreUtils;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.Commands;
@@ -48,7 +51,7 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 
 public class BattleRoom extends BBGRoom
 {
-	static boolean DEBUG_MODE = false;
+	static boolean DEBUG_MODE = true;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
 	public ScheduledFuture<?> autoJoinTimer;
@@ -194,34 +197,96 @@ public class BattleRoom extends BBGRoom
 			setState( BattleField.STATE_2_STARTED );
 		if( getState() > BattleField.STATE_3_PAUSED )
 			return MessageTypes.RESPONSE_NOT_ALLOWED;
-		int id = this.battleField.summonUnit(type, side, x, y);
 
-		if( id > -1 )
+		// -------------------------------------------------------------------
+		// int id = this.battleField.summonUnit(type, side, x, y);
+
+		// if( id > -1 )
+		// {
+		// 	SFSArray units = new SFSArray();
+		// 	SFSObject params = new SFSObject();
+
+		// 	if( CardTypes.isSpell(type) )
+		// 	{
+		// 		Card card = this.battleField.games.__get(side).player.cards.get(type);
+		// 		units.addSFSObject(getSFSUnit(type, id, side, card.level, x, y));
+		// 		params.putSFSArray("units", units);
+		// 		send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
+		// 		return id;
+		// 	}
+
+		// 	Unit unit = this.battleField.units.get(id);
+		// 	for (int i = id; i > id - unit.card.quantity; i--)
+		// 	{
+		// 		unit = this.battleField.units.get(i);
+		// 		unit.eventCallback = eventCallback;
+
+		// 		units.addSFSObject(getSFSUnit(type, unit.id, side, unit.card.level, unit.x, unit.y));
+		// 	}
+		// 	params.putSFSArray("units", units);
+		// 	send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
+		// }
+		// return id;
+		// -------------------------------------------------------------------
+
+		SFSObject params = new SFSObject();
+		SFSArray units = new SFSArray();
+		List<Unit> unitQueue = new ArrayList<>();
+		// We shall check for card in deck of request sender.
+		int index = this.battleField.cardAvailabled(side, type);
+		
+		// if cardAvaliabled return negative number means it's invalid.
+		if( index < 0 )
+			return index;
+
+		Card card = this.battleField.decks.get(side).get(type);
+		if( CardTypes.isSpell(type) )
 		{
-			SFSArray units = new SFSArray();
-			SFSObject params = new SFSObject();
-
-			if( CardTypes.isSpell(type) )
-			{
-				Card card = this.battleField.games.__get(side).player.cards.get(type);
-				units.addSFSObject(getSFSUnit(type, id, side, card.level, x, y));
-				params.putSFSArray("units", units);
-				send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
-				return id;
-			}
-
-			Unit unit = this.battleField.units.get(id);
-			for (int i = id; i > id - unit.card.quantity; i--)
-			{
-				unit = this.battleField.units.get(i);
-				unit.eventCallback = eventCallback;
-
-				units.addSFSObject(getSFSUnit(type, unit.id, side, unit.card.level, unit.x, unit.y));
-			}
+			int id = this.battleField.addSpell(card, side, x, y);
+			units.addSFSObject(getSFSUnit(type, id, side, card.level, x, y));
+			// Server dispatch time.
+			params.putDouble("dis", this.battleField.now);
+			// Units.
 			params.putSFSArray("units", units);
-			send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
 		}
-		return id;
+		else
+		{
+			int uCountToSummon = card.quantity -1 ;
+			while( uCountToSummon >= 0 )
+			{
+				Tile tile = this.battleField.field.tileMap.findTile(
+					CoreUtils.getXPosition(card.quantity, uCountToSummon, x),
+					CoreUtils.getYPosition(card.quantity, uCountToSummon, y),
+					side == 0 ? 1 : -1,
+					TileMap.STATE_EMPTY);
+				
+				if( tile == null )
+					trace("tile not found!");
+					
+				Unit unit = new Unit(this.battleField.unitId, this.battleField, card, side, tile.x, tile.y, card.z);
+				unit.eventCallback = eventCallback;
+				unitQueue.add(unit);
+				this.battleField.unitId ++;
+				uCountToSummon --;
+			}
+			
+			for (Unit unit : unitQueue) {
+				units.addSFSObject(getSFSUnit(type, unit.id, side, card.level, x, y));
+			}
+			// Server dispatch time.
+			params.putDouble("dis", this.battleField.now);
+			// Units.
+			params.putSFSArray("units", units);
+		}
+		send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
+		for (Unit unit : unitQueue) {
+			this.battleField.units.set(unit.id, unit);
+			trace(unit.id);
+		}
+		this.battleField.decks.get(side).queue_removeAt(index);
+		this.battleField.decks.get(side).enqueue(type);
+		this.battleField.elixirUpdater.updateAt(side, this.battleField.elixirUpdater.bars.__get(side) - card.elixirSize);
+		return 0;
 	}
 
 	private ISFSObject getSFSUnit(int type, int id, int side, int level, double x, double y)
