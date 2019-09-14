@@ -261,9 +261,7 @@ public class BattleBot
 
             if( CardTypes.isSpell(cardType) || playerHead.y < BattleField.HEIGHT * 0.4 )// drop spell
             {
-                if( CardTypes.isSpell(cardType) )
-                    // trace("isSpell", cardType);
-                y = playerHead.y - (CardTypes.isTroop(playerHead.card.type) && playerHead.state == GameObject.STATE_4_MOVING ? 200 : 0);
+                y = playerHead.y - (CardTypes.isTroop(playerHead.card.type) && playerHead.state == GameObject.STATE_4_MOVING ? 80 : 0);
             }
             else if( cardType == 109 )
             {
@@ -422,11 +420,7 @@ public class BattleBot
      */
     private double validatedX(double x)
     {
-        if ( x < 100 )
-            x = 120;
-        if ( x > 900 )
-            x = 800;
-        return x;
+        return CoreUtils.clamp(x, 150, 810);
     }
 
     /**
