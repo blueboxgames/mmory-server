@@ -16,7 +16,7 @@ public class BattleSummonRequestHandler extends BaseClientRequestHandler
 			if( room.getState() < BattleField.STATE_1_CREATED || room.getState() > BattleField.STATE_3_PAUSED )
 				return;
 			int side = room.getPlayerGroup(sender);
-		room.summonUnit(side, params.getInt("t"), params.getDouble("x"), params.getDouble("y"));
+		room.summonUnit(side, params.getInt("t"), params.getDouble("x"), params.getDouble("y"), params.getDouble("time"));
 	} catch (Exception | Error e) { e.printStackTrace(); };
 }
 }

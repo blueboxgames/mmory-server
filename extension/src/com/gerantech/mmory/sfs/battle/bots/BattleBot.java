@@ -283,7 +283,7 @@ public class BattleBot
         if( defaultIndex  != 0 )
             defaultIndex = 0;
 
-        int id = battleRoom.summonUnit(1, cardType, validatedX(x), validatedY(y));
+        int id = battleRoom.summonUnit(1, cardType, validatedX(x), validatedY(y), this.battleField.now);
         if( id >= 0 )
         {
             lastSummonInterval = battleField.now + SUMMON_DELAY;

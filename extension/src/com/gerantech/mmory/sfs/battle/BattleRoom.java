@@ -191,7 +191,7 @@ public class BattleRoom extends BBGRoom
 	}
 
 	// summon unit  =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-	public int summonUnit(int side, int type, double x, double y)
+	public int summonUnit(int side, int type, double x, double y, double time)
 	{
 		if( getState() == BattleField.STATE_1_CREATED )
 			setState( BattleField.STATE_2_STARTED );
@@ -273,15 +273,14 @@ public class BattleRoom extends BBGRoom
 			for (Unit unit : unitQueue) {
 				units.addSFSObject(getSFSUnit(type, unit.id, side, card.level, unit.x, unit.y));
 			}
-			// Server dispatch time.
-			params.putDouble("dis", this.battleField.now);
+			// Amount of desync time.
+			params.putDouble("dis", this.battleField.now - time);
 			// Units.
 			params.putSFSArray("units", units);
 		}
 		send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
 		for (Unit unit : unitQueue) {
 			this.battleField.units.set(unit.id, unit);
-			trace(unit.id);
 		}
 		this.battleField.decks.get(side).queue_removeAt(index);
 		this.battleField.decks.get(side).enqueue(type);
