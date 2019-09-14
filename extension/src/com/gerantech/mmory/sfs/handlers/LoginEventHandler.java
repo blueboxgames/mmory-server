@@ -65,7 +65,7 @@ try {
 		}
 
 		// check ban
-		ISFSObject banData = BanUtils.getInstance().checkBan(inData.getInt("id"), inData.getText("udid"), now);
+		ISFSObject banData = BanUtils.getInstance().checkBan(inData.getInt("id"), inData.getText("udid"), inData.containsKey("imei")?inData.getText("imei"):null, now);
 		if( banData != null )
 		{
 			outData.putSFSObject("ban", banData);
@@ -98,12 +98,13 @@ try {
 	{
 		IDBManager dbManager = getParentExtension().getParentZone().getDBManager();
 		String deviceUDID = inData.getText("udid");
+		String deviceIMEI = inData.containsKey("imei") && inData.getText("imei") != "" ? "' OR imei='" + inData.getText("imei") : "";
 		String deviceModel = inData.getText("device");
 		if( inData.getInt("id") == -1 )
 		{
 			// retrieve user that saved account before
 			try {
-				ISFSArray res = dbManager.executeQuery("SELECT player_id FROM devices WHERE udid='" + deviceUDID + "' AND model='" + deviceModel + "'", new Object[]{});
+				ISFSArray res = dbManager.executeQuery("SELECT player_id FROM devices WHERE udid='" + deviceUDID + "' AND model='" + deviceModel + deviceIMEI + "'", new Object[]{});
 				if ( res.size() > 0 )
 				{
 					ISFSArray res2 = dbManager.executeQuery("SELECT id, name, password FROM players WHERE id=" + res.getSFSObject(0).getInt("player_id"), new Object[]{});
@@ -178,7 +179,12 @@ try {
 		// add udid and device as account id for restore players
 		try {
 			if( deviceUDID != null )
-				dbManager.executeInsert("INSERT INTO devices (`player_id`, `model`, `udid`) VALUES ('" + playerId + "', '" + deviceModel + "', '" + deviceUDID + "');", new Object[] {});
+			{
+				if( deviceIMEI == "" )
+					dbManager.executeInsert("INSERT INTO devices (`player_id`, `model`, `udid`) VALUES ('" + playerId + "', '" + deviceModel + "', '" + deviceUDID + "');", new Object[] {});
+				else
+					dbManager.executeInsert("INSERT INTO devices (`player_id`, `model`, `udid`, `imei`) VALUES ('" + playerId + "', '" + deviceModel + "', '" + deviceUDID + "', '" + inData.getText("imei") + "');", new Object[] {});
+			}
 		} catch (SQLException e) { e.printStackTrace(); }
 		initiateCore(session, inData, outData, loginData);
 	}

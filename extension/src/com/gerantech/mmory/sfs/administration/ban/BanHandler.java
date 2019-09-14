@@ -40,7 +40,8 @@ public class BanHandler extends BBGClientRequestHandler
 			return;
 		}
 
-		BanUtils.getInstance().warnOrBan(params.getInt("id"), DBUtils.getInstance().getUDID(params.getInt("id")), params.getInt("mode"), (int)Instant.now().getEpochSecond(), params.getInt("len"), params.getText("msg"));
+		ISFSObject device = DBUtils.getInstance().getDevice(params.getInt("id"));
+		BanUtils.getInstance().warnOrBan(params.getInt("id"), device.getText("udid"), device.containsKey("imei") ? device.getText("imei") : null, params.getInt("mode"), (int)Instant.now().getEpochSecond(), params.getInt("len"), params.getText("msg"));
 		send(Commands.BAN, MessageTypes.RESPONSE_SUCCEED, params, sender);
 
 		if( params.getInt("mode") >= 2 )
@@ -49,7 +50,8 @@ public class BanHandler extends BBGClientRequestHandler
 			if( u != null )
 			{
 				List<Room> publics = getParentExtension().getParentZone().getRoomListFromGroup("publics");
-				for (Room p : publics) {
+				for (Room p : publics)
+				{
 					SFSObject msg = new SFSObject();
 					msg.putInt("m",  MessageTypes.M18_COMMENT_BAN);
 					msg.putUtfString("s", "ادمین");
