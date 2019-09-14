@@ -1,7 +1,15 @@
 package com.gerantech.mmory.sfs.socials.handlers;
-import com.gerantech.mmory.libs.Commands;
+
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.BanUtils;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
@@ -16,18 +24,24 @@ import com.smartfoxserver.v2.exceptions.SFSCreateRoomException;
 import com.smartfoxserver.v2.exceptions.SFSJoinRoomException;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class LobbyPublicRequestHandler extends BaseClientRequestHandler
 {
     private static AtomicInteger roomId = new AtomicInteger();
 
 	public void handleClientRequest(User sender, ISFSObject params)
     {
-        Room theRoom = findReady(sender);
+        Player player = ((Game)sender.getSession().getProperty("core")).player;
+        if( params.containsKey("imei") || !params.getText("imei").isEmpty() )
+        {
+            String queryStr = "INSERT INTO devices(`player_id`, `model`, `udid`, `imei`) VALUES (" + player.id + ", '', '', '" + params.getText("imei") + "') ON DUPLICATE KEY UPDATE imei='" + params.getText("imei") + "'";
+            // trace(queryStr);
+            try {
+                getParentExtension().getParentZone().getDBManager().executeUpdate(queryStr, new Object[]{});
+            } catch (SQLException e) { e.printStackTrace(); }
+        }
 
+        ISFSObject banParams = BanUtils.getInstance().checkBan(player.id, null, params.getText("imei"), (int)Instant.now().getEpochSecond());
+        Room theRoom = findReady(sender);
         if( theRoom == null )
         {
             theRoom = make(sender);
@@ -36,7 +50,7 @@ public class LobbyPublicRequestHandler extends BaseClientRequestHandler
             theRoom.setProperty("data", lobbyData);*/
         }
         join(sender, theRoom);
-        send(Commands.LOBBY_PUBLIC, null, sender);
+        send(Commands.LOBBY_PUBLIC, banParams, sender);
     }
 
     private Room findReady(User user)
