@@ -262,7 +262,7 @@ public class BattleRoom extends BBGRoom
 				
 				if( tile == null )
 					trace("tile not found!");
-					
+				
 				Unit unit = new Unit(this.battleField.unitId, this.battleField, card, side, tile.x, tile.y, card.z);
 				unit.eventCallback = eventCallback;
 				unitQueue.add(unit);
@@ -271,7 +271,7 @@ public class BattleRoom extends BBGRoom
 			}
 			
 			for (Unit unit : unitQueue) {
-				units.addSFSObject(getSFSUnit(type, unit.id, side, card.level, x, y));
+				units.addSFSObject(getSFSUnit(type, unit.id, side, card.level, unit.x, unit.y));
 			}
 			// Server dispatch time.
 			params.putDouble("dis", this.battleField.now);
