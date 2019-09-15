@@ -1,11 +1,8 @@
 package com.gerantech.mmory.sfs.battle.factories;
 
-import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.battle.units.Unit;
-
-import java.util.Iterator;
-import java.util.Map;
+import com.gerantech.mmory.sfs.battle.BattleRoom;
 
 public class TouchDownEndCalculator extends EndCalculator
 {
