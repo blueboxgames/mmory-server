@@ -48,8 +48,7 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 
 public class BattleRoom extends BBGRoom
 {
-	static boolean DEBUG_MODE = true;
-	static double LOW_NETWORK_CONNECTION_THRESHOLD = 5000;
+	static boolean DEBUG_MODE = false;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
 	public ScheduledFuture<?> autoJoinTimer;
