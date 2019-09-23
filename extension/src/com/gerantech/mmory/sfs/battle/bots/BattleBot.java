@@ -434,11 +434,9 @@ public class BattleBot
      */
     private double validatedY(double y)
     {
-        if( battleField.field.mode == Challenge.MODE_0_HQ )
-            return y > BattleField.HEIGHT * 0.45 ? BattleField.HEIGHT * 0.45 : y;
-        else if ( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
+        if( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
             return y > BattleField.HEIGHT * 0.35 ? BattleField.HEIGHT * 0.35 : y;
-        return y;
+        return y > BattleField.HEIGHT * 0.45 ? BattleField.HEIGHT * 0.45 : y;
     }
 
     private void updateChatProcess()
