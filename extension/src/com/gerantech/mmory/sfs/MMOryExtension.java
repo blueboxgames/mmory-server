@@ -21,7 +21,6 @@ import com.gerantech.mmory.sfs.quests.QuestRewardCollectHandler;
 import com.gerantech.mmory.sfs.socials.handlers.*;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.gerantech.mmory.libs.utils.UtilBase;

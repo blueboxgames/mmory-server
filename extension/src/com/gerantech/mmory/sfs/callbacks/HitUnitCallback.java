@@ -16,7 +16,7 @@ public class HitUnitCallback implements IUnitHitCallback
         this.battleRoom = battleRoom;
     }
 
-    @Override
+    @Override @SuppressWarnings({"unchecked", "rawtypes"})
     public void hit(int bulletId, List list)
     {
         /*String log = "hit bulletId:" + bulletId;
