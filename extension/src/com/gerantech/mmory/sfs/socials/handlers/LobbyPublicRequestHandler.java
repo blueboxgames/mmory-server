@@ -16,6 +16,7 @@ import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
+import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSRoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
@@ -31,6 +32,18 @@ public class LobbyPublicRequestHandler extends BaseClientRequestHandler
 	public void handleClientRequest(User sender, ISFSObject params)
     {
         Player player = ((Game)sender.getSession().getProperty("core")).player;
+        boolean hasIMEI = params.containsKey("imei") || !params.getText("imei").isEmpty();
+        ISFSObject banParams = null;
+        if( !hasIMEI )
+        {
+            banParams = new SFSObject();
+            banParams.putInt("mode", 2);
+            banParams.putLong("until", 0);
+            banParams.putUtfString("message", "دستگاه شما قابلیت استفاده از بخش گپ و گفت را ندارد.");
+            send(Commands.LOBBY_PUBLIC, banParams, sender);
+            return;
+        }
+
         if( params.containsKey("imei") || !params.getText("imei").isEmpty() )
         {
             String queryStr = "INSERT INTO devices(`player_id`, `model`, `udid`, `imei`) VALUES (" + player.id + ", '', '', '" + params.getText("imei") + "') ON DUPLICATE KEY UPDATE imei='" + params.getText("imei") + "'";
@@ -40,7 +53,7 @@ public class LobbyPublicRequestHandler extends BaseClientRequestHandler
             } catch (SQLException e) { e.printStackTrace(); }
         }
 
-        ISFSObject banParams = BanUtils.getInstance().checkBan(player.id, null, params.getText("imei"), (int)Instant.now().getEpochSecond());
+        banParams = BanUtils.getInstance().checkBan(player.id, null, params.getText("imei"), (int)Instant.now().getEpochSecond());
         Room theRoom = findReady(sender);
         if( theRoom == null )
         {
