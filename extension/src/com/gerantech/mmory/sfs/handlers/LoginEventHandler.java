@@ -292,11 +292,15 @@ try {
 		IntIntMap dbItems = new IntIntMap();
 		for(int i = 0; i < exchanges.size(); i++)
 			dbItems.set(exchanges.getSFSObject(i).getInt("type"), exchanges.getSFSObject(i).getInt("id"));
+		
+		// Check for initial assets md5
+		if( this.getParentExtension().getParentZone().getProperty("checksum") != null )
+			outData.putSFSObject("checksum", (ISFSObject) this.getParentExtension().getParentZone().getProperty("checksum"));
 
 		// load script
 		if( ScriptEngine.script == null )
 		{
-			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/maps/script-data.cs", null, false);
+			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/ext/script-data.cs", null, false);
 			if( _data.statusCode != HttpStatus.SC_OK )
 			{
 				outData.putInt("umt", 15);
@@ -305,7 +309,7 @@ try {
 			else
 			{
 				ScriptEngine.initialize(_data.text, inData.getInt("appver"));
-				trace("http://localhost:8080/maps/script-data.cs loaded.");
+				trace("http://localhost:8080/ext/script-data.cs loaded.");
 			}
 		}
 		outData.putText("script", ScriptEngine.script);

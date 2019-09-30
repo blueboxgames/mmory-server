@@ -18,6 +18,7 @@ public class UtilBase {
             RankingUtils.getInstance().fillActives();
             LobbyUtils.getInstance().loadAll();
             ChallengeUtils.getInstance().loadAll();
+            AssetUtils.getInstance().loadAll();
             ext.getParentZone().removeProperty("startTime");
         }
     }
