@@ -1,18 +1,18 @@
 package com.gerantech.mmory.libs.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import com.smartfoxserver.v2.entities.data.ISFSObject;
+import com.smartfoxserver.v2.entities.data.SFSDataWrapper;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
 /**
@@ -30,36 +30,21 @@ public class AssetUtils extends UtilBase
         // Initial MD5's
 		if( ext.getParentZone().getProperty("checksum") == null )
 		{
-            long latestModified = 0;
-            ISFSObject checksum = new SFSObject();
-            ISFSObject addressList = new SFSObject();
-            ISFSObject timeList = new SFSObject();
-            // ISFSObject md5List = new SFSObject();
-            List<String> fileListing = getDirectoryListing("./www/ext");
-            for (String v : fileListing)
-            {
-                String fileAddress = v.replace('\\', '/');
-                String fileName = "";
-                if(fileAddress.split("./www/ext/inits").length == 2)
-                    fileName = fileAddress.split("./www/ext/inits")[1];
-                else if( fileAddress.split("./www/ext/others").length == 2 )
-                    fileName = fileAddress.split("./www/ext/others")[1];
-                else
-                    fileName = fileAddress.split("./www/ext")[1];
-                
-                long modifyTime = Long.parseLong(getModifiedDate(v));
-                if(modifyTime > latestModified)
-                    latestModified = modifyTime;
-                
-                addressList.putUtfString(fileName, fileAddress.split("./www/")[1]);
-                // md5List.putUtfString(fileName, hashMd5File(v));
-                timeList.putUtfString(fileName, getModifiedDate(v));
+
+            // long latestModified = 0;
+            ISFSObject fromJson = SFSObject.newFromJsonData(getAssetsJsonString());
+            ISFSObject ret = new SFSObject();
+            for (Iterator<Entry<String, SFSDataWrapper>> iterator = fromJson.iterator(); iterator.hasNext(); ) {
+                Entry<String, SFSDataWrapper> next = iterator.next();
+                ISFSObject fileData = new SFSObject();
+                fileData.putUtfString("url", fromJson.getSFSObject(next.getKey()).getUtfString("url"));
+                fileData.putBool("first", fromJson.getSFSObject(next.getKey()).getBool("first"));
+                fileData.putBool("pre", fromJson.getSFSObject(next.getKey()).getBool("pre"));
+                fileData.putBool("post", fromJson.getSFSObject(next.getKey()).getBool("post"));
+                fileData.putUtfString("md5", hashMd5File("www/ext" + next.getKey()));
+                ret.putSFSObject(next.getKey(), fileData);
             }
-            checksum.putLong("lastMod", latestModified);
-            checksum.putSFSObject("address", addressList);
-            checksum.putSFSObject("time", timeList);
-            // checksum.putSFSObject("md5", md5List);
-			ext.getParentZone().setProperty("checksum", checksum);
+            ext.getParentZone().setProperty("checksum", ret);
 		}
     }
     /**
@@ -145,18 +130,15 @@ public class AssetUtils extends UtilBase
         }
         return sb.toString();
     }
-    private List<String> getDirectoryListing(String path)
-	{
-		try (Stream<Path> walk = Files.walk(Paths.get(path))) {
-
-			List<String> result = walk.filter(Files::isRegularFile)
-					.map(x -> x.toString()).collect(Collectors.toList());
-	
-			return result;
-	
-		} catch (Throwable e) {
+    
+    private String getAssetsJsonString()
+    {
+        try {
+            String content = new String(Files.readAllBytes(Paths.get("./assets.json")));
+            return content;
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return null;
-	}
+        return "{}";
+    }
 }
