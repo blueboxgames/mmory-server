@@ -99,7 +99,7 @@ try {
 	{
 		IDBManager dbManager = getParentExtension().getParentZone().getDBManager();
 		String deviceUDID = inData.getText("udid");
-		String deviceIMEI = inData.containsKey("imei") && inData.getText("imei") != "" ? "' OR imei='" + inData.getText("imei") : "";
+		String deviceIMEI = inData.containsKey("imei") && !inData.getText("imei").isEmpty() ? "' OR imei='" + inData.getText("imei") : "";
 		String deviceModel = inData.getText("device");
 		if( inData.getInt("id") == -1 )
 		{
