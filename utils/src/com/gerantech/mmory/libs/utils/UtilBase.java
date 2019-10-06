@@ -23,7 +23,7 @@ public class UtilBase {
         }
     }
     static public void setBattleClass(Class<?> battleClass) {
-            ext.getParentZone().setProperty("battleClass", battleClass);
+        ext.getParentZone().setProperty("battleClass", battleClass);
     }
 
     static public Object get(Class<?> _class) {
