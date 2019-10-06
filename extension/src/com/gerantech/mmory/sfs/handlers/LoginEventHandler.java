@@ -91,6 +91,7 @@ try {
 			createPlayer(session, name, password, inData, outData, loginData);
 		else
 			loadPlayer(session, name, password, inData, outData, loginData);
+		outData.putText("forbidenApps", "parallel,clone,dualspace,multiapp,multiaccounts,ludashi,mochat,trendmicro");
 } catch (Exception | Error e) { e.printStackTrace();}
 	}
 
