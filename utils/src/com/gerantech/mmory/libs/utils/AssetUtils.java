@@ -41,7 +41,7 @@ public class AssetUtils extends UtilBase
                 fileData.putBool("first", fromJson.getSFSObject(next.getKey()).getBool("first"));
                 fileData.putBool("pre", fromJson.getSFSObject(next.getKey()).getBool("pre"));
                 fileData.putBool("post", fromJson.getSFSObject(next.getKey()).getBool("post"));
-                fileData.putUtfString("md5", hashMd5File("www/ext" + next.getKey()));
+                fileData.putUtfString("md5", hashMd5File("www/" + fromJson.getSFSObject(next.getKey()).getUtfString("url")));
                 ret.putSFSObject(next.getKey(), fileData);
             }
             ext.getParentZone().setProperty("checksum", ret);
