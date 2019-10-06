@@ -11,7 +11,6 @@
 	<classpathentry kind="lib" path="C:/SmartFoxServer_2X/SFS2X-5000/lib/json-lib-2.2.3-jdk15.jar"/>
 	<classpathentry kind="lib" path="C:/SmartFoxServer_2X/SFS2X-5000/lib/slf4j-log4j12-1.7.5.jar"/>
 	<classpathentry kind="lib" path="C:/SmartFoxServer_2X/SFS2X-5000/lib/slf4j-api-1.7.5.jar"/>
-	<classpathentry kind="lib" path="C:/SmartFoxServer_2X/SFS2X-5000/lib/commons-io-1.4.jar"/>
 	<classpathentry kind="lib" path="C:/SmartFoxServer_2X/SFS2X-5000/lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="C:/SmartFoxServer_2X/SFS2X-5000/extensions/__lib__/mmory-core.jar"/>
 	
