@@ -15,6 +15,7 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSDataWrapper;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
+import org.apache.commons.codec.digest.DigestUtils;
 /**
  * HashUtils
  */
@@ -34,6 +35,7 @@ public class AssetUtils extends UtilBase
             // long latestModified = 0;
             ISFSObject fromJson = SFSObject.newFromJsonData(getAssetsJsonString());
             ISFSObject ret = new SFSObject();
+            long startTime = System.nanoTime();
             for (Iterator<Entry<String, SFSDataWrapper>> iterator = fromJson.iterator(); iterator.hasNext(); ) {
                 Entry<String, SFSDataWrapper> next = iterator.next();
                 ISFSObject fileData = new SFSObject();
@@ -44,6 +46,9 @@ public class AssetUtils extends UtilBase
                 fileData.putUtfString("md5", hashMd5File("www/" + fromJson.getSFSObject(next.getKey()).getUtfString("url")));
                 ret.putSFSObject(next.getKey(), fileData);
             }
+            long endTime   = System.nanoTime();
+            long totalTime = endTime - startTime;
+            System.out.println(totalTime);
             ext.getParentZone().setProperty("checksum", ret);
 		}
     }
@@ -75,19 +80,10 @@ public class AssetUtils extends UtilBase
     public static String hashMd5File(String path)
     {
         String result = null;
-        try
-        {
-            InputStream is;
-            try 
-            {
-                is = Files.newInputStream(Paths.get(path));
-                result = getInputDigest(is);
-            }
-            catch (java.io.FileNotFoundException e)
-            {
-                return null;
-            }
-        } catch (Exception e) {
+        try {
+            result = DigestUtils.md5Hex(Files.newInputStream(Paths.get(path)));
+        }
+        catch(Exception e) {
             e.printStackTrace();
         }
         return result;
