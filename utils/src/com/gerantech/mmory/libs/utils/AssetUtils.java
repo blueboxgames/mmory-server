@@ -25,19 +25,19 @@ public class AssetUtils extends UtilBase
     public void loadAll()
     {
         // Initial MD5's
-        if( ext.getParentZone().containsProperty("checksum") )
+        if( ext.getParentZone().containsProperty("assets") )
             return;
 
-        ISFSObject ret = null;
+        ISFSObject ret = new SFSObject();
         try {
-            ret = SFSObject.newFromJsonData(new String( Files.readAllBytes(Paths.get("./assets.json")) ));
+            ret = SFSObject.newFromJsonData(new String(Files.readAllBytes(Paths.get("config/assets.json"))));
         } catch (IOException e) { e.printStackTrace(); }
-
+        
         Iterator<Entry<String, SFSDataWrapper>> iterator = ret.iterator();
         while( iterator.hasNext() )
             addMd5(ret.getSFSObject(iterator.next().getKey()));
 
-        ext.getParentZone().setProperty("checksum", ret);
+        ext.getParentZone().setProperty("assets", ret);
     }
 
     private void addMd5(ISFSObject item)

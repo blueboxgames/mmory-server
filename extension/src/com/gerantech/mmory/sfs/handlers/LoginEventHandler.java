@@ -92,6 +92,11 @@ try {
 		else
 			loadPlayer(session, name, password, inData, outData, loginData);
 		outData.putText("forbidenApps", "parallel,clone,dualspace,multiapp,multiaccounts,ludashi,mochat,trendmicro");
+		// Check for initial assets md5
+		if( this.getParentExtension().getParentZone().getProperty("assets") != null )
+			outData.putSFSObject("assets", (ISFSObject) this.getParentExtension().getParentZone().getProperty("assets"));
+	
+	
 } catch (Exception | Error e) { e.printStackTrace();}
 	}
 
@@ -294,10 +299,6 @@ try {
 		for(int i = 0; i < exchanges.size(); i++)
 			dbItems.set(exchanges.getSFSObject(i).getInt("type"), exchanges.getSFSObject(i).getInt("id"));
 		
-		// Check for initial assets md5
-		if( this.getParentExtension().getParentZone().getProperty("checksum") != null )
-			outData.putSFSObject("checksum", (ISFSObject) this.getParentExtension().getParentZone().getProperty("checksum"));
-
 		// load script
 		if( ScriptEngine.script == null )
 		{
