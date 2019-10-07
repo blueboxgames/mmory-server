@@ -1,6 +1,7 @@
 package com.gerantech.mmory.libs.utils;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
@@ -24,12 +25,12 @@ public class AssetUtils extends UtilBase
     public void loadAll()
     {
         // Initial MD5's
-        if( ext.getParentZone().getProperty("checksum") != null )
+        if( ext.getParentZone().containsProperty("checksum") )
             return;
 
         ISFSObject ret = null;
         try {
-            ret = SFSObject.newFromJsonData(Files.readAllBytes(Paths.get("./assets.json")).toString());
+            ret = SFSObject.newFromJsonData(new String( Files.readAllBytes(Paths.get("./assets.json")) ));
         } catch (IOException e) { e.printStackTrace(); }
 
         Iterator<Entry<String, SFSDataWrapper>> iterator = ret.iterator();
@@ -43,8 +44,9 @@ public class AssetUtils extends UtilBase
     {
         String result = null;
         try {
-            result = DigestUtils.md5Hex(Files.newInputStream(Paths.get("www/" + item.getUtfString("url"))));
-        } catch(IOException e) { e.printStackTrace(); }
+            URI u = new URI(item.getUtfString("url"));
+            result = DigestUtils.md5Hex(Files.newInputStream(Paths.get("www/" + u.getPath())));
+        } catch(Exception e) { e.printStackTrace(); }
         item.putUtfString("md5", result);
     }
 }
