@@ -302,7 +302,7 @@ try {
 		// load script
 		if( ScriptEngine.script == null )
 		{
-			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/maps/script-data.cs", null, false);
+			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/assets/script-data.cs", null, false);
 			if( _data.statusCode != HttpStatus.SC_OK )
 			{
 				outData.putInt("umt", 15);
@@ -311,7 +311,7 @@ try {
 			else
 			{
 				ScriptEngine.initialize(_data.text, inData.getInt("appver"));
-				trace("http://localhost:8080/maps/script-data.cs loaded.");
+				trace("http://localhost:8080/assets/script-data.cs loaded.");
 			}
 		}
 		outData.putText("script", ScriptEngine.script);

@@ -44,6 +44,8 @@ public class AssetUtils extends UtilBase
     {
         String result = null;
         try {
+            // InputStream is = new URL(item.getUtfString("url")).openStream();
+            // result = DigestUtils.md5Hex(is);
             URI u = new URI(item.getUtfString("url"));
             result = DigestUtils.md5Hex(Files.newInputStream(Paths.get("www/" + u.getPath())));
         } catch(Exception e) { e.printStackTrace(); }
