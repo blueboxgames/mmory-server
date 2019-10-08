@@ -130,7 +130,6 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		params.putInt("roomId", room.getId());
 		params.putInt("userType", room.getUserType(user));
 		params.putDouble("now", room.battleField.now);
-		params.putText("map", room.battleField.field.mapData);
 		params.putInt("index", room.getPropertyAsInt("index"));
 		params.putInt("type", room.getPropertyAsInt("type"));
 		params.putInt("mode", room.getPropertyAsInt("mode"));

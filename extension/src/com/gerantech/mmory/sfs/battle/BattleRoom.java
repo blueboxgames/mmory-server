@@ -46,6 +46,9 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+
 public class BattleRoom extends BBGRoom
 {
 	static boolean DEBUG_MODE = false;
@@ -97,10 +100,12 @@ public class BattleRoom extends BBGRoom
 		int mode = this.getPropertyAsInt("mode");
 		// trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
 		if( !BattleUtils.getInstance().maps.containsKey(mode) )
-			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/maps/map-" + mode + ".json", null, false).text);
+			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".cs", null, false).text);
 
 		Instant instant = Instant.now();
-		this.battleField.initialize(registeredPlayers.get(0), registeredPlayers.get(1), new FieldData(mode, BattleUtils.getInstance().maps.get(mode), "60,120,180,240"), 0, instant.getEpochSecond(), instant.toEpochMilli(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
+		JSONObject json = (JSONObject) JSONSerializer.toJSON(BattleUtils.getInstance().maps.get(mode));
+		FieldData field = new FieldData(mode, json, "60,120,180,240");
+		this.battleField.initialize(registeredPlayers.get(0), registeredPlayers.get(1), field, 0, instant.getEpochSecond(), instant.toEpochMilli(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
 		this.battleField.unitsHitCallback = new HitUnitCallback(this);
 		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
 		this.eventCallback = new BattleEventCallback(this);

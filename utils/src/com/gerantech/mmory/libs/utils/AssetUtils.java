@@ -35,8 +35,7 @@ public class AssetUtils extends UtilBase
         
         Iterator<Entry<String, SFSDataWrapper>> iterator = ret.iterator();
         while( iterator.hasNext() )
-            addMd5(ret.getSFSObject(iterator.next().getKey()));
-
+            this.addMd5(ret.getSFSObject(iterator.next().getKey()));
         ext.getParentZone().setProperty("assets", ret);
     }
 
@@ -44,10 +43,7 @@ public class AssetUtils extends UtilBase
     {
         String result = null;
         try {
-            // InputStream is = new URL(item.getUtfString("url")).openStream();
-            // result = DigestUtils.md5Hex(is);
-            URI u = new URI(item.getUtfString("url"));
-            result = DigestUtils.md5Hex(Files.newInputStream(Paths.get("www/" + u.getPath())));
+            result = DigestUtils.md5Hex(Files.newInputStream(Paths.get("www/" + new URI(item.getUtfString("url")).getPath())));
         } catch(Exception e) { e.printStackTrace(); }
         item.putUtfString("md5", result);
     }
