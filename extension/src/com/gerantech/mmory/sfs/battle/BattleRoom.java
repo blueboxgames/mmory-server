@@ -100,11 +100,10 @@ public class BattleRoom extends BBGRoom
 		int mode = this.getPropertyAsInt("mode");
 		// trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
 		if( !BattleUtils.getInstance().maps.containsKey(mode) )
-			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".cs", null, false).text);
+			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".json", null, false).text);
 
 		Instant instant = Instant.now();
-		JSONObject json = (JSONObject) JSONSerializer.toJSON(BattleUtils.getInstance().maps.get(mode));
-		FieldData field = new FieldData(mode, json, "60,120,180,240");
+		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), "60,120,180,240");
 		this.battleField.initialize(registeredPlayers.get(0), registeredPlayers.get(1), field, 0, instant.getEpochSecond(), instant.toEpochMilli(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
 		this.battleField.unitsHitCallback = new HitUnitCallback(this);
 		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
