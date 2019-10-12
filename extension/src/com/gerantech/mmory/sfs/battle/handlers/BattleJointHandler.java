@@ -142,6 +142,8 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		for (Object o : registeredPlayers)
 		{
 			Player player = ((Game) o).player;
+			if( player.game.appVersion < 2500 )
+				params.putText("map", room.battleField.field.mapData);
 			SFSObject p = new SFSObject();
 			p.putInt("id", player.id);
 			p.putInt("xp", player.get_xp());
@@ -153,7 +155,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			for (int k = 0; k <qlen; k++)
 			{
 				int t = room.battleField.decks.get(i)._queue[k];
-				deck += (t + ":" + room.battleField.decks.get(i).get(t).level + (k<qlen-1 ? "," : ""));
+				deck += (t + ":" + room.battleField.decks.get(i).get(t).level + (k < qlen-1 ? "," : ""));
 			}
 			
 			p.putText("deck", deck);

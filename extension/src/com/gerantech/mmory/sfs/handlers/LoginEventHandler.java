@@ -311,7 +311,9 @@ try {
 				trace("http://localhost:8080/assets/script-data.cs loaded.");
 			}
 		}
-		outData.putText("script", ScriptEngine.script);
+
+		if( inData.getInt("appver") < 2500 )
+			outData.putText("script", ScriptEngine.script);
 
 		// initial exchanges
 		boolean contained;

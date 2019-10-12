@@ -46,9 +46,6 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-import net.sf.json.JSONObject;
-import net.sf.json.JSONSerializer;
-
 public class BattleRoom extends BBGRoom
 {
 	static boolean DEBUG_MODE = false;
@@ -100,7 +97,7 @@ public class BattleRoom extends BBGRoom
 		int mode = this.getPropertyAsInt("mode");
 		// trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
 		if( !BattleUtils.getInstance().maps.containsKey(mode) )
-			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".json", null, false).text);
+			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/" + (((Game)registeredPlayers.get(0)).appVersion < 2500 ? "maps" : "assets") + "/map-" + mode + ".json", null, false).text);
 
 		Instant instant = Instant.now();
 		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), "60,120,180,240");
