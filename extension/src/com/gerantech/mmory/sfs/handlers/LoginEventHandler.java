@@ -75,7 +75,7 @@ try {
 
 		// check force update
 		LoginData loginData = new LoginData();
-		if( inData.containsKey("appver") && inData.getInt("appver") < loginData.forceVersion )
+		if( inData.getInt("appver") < loginData.forceVersion )
 		{
 			outData.putInt("forceVersion", loginData.forceVersion);
 			return;
@@ -255,11 +255,8 @@ try {
 		InitData initData = new InitData();
 		initData.nickName = outData.getText("name");
 		initData.id = outData.getInt("id");
-		if( inData.containsKey("appver") )
-		{
-			initData.appVersion = inData.containsKey("appver") ? inData.getInt("appver") : 0;
-			initData.market = inData.containsKey("market") ? inData.getText("market") : "none";
-		}
+		initData.appVersion = inData.getInt("appver");
+		initData.market = inData.getText("market");
 
 		// initData.createAt = outData.getInt("createAt");
 		// initData.lastLogin = outData.getInt("lastLogin");
