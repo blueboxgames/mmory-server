@@ -216,7 +216,7 @@ public class BanUtils extends UtilBase
 			return null;
 		if( this.patterns == null )
 		{
-			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/maps/bad-words.txt", null, false);
+			HttpUtils.Data _data = HttpUtils.post("http://localhost:8080/assets/bad-words.txt", null, false);
 			if( _data.statusCode != HttpStatus.SC_OK )
 			{
 				trace(ExtensionLogLevel.WARN, "bad-words.txt not found.");
