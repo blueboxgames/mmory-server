@@ -10,6 +10,7 @@ import com.gerantech.mmory.core.constants.StickerType;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.CoreUtils;
+import com.gerantech.mmory.core.utils.Point2;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
@@ -282,10 +283,8 @@ public class BattleBot
             defaultIndex = 0;
 
         int id;
-        if( CardTypes.isSpell(cardType) )
-            id = battleRoom.summonUnit(1, cardType, x, y, this.battleField.now);
-        else
-            id = battleRoom.summonUnit(1, cardType, validatedX(x,y), validatedY(x,y), this.battleField.now);
+        Point2 summonPoint = battleField.fixSummonPosition(new Point2(x, y), cardType, battleField.getSummonState(1));
+        id = battleRoom.summonUnit(1, cardType, summonPoint.x, summonPoint.y, this.battleField.now);
 
         if( id >= 0 )
         {
@@ -420,10 +419,10 @@ public class BattleBot
 
     /**
      * A method to validate calculated x
+     * @deprecated
      * @param x
      * @param y
      * @return
-     */
     private double validatedX(double x, double y)
     {
         if( battleField.getSummonState(1) > BattleField.SUMMON_AREA_HALF )
@@ -434,14 +433,14 @@ public class BattleBot
                 return CoreUtils.clamp(x, 150, BattleField.WIDTH * 0.5);
         }
         return CoreUtils.clamp(x, 150, 810);
-    }
+    } */
 
     /**
      * A method to validate calculated y
+     * @deprecated
      * @param x
      * @param y
      * @return
-     */
     private double validatedY(double x, double y)
     {
         // Summon in 1/3
@@ -455,7 +454,11 @@ public class BattleBot
           return y > (BattleField.HEIGHT * 0.6) + BattleField.SUMMON_PADDING ? (BattleField.HEIGHT * 0.6) + BattleField.SUMMON_PADDING : y;
         return (y > BattleField.HEIGHT * 0.3) ? BattleField.HEIGHT * 0.3 : y;
     }
+    */
 
+    /**
+     * 
+     */
     private void updateChatProcess()
     {
         if( chatParams.getDouble("ready") > battleField.now || !chatParams.containsKey("t") )
