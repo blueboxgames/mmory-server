@@ -285,7 +285,7 @@ public class BattleBot
         if( CardTypes.isSpell(cardType) )
             id = battleRoom.summonUnit(1, cardType, x, y, this.battleField.now);
         else
-            id = battleRoom.summonUnit(1, cardType, validatedX(x), validatedY(y), this.battleField.now);
+            id = battleRoom.summonUnit(1, cardType, validatedX(x,y), validatedY(x,y), this.battleField.now);
 
         if( id >= 0 )
         {
@@ -421,23 +421,39 @@ public class BattleBot
     /**
      * A method to validate calculated x
      * @param x
+     * @param y
      * @return
      */
-    private double validatedX(double x)
+    private double validatedX(double x, double y)
     {
+        if( battleField.getSummonState(1) > BattleField.SUMMON_AREA_HALF )
+        {
+            if( battleField.getSummonState(1) == BattleField.SUMMON_AREA_RIGHT &&  y < (BattleField.HEIGHT * 0.5) )
+                return CoreUtils.clamp(x, BattleField.WIDTH * 0.5 , 810);
+            if( battleField.getSummonState(1) == BattleField.SUMMON_AREA_LEFT && y < (BattleField.HEIGHT * 0.5) )
+                return CoreUtils.clamp(x, 150, BattleField.WIDTH * 0.5);
+        }
         return CoreUtils.clamp(x, 150, 810);
     }
 
     /**
      * A method to validate calculated y
+     * @param x
      * @param y
      * @return
      */
-    private double validatedY(double y)
+    private double validatedY(double x, double y)
     {
-        if( battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
-            return y > BattleField.HEIGHT * 0.35 ? BattleField.HEIGHT * 0.35 : y;
-        return y > BattleField.HEIGHT * 0.45 ? BattleField.HEIGHT * 0.45 : y;
+        // Summon in 1/3
+        if( battleField.getSummonState(1) == BattleField.SUMMON_AREA_THIRD )
+            return y > (BattleField.HEIGHT * 0.3) + BattleField.SUMMON_PADDING ? (BattleField.HEIGHT * 0.3) + BattleField.SUMMON_PADDING : y;
+        // Summon in 1/2
+        if( battleField.getSummonState(1) == BattleField.SUMMON_AREA_HALF )
+            return y > (BattleField.HEIGHT * 0.5) + BattleField.SUMMON_PADDING ? (BattleField.HEIGHT * 0.5) + BattleField.SUMMON_PADDING : y;
+        // Summon in 2/3 Left Half
+        if( battleField.getSummonState(1) > BattleField.SUMMON_AREA_HALF )
+          return y > (BattleField.HEIGHT * 0.6) + BattleField.SUMMON_PADDING ? (BattleField.HEIGHT * 0.6) + BattleField.SUMMON_PADDING : y;
+        return (y > BattleField.HEIGHT * 0.3) ? BattleField.HEIGHT * 0.3 : y;
     }
 
     private void updateChatProcess()
