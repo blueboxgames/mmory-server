@@ -46,8 +46,7 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-public class BattleRoom extends BBGRoom
-{
+public class BattleRoom extends BBGRoom {
 	static boolean DEBUG_MODE = false;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
@@ -60,16 +59,14 @@ public class BattleRoom extends BBGRoom
 	private List<Integer> reservedUnitIds;
 	private BattleEventCallback eventCallback;
 
-	public void init(int id, CreateRoomSettings settings)
-	{
+	public void init(int id, CreateRoomSettings settings) {
 		super.init(id, settings);
 		battleField = new BattleField();
-		setState( BattleField.STATE_0_WAITING );
+		setState(BattleField.STATE_0_WAITING);
 	}
 
-	public void createGame(Boolean opponentNotFound)
-	{
-		if( this.autoJoinTimer != null )
+	public void createGame(Boolean opponentNotFound) {
+		if (this.autoJoinTimer != null)
 			this.autoJoinTimer.cancel(true);
 		this.autoJoinTimer = null;
 
@@ -79,28 +76,32 @@ public class BattleRoom extends BBGRoom
 
 		// reserve player data
 		List<Game> registeredPlayers = new ArrayList<>();
-		for (User u: players)
-			registeredPlayers.add((Game)u.getSession().getProperty("core"));
+		for (User u : players)
+			registeredPlayers.add((Game) u.getSession().getProperty("core"));
 
-		if( this.singleMode )
-		{
+		if (this.singleMode) {
 			InitData data = new InitData();
 			data.id = (int) (Math.random() * 9999);
 			data.nickName = RankingUtils.getInstance().getRandomName();
 			data.resources.set(ResourceType.R2_POINT, 0);
 			Game botGame = new Game();
 			botGame.init(data);
-			registeredPlayers.add( botGame );
+			registeredPlayers.add(botGame);
 		}
 		this.setProperty("registeredPlayers", registeredPlayers);
 
 		int mode = this.getPropertyAsInt("mode");
-		// trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
-		if( !BattleUtils.getInstance().maps.containsKey(mode) )
-			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/" + (((Game)registeredPlayers.get(0)).appVersion < 2500 ? "maps" : "assets") + "/map-" + mode + ".json", null, false).text);
+		String mapName = "assets/field-";
+		if (((Game) registeredPlayers.get(0)).appVersion < 2500)
+			mapName = "maps/map-";
+		else if (((Game) registeredPlayers.get(0)).appVersion < 2510)
+			mapName = "assets/map-";
+		trace(registeredPlayers.get(0), registeredPlayers.get(1), mode, mapName);
+		// if( !BattleUtils.getInstance().maps.containsKey(mode) )
+			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/" + mapName + mode + ".json", null, false).text);
 
 		Instant instant = Instant.now();
-		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), "60,120,180,240");
+		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)registeredPlayers.get(0)).appVersion);
 		this.battleField.initialize(registeredPlayers.get(0), registeredPlayers.get(1), field, 0, instant.getEpochSecond(), instant.toEpochMilli(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
 		this.battleField.unitsHitCallback = new HitUnitCallback(this);
 		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
@@ -334,7 +335,7 @@ public class BattleRoom extends BBGRoom
 		if( this.getState() > BattleField.STATE_2_STARTED || battleDuration < 3 )
 			return;
 
-		// this.endCalculator.scores[0] = 3;
+		// this.endCalculator.scoreED32C  333333333333333s[0] = 3;
 		boolean haveWinner = endCalculator.check();
 		// trace("state:" + this.getState() + " haveWinner " + haveWinner + " scores[0]:" + endCalculator.scores[0] + " scores[1]:" + endCalculator.scores[1] );
 		if( haveWinner )
