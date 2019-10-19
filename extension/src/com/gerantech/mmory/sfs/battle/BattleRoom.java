@@ -46,8 +46,7 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-public class BattleRoom extends BBGRoom
-{
+public class BattleRoom extends BBGRoom {
 	static boolean DEBUG_MODE = false;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
@@ -60,16 +59,14 @@ public class BattleRoom extends BBGRoom
 	private List<Integer> reservedUnitIds;
 	private BattleEventCallback eventCallback;
 
-	public void init(int id, CreateRoomSettings settings)
-	{
+	public void init(int id, CreateRoomSettings settings) {
 		super.init(id, settings);
 		battleField = new BattleField();
-		setState( BattleField.STATE_0_WAITING );
+		setState(BattleField.STATE_0_WAITING);
 	}
 
-	public void createGame(Boolean opponentNotFound)
-	{
-		if( this.autoJoinTimer != null )
+	public void createGame(Boolean opponentNotFound) {
+		if (this.autoJoinTimer != null)
 			this.autoJoinTimer.cancel(true);
 		this.autoJoinTimer = null;
 
@@ -79,18 +76,17 @@ public class BattleRoom extends BBGRoom
 
 		// reserve player data
 		List<Game> registeredPlayers = new ArrayList<>();
-		for (User u: players)
-			registeredPlayers.add((Game)u.getSession().getProperty("core"));
+		for (User u : players)
+			registeredPlayers.add((Game) u.getSession().getProperty("core"));
 
-		if( this.singleMode )
-		{
+		if (this.singleMode) {
 			InitData data = new InitData();
 			data.id = (int) (Math.random() * 9999);
 			data.nickName = RankingUtils.getInstance().getRandomName();
 			data.resources.set(ResourceType.R2_POINT, 0);
 			Game botGame = new Game();
 			botGame.init(data);
-			registeredPlayers.add( botGame );
+			registeredPlayers.add(botGame);
 		}
 		this.setProperty("registeredPlayers", registeredPlayers);
 
@@ -340,7 +336,7 @@ public class BattleRoom extends BBGRoom
 		if( this.getState() > BattleField.STATE_2_STARTED || battleDuration < 3 )
 			return;
 
-		// this.endCalculator.scores[0] = 3;
+		// this.endCalculator.scoreED32C  333333333333333s[0] = 3;
 		boolean haveWinner = endCalculator.check();
 		// trace("state:" + this.getState() + " haveWinner " + haveWinner + " scores[0]:" + endCalculator.scores[0] + " scores[1]:" + endCalculator.scores[1] );
 		if( haveWinner )
