@@ -96,11 +96,17 @@ public class BattleRoom extends BBGRoom
 
 		int mode = this.getPropertyAsInt("mode");
 		// trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
-		if( !BattleUtils.getInstance().maps.containsKey(mode) )
-			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/" + (((Game)registeredPlayers.get(0)).appVersion < 2500 ? "maps" : "assets") + "/map-" + mode + ".json", null, false).text);
+		String mapName = "assets/field-";
+		if (((Game) registeredPlayers.get(0)).appVersion < 2500)
+			mapName = "maps/map-";
+		else if (((Game) registeredPlayers.get(0)).appVersion < 2510)
+			mapName = "assets/map-";
+		trace(registeredPlayers.get(0), registeredPlayers.get(1), mode, mapName);
+		// if( !BattleUtils.getInstance().maps.containsKey(mode) )
+			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/" + mapName + mode + ".json", null, false).text);
 
 		Instant instant = Instant.now();
-		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), "60,120,180,240");
+		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)registeredPlayers.get(0)).appVersion);
 		this.battleField.initialize(registeredPlayers.get(0), registeredPlayers.get(1), field, 0, instant.getEpochSecond(), instant.toEpochMilli(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
 		this.battleField.unitsHitCallback = new HitUnitCallback(this);
 		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
