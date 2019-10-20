@@ -413,7 +413,7 @@ public class BattleBot
     private Point2 reversePreformReverse(double x, double y, int cardType)
     {
         Point2 revPer = battleField.fixSummonPosition(new Point2(BattleField.WIDTH - x, BattleField.HEIGHT - y), cardType, battleField.getSummonState(1), 1);
-        return new Point2( BattleField.WIDTH - revPer.x, BattleField.HEIGHT - revPer.y );
+        return new Point2( BattleField.WIDTH - revPer.x, BattleField.HEIGHT - revPer.y - 50);
     }
 
     public void chatStarting(float battleRatio)
