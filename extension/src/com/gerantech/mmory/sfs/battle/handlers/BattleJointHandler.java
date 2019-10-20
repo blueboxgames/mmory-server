@@ -117,7 +117,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, room.getPropertyAsInt("mode"), null, null, null));
 			ExchangeItem exItem = Challenge.getExchangeItem(room.getPropertyAsInt("mode"), cost, game.player.get_arena(0));
 			int response = ExchangeUtils.getInstance().process(game, exItem, 0, 0);
-			if (response != MessageTypes.RESPONSE_SUCCEED)
+			if( response != MessageTypes.RESPONSE_SUCCEED )
 			{
 				params.putInt("response", response);
 				send(Commands.BATTLE_START, params, user);
@@ -142,7 +142,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		for (Object o : registeredPlayers)
 		{
 			Player player = ((Game) o).player;
-			if( player.game.appVersion < 2500 )
+			if( !player.isBot() && player.game.appVersion < 2500 )
 				params.putText("map", room.battleField.field.mapData);
 			SFSObject p = new SFSObject();
 			p.putInt("id", player.id);
