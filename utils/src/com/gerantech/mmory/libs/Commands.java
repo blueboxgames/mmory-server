@@ -13,7 +13,6 @@ public class Commands
     public static final String BATTLE_ELIXIR_UPDATE = "x";
     public static final String BATTLE_NEW_ROUND = "battleNewRound";
     public static final String BATTLE_SUMMON_UNIT = "s";
-    public static final String BATTLE_HIT = "h";
 
     public static final String PROFILE = "profile";
 
