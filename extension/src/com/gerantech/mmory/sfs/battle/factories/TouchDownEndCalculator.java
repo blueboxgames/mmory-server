@@ -4,6 +4,8 @@ import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.battle.units.Unit;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 
+import haxe.ds._IntMap.IntMapKeyIterator;
+
 public class TouchDownEndCalculator extends EndCalculator
 {
     public int round = 1;
@@ -37,10 +39,11 @@ public class TouchDownEndCalculator extends EndCalculator
     {
         int threshold = 24;
         Unit u;
-        int[] keys = room.battleField.units.keys();
-        for (int k : keys)
+		@SuppressWarnings("unchecked")
+		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) room.battleField.units.keys();
+		while (iterator.hasNext())
         {
-           u = room.battleField.units.get(k);
+           u = room.battleField.units.get(iterator.next());
            if( (u.side == 0 && u.y <= threshold) || (u.side == 1 && u.y >= BattleField.HEIGHT - threshold) )
                return u;
         }

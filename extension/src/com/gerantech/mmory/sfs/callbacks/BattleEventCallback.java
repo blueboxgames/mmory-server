@@ -9,6 +9,8 @@ import com.gerantech.mmory.core.events.EventCallback;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 
+import haxe.ds._IntMap.IntMapKeyIterator;
+
 public class BattleEventCallback implements EventCallback
 {
     private final BattleRoom battleRoom;
@@ -17,9 +19,10 @@ public class BattleEventCallback implements EventCallback
     public BattleEventCallback(BattleRoom battleRoom)
     {
         this.battleRoom = battleRoom;
-        int[] keys = battleRoom.battleField.units.keys();
-        for (int k : keys)
-            battleRoom.battleField.units.get(k).eventCallback = this;
+		@SuppressWarnings("unchecked")
+		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleRoom.battleField.units.keys();
+        while (iterator.hasNext())
+            battleRoom.battleField.units.get(iterator.next()).eventCallback = this;
     }
 
     @Override

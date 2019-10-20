@@ -2,12 +2,10 @@ package com.gerantech.mmory.sfs.battle;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.InitData;
@@ -36,15 +34,15 @@ import com.gerantech.mmory.sfs.battle.factories.EndCalculator;
 import com.gerantech.mmory.sfs.battle.factories.TouchDownEndCalculator;
 import com.gerantech.mmory.sfs.callbacks.BattleEventCallback;
 import com.gerantech.mmory.sfs.callbacks.ElixirChangeCallback;
-import com.gerantech.mmory.sfs.callbacks.HitUnitCallback;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
 import com.smartfoxserver.v2.entities.User;
-import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
+
+import haxe.ds._IntMap.IntMapKeyIterator;
 
 public class BattleRoom extends BBGRoom {
 	static boolean DEBUG_MODE = false;
@@ -104,7 +102,6 @@ public class BattleRoom extends BBGRoom {
 		Instant instant = Instant.now();
 		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)registeredPlayers.get(0)).appVersion);
 		this.battleField.initialize(registeredPlayers.get(0), registeredPlayers.get(1), field, 0, instant.getEpochSecond(), instant.toEpochMilli(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
-		this.battleField.unitsHitCallback = new HitUnitCallback(this);
 		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
 		this.eventCallback = new BattleEventCallback(this);
 		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
@@ -149,43 +146,47 @@ public class BattleRoom extends BBGRoom {
 
 	private void updateReservesData()
 	{
-		int[] keys = getChangedUnits();
-		if( keys != null )
+		reservedUnitIds = getChangedUnits();
+		if( reservedUnitIds == null )
+			return;
+
+		ISFSObject units = new SFSObject();
+		units.putIntArray("keys", reservedUnitIds);
+
+		/**
+		 * TEST_FLAG: Code bellow sneds some test information about changed units.
+		 */
+
+		if( DEBUG_MODE )
 		{
-			reservedUnitIds = Arrays.stream(keys).boxed().collect(Collectors.toList());
-			ISFSObject units = new SFSObject();
-			units.putIntArray("keys", reservedUnitIds);
-
-			/**
-			 * TEST_FLAG: Code bellow sneds some test information about changed units.
-			 */
-
-			if( DEBUG_MODE )
+			List<String> testData = new ArrayList<>();
+			for ( int k:reservedUnitIds )
 			{
-				List<String> testData = new ArrayList<>();
-				for ( int k:reservedUnitIds )
-				{
-					Unit unit = this.battleField.units.get(k);
-					testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
-				}
-				units.putUtfStringArray("testData", testData);
+				Unit unit = this.battleField.units.get(k);
+				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
 			}
-			send("u", units, getUserList());
+			units.putUtfStringArray("testData", testData);
 		}
+		send("u", units, getUserList());
 	}
 
-	private int[] getChangedUnits()
+	private List<Integer> getChangedUnits()
 	{
-		int[] keys = this.battleField.units.keys();
+		List<Integer> ret = new ArrayList<>();
+		@SuppressWarnings("unchecked")
+		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleField.units.keys();
+		while (iterator.hasNext())
+			ret.add(iterator.next());
+		
 		if( reservedUnitIds == null )
-			return keys;
+			return ret;
 
-		if( !DEBUG_MODE && reservedUnitIds.size() != keys.length || DEBUG_MODE )
-			return keys;
+		if( !DEBUG_MODE && reservedUnitIds.size() != ret.size()|| DEBUG_MODE )
+			return ret;
 
-		for( int i=0; i < keys.length; i ++ )
-			if( keys[i] != reservedUnitIds.get(i) )
-				return keys;
+		for (int i = 0; i < ret.size(); i++)
+			if( ret.get(i) != reservedUnitIds.get(i) )
+				return ret;
 
 		return null;
 	}
@@ -239,25 +240,6 @@ public class BattleRoom extends BBGRoom {
 		u.putDouble("x", x);
 		u.putDouble("y", y);
 		return u;
-	}
-
-	public void hitUnit(int bulletId, List<Integer> targets)
-	{
-		SFSObject params = new SFSObject();
-		params.putInt("b", bulletId);
-
-		ISFSObject _target;
-		ISFSArray _targets = new SFSArray();
-		for (int i = 0; i < targets.size(); i++)
-		{
-			_target = new SFSObject();
-			_target.putInt("i", targets.get(i));
-			_target.putDouble("h", this.battleField.units.get(targets.get(i)).health);
-			_targets.addSFSObject(_target);
-		}
-		params.putSFSArray("t", _targets);
-
-		send(Commands.BATTLE_HIT, params, getUserList());
 	}
 
 	public void sendNewRoundResponse(int winner, int unitId)
