@@ -174,7 +174,7 @@ public class BattleRoom extends BBGRoom {
 	{
 		List<Integer> ret = new ArrayList<>();
 		@SuppressWarnings("unchecked")
-		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleField.units.keys();
+		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleField.units.keys();	
 		while (iterator.hasNext())
 			ret.add(iterator.next());
 		

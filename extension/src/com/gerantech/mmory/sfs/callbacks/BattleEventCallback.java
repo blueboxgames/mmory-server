@@ -40,7 +40,7 @@ public class BattleEventCallback implements EventCallback
                 int other = battleRoom.battleField.units.get(id).side == 0 ? 1 : 0;
                 if( id < 2 )
                     battleRoom.endCalculator.scores[other] = Math.min(3, battleRoom.endCalculator.scores[other] + 3);
-                else if( id < 6)
+                else if( id < 6 )
                     battleRoom.endCalculator.scores[other] ++;
 
                 battleRoom.sendNewRoundResponse(other, 0);
