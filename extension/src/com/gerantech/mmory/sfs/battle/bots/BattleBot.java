@@ -25,7 +25,7 @@ public class BattleBot
     /** Time between each summon that bot commits. */
     static final private int SUMMON_DELAY = 1060;
     /** Debug flag. */
-    static final private boolean DEBUG_MODE = true;
+    static final private boolean DEBUG_MODE = false;
     /** Middle summon X position threshold. */
     static final private double SUMMON_X_THRESHOLD = 200;
     /** Know the player bot is playing with. */
