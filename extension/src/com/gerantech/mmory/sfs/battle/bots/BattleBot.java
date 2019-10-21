@@ -333,7 +333,7 @@ public class BattleBot
             defaultIndex = 0;
 
         
-        Point2 summonPoint = reversePreformReverse(x,y,cardType);
+        Point2 summonPoint = mirrorSummon(x,y,cardType);
         if( CardTypes.isSpell(cardType) )
         {
             id = battleRoom.summonUnit(1, cardType, x, y, this.battleField.now);
@@ -412,10 +412,10 @@ public class BattleBot
         return -1;
     }
 
-    private Point2 reversePreformReverse(double x, double y, int cardType)
+    private Point2 mirrorSummon(double x, double y, int cardType)
     {
-        Point2 revPer = battleField.fixSummonPosition(new Point2(BattleField.WIDTH - x, BattleField.HEIGHT - y), cardType, battleField.getSummonState(1), 1);
-        return new Point2( BattleField.WIDTH - revPer.x, BattleField.HEIGHT - revPer.y - 50);
+        Point2 reversePoint = battleField.fixSummonPosition(new Point2(BattleField.WIDTH - x, BattleField.HEIGHT - y), cardType, battleField.getSummonState(battleField.side == 0 ? 0 : 1), 1);
+        return new Point2( BattleField.WIDTH - reversePoint.x, BattleField.HEIGHT - reversePoint.y );
     }
 
     public void chatStarting(float battleRatio)
