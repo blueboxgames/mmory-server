@@ -158,7 +158,7 @@ public class BattleBot
                     playerHead = u;
                 
                 // Prioritize hero with low hp.
-                if( CardTypes.isHero(u.card.type) && (u.health < u.cardHealth * 0.2) )
+                if( CardTypes.isHero(u.card.type) && (u.health < u.cardHealth * 0.3) )
                 {
                     if( getSpell() != -1 )
                     {
@@ -310,6 +310,9 @@ public class BattleBot
 
             if( CardTypes.isSpell(cardType) )// drop spell
             {
+                // Change spell if hero it's hero and a lot hp.
+                if( CardTypes.isHero(playerHead.card.type) && playerHead.health > playerHead.cardHealth * 0.3 )
+                    cardIndex = (int) Math.floor(Math.random()*4.5);
                 x = playerHead.x;
                 y = playerHead.y - (CardTypes.isTroop(playerHead.card.type) && playerHead.state == GameObject.STATE_4_MOVING ? 80 : 0);
                 trace("Using Spell on " + playerHead.card.type + " in: " + x + "," + y);
