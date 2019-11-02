@@ -128,6 +128,8 @@ public class MMOryExtension extends SFSExtension
 			return LobbyUtils.getInstance().resetActivities();
 		else if( cmdName.equals("getplayernamebyic") )
 			return PasswordGenerator.getIdAndNameByInvitationCode((String) params);
+		else if( cmdName.equals("cleanInactives"))
+			return DBUtils.getInstance().cleanInactiveUsers((String) params);
 		//else if( cmdName.equals("custom") )
 		//	return LobbyUtils.getInstance().moveActiveness();
 		

@@ -1,1 +1,1 @@
-echo f | xcopy /f /y bin\com\grantech\mmory\http\ExtensionHTTPFacade.class C:\SmartFoxServer_2X\SFS2X-5000\www\servlet\WEB-INF\classes\com\grantech\mmory\http\ExtensionHTTPFacade.class
+echo f | xcopy /f /y bin\com\grantech\mmory\http\ExtensionHTTPFacade.class C:\SmartFoxServer_2X\SFS2X-5000\www\mmorylet\WEB-INF\classes\com\grantech\mmory\http\ExtensionHTTPFacade.class
