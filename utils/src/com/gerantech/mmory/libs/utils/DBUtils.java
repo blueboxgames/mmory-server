@@ -16,8 +16,15 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,6 +35,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DBUtils extends UtilBase
 {
     private final IDBManager db;
+    private final Boolean DEBUG_MODE = true;
+    private final String mainDB = "towers_5k_db";//ext.getParentZone().getDBManager().getConfig();
+    private final String inactiveDB = "towers_5k_db_inactive";//ext.getParentZone().getDBManager().getName() + "_inactive";
     public DBUtils()
     {
         super();
@@ -36,6 +46,166 @@ public class DBUtils extends UtilBase
     public static DBUtils getInstance()
     {
         return (DBUtils)UtilBase.get(DBUtils.class);
+    }
+
+    public String cleanInactiveUsers(String dateFormat) {
+        String query = "";
+        String ret = "";
+        Instant start = Instant.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(dateFormat, formatter);
+        try {
+            Connection con = db.getConnection();
+            try {
+                con.setAutoCommit(false);
+                Statement statement = con.createStatement();
+                
+    
+                query = "SET FOREIGN_KEY_CHECKS=0";
+                traceQuery(query);
+                statement.execute(query);
+    
+                // players
+                List<String> columns = new ArrayList<String>(Arrays.asList("name", "password", "create_at", "app_version", "last_login", "sessions_count"));
+                query = "INSERT INTO " + inactiveDB + ".players SELECT * FROM " + mainDB + ".players " + getOnDuplicateKeyChanges(columns);
+                traceQuery(query);
+                statement.execute(query);
+    
+                query = "TRUNCATE TABLE " + mainDB + ".players";
+                traceQuery(query);
+                statement.execute(query);
+                query = "INSERT INTO " + mainDB + ".players SELECT * FROM " + inactiveDB + ".players" + 
+                        " WHERE DAY(last_login) >=" + date.getDayOfMonth() +
+                        " AND MONTH(last_login) >= "+ date.getMonth().getValue() + 
+                        " AND YEAR(last_login) >=" + date.getYear() + 
+                        " OR id = 10000" +
+                        " " + getOnDuplicateKeyChanges(columns);
+                traceQuery(query);
+                statement.execute(query);
+    
+                //---------- Tables ------------
+                // accounts
+                columns = new ArrayList<String>(Arrays.asList("id", "player_id", "type", "google_id", "name", "image_url", "timestamp"));
+                moveInactivesTable("accounts", columns, date, statement);
+                // banneds
+                columns = new ArrayList<String>(Arrays.asList("id", "player_id", "udid", "imei", "message", "mode", "timestamp", "expire_at", "time"));
+                moveInactivesTable("banneds", columns, date, statement);
+                // bugs
+                columns = new ArrayList<String>(Arrays.asList("id","player_id","email","description","status","report_at"));
+                moveInactivesTable("bugs", columns, date, statement);
+                // exchanges
+                columns = new ArrayList<String>(Arrays.asList("id","type","player_id","num_exchanges","expired_at","outcome","reqs"));
+                moveInactivesTable("exchanges", columns, date, statement);
+                // operations
+                columns = new ArrayList<String>(Arrays.asList("index","player_id","score","create_at"));
+                moveInactivesTable("operations", columns, date, statement);
+                // pushtokens
+                columns = new ArrayList<String>(Arrays.asList("player_id","fcm_token","os_pid","os_token"));
+                moveInactivesTable("pushtokens", columns, date, statement);
+                // quests
+                columns = new ArrayList<String>(Arrays.asList("id","player_id","type","key","step","timestamp"));
+                moveInactivesTable("quests", columns, date, statement);
+                // resources
+                columns = new ArrayList<String>(Arrays.asList("type", "count", "level"));            
+                moveInactivesTable("resources", columns, date, statement);
+                // userprefs
+                columns = new ArrayList<String>(Arrays.asList("player_id","k","v"));
+                moveInactivesTable("userprefs", columns, date, statement);
+    
+                statement.execute("SET FOREIGN_KEY_CHECKS=1");
+                con.commit();
+                con.setAutoCommit(true);
+                ret = "Cleaned inactive useres before " + dateFormat + " ";
+            } catch(SQLException e) {
+                con.rollback();
+                e.printStackTrace();
+                ret = "Failed to clean users ";
+            } finally {
+                Instant fin = Instant.now();
+                con.close();
+                ret += "in " + Duration.between(start, fin).toMillis() + " milisecounds.\n";
+            }
+        } catch( SQLException e ) { e.printStackTrace(); }
+        return ret;
+    }
+
+    private String getOnDuplicateKeyChanges(List<String> columns) {
+        String ret = "ON DUPLICATE KEY UPDATE ";
+        List<String> valueColumn = new ArrayList<String>();
+        for ( String column : columns ) {
+            valueColumn.add("`"+column+"`=VALUES(`"+column+"`)");
+        }
+        ret += String.join(",", valueColumn);
+        return ret;
+    }
+
+    public Boolean recoverFromInactives(int playerId) {
+        List<String> columns = new ArrayList<String>();
+        // players
+        columns = new ArrayList<String>(Arrays.asList("name", "password", "create_at", "app_version", "last_login", "sessions_count"));
+        String query = "INSERT INTO " + mainDB + ".players SELECT * FROM " + inactiveDB + ".players " + getOnDuplicateKeyChanges(columns);
+        try { db.executeInsert(query, new Object[] {}); } catch(SQLException e) {e.printStackTrace(); }
+        // accounts
+        columns = new ArrayList<String>(Arrays.asList("id", "player_id", "type", "google_id", "name", "image_url", "timestamp"));
+        recoverInactivePlayerFromTable("accounts", columns, playerId);
+        // banneds
+        columns = new ArrayList<String>(Arrays.asList("id", "player_id", "udid", "imei", "message", "mode", "timestamp", "expire_at", "time"));
+        recoverInactivePlayerFromTable("banneds", columns, playerId);
+        // bugs
+        columns = new ArrayList<String>(Arrays.asList("id","player_id","email","description","status","report_at"));
+        recoverInactivePlayerFromTable("bugs", columns, playerId);
+        // exchanges
+        columns = new ArrayList<String>(Arrays.asList("id","type","player_id","num_exchanges","expired_at","outcome","reqs"));
+        recoverInactivePlayerFromTable("exchanges", columns, playerId);
+        // operations
+        columns = new ArrayList<String>(Arrays.asList("index","player_id","score","create_at"));
+        recoverInactivePlayerFromTable("operations", columns, playerId);
+        // pushtokens
+        columns = new ArrayList<String>(Arrays.asList("player_id","fcm_token","os_pid","os_token"));
+        recoverInactivePlayerFromTable("pushtokens", columns, playerId);
+        // quests
+        columns = new ArrayList<String>(Arrays.asList("id","player_id","type","key","step","timestamp"));
+        recoverInactivePlayerFromTable("quests", columns, playerId);
+        // resources
+        columns = new ArrayList<String>(Arrays.asList("type", "count", "level"));            
+        recoverInactivePlayerFromTable("resources", columns, playerId);
+        // userprefs
+        columns = new ArrayList<String>(Arrays.asList("player_id","k","v"));
+        recoverInactivePlayerFromTable("userprefs", columns, playerId);
+        return false;
+    }
+
+    private void moveInactivesTable(String table, List<String> columns, LocalDate date, Statement statement) throws SQLException {
+        String query = "INSERT INTO " + inactiveDB + "." + table + " SELECT * FROM " + mainDB + "." + table + " " + getOnDuplicateKeyChanges(columns);
+        traceQuery(query);
+        statement.execute(query);
+
+        query = "TRUNCATE TABLE " + mainDB + "." + table;
+        traceQuery(query);
+        statement.execute(query);
+
+        query = "INSERT INTO " + mainDB + "." + table +
+                " SELECT " + inactiveDB + "." + table + ".* FROM " + inactiveDB +
+                "." + table + " INNER JOIN " + inactiveDB + ".players ON players.id="+ table + ".player_id " +
+                " WHERE DAY(last_login) >= " + date.getDayOfMonth() + 
+                " AND MONTH(last_login) >= " + date.getMonth().getValue() + 
+                " AND YEAR(last_login) >= " + date.getYear() +
+                " " + getOnDuplicateKeyChanges(columns);
+        traceQuery(query);
+        statement.execute(query);
+    }
+
+    private void recoverInactivePlayerFromTable(String table, List<String> columns, int playerId)
+    {
+        String query =  "INSERT INTO " + mainDB + "." + table +
+                        " SELECT " + inactiveDB + "." + table + ".* FROM " + inactiveDB +
+                        "." + table + " INNER JOIN " + inactiveDB + ".players ON players.id=" + table + ".player_id " +
+                        " WHERE player_id=" + playerId +
+                        " " + getOnDuplicateKeyChanges(columns);
+        traceQuery(query);
+        try {
+            db.executeInsert(query, new Object[]{});
+        } catch(SQLException e) { e.printStackTrace(); }
     }
 
     // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-   RESOURCES  -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -320,5 +490,11 @@ public class DBUtils extends UtilBase
         if( udids != null && udids.size() > 0 )
             return udids.getSFSObject(0);
         return null;
+    }
+
+    public void traceQuery(String query)
+    {
+        if( DEBUG_MODE )
+            System.out.println("SQLQuery: " + query);
     }
 }
