@@ -259,7 +259,7 @@ public class DBUtils extends UtilBase
     {
         int[] keys = resources.keys();
         int keyLen = keys.length;
-        List<Integer> res = new ArrayList<>();
+        List<Integer> res = new ArrayList<Integer>();
         for (int i = 0; i < keyLen; i++)
             if( !ResourceType.isBook(keys[i]) )
                 res.add(keys[i]);
@@ -295,27 +295,12 @@ public class DBUtils extends UtilBase
         } catch (SQLException e) { e.printStackTrace(); }
         return ret;
     }
-    public void updateExchange(Game game, int type, int expireAt, int numExchanges, String outcomesStr, String reqsStr)
+    public void updateExchange(int type, int playerId, int expireAt, int numExchanges, String outcomesStr, String reqsStr)
     {
-        String query;
-        if( game.exchanger.dbItems.exists(type) )
-        {
-            query = "UPDATE exchanges SET num_exchanges=" + numExchanges + ", expired_at=" + expireAt + ", outcome='" + outcomesStr + "', reqs='" + reqsStr + "' WHERE id=" + game.exchanger.dbItems.get(type);
-            try {
-                db.executeUpdate(query, new Object[]{});
-            } catch (SQLException e) { e.printStackTrace();}
-            query += "   t:" + type + " p:" + game.player.id;
-        }
-        else
-        {
-            query = "INSERT INTO exchanges (type, player_id, num_exchanges, expired_at, outcome, reqs) VALUES (" + type + ", " + game.player.id + ", " + numExchanges + ", " + expireAt + ", '" + outcomesStr + "', '" + reqsStr + "');";
-            long id = 0;
-            try {
-                id = (long) db.executeInsert(query, new Object[]{});
-            } catch (SQLException e) { e.printStackTrace();}
-            game.exchanger.dbItems.set(type, Math.toIntExact(id));
-        }
-        trace(query);
+        String query = "SELECT _func_exchanges(" + type + "," + playerId + "," + numExchanges + "," + expireAt + ",'" + outcomesStr + "', '" + reqsStr + "')";
+        try {
+            db.executeQuery(query, new Object[] {});
+        } catch (SQLException e) { e.printStackTrace(); }
     }
 
     // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-   OPERATIONS  -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
