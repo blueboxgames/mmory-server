@@ -345,7 +345,6 @@ try {
 		game.player.tutorialMode = outData.getInt("tutorialMode");
 		game.player.hasOperations = outData.getBool("hasOperations");
 		game.exchanger.updater = new ExchangeUpdater(game, now);
-		game.exchanger.dbItems = dbItems;
 
 		game.player.resourceIds = new ConcurrentHashMap<>();
 		for(int i = 0; i < resources.size(); i++)
