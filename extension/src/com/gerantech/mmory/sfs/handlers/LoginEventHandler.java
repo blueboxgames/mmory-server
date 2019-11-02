@@ -149,7 +149,6 @@ try {
 			resources.addSFSObject( so );
 		}
 
-		int id = 0;
 		String query = "INSERT INTO resources (`player_id`, `type`, `count`, `level`) VALUES ";
 		for(int i=0; i<resources.size(); i++)
 		{
@@ -157,17 +156,8 @@ try {
 			query += i<resources.size()-1 ? ", " : ";";
 		}
 		try {
-			id = Math.toIntExact((long) dbManager.executeInsert(query, new Object[] {}));
+			dbManager.executeInsert(query, new Object[] {});
 		} catch (SQLException e) { e.printStackTrace(); }
-		if( id == 0 )
-		{
-			LoginErrors.dispatch(LoginErrors.LOGIN_BAD_USERNAME, "Login error! resources id=" + id + " is wrong.", new String[]{"Login error! resources id=" + id + " is wrong."});
-			return;
-		}
-
-		// add  Ids
-		for(int i=0; i<resources.size(); i++)
-			resources.getSFSObject(i).putInt("id", id + i);
 
 		session.setProperty("joinedRoomId", -1);
 
@@ -203,6 +193,11 @@ try {
 		int id = Integer.parseInt(name);
 		ISFSArray res = null;
 		try { res = dbManager.executeQuery("SELECT name, password, sessions_count FROM players WHERE id=" + id, new Object[]{});
+			if( res.size() == 0 )
+			{
+				DBUtils.getInstance().recoverFromInactives(id);
+				res = dbManager.executeQuery("SELECT name, password, sessions_count FROM players WHERE id=" + id, new Object[]{});
+			}
 		} catch(SQLException e) { e.printStackTrace(); }
 
 		if( res == null || res.size() != 1 )
@@ -293,8 +288,19 @@ try {
 		// create exchanges init data
 		ISFSArray exchanges = outData.getSFSArray("exchanges");
 		IntIntMap dbItems = new IntIntMap();
+		long startTime = System.nanoTime();
 		for(int i = 0; i < exchanges.size(); i++)
+		{
 			dbItems.set(exchanges.getSFSObject(i).getInt("type"), exchanges.getSFSObject(i).getInt("id"));
+			System.out.println(exchanges.getSFSObject(i).getInt("id"));
+		}
+		long endTime = System.nanoTime();
+		System.out.println(endTime - startTime);
+
+		for(int i : dbItems.keys())
+		{
+			System.out.println(dbItems.get(i));
+		}
 		
 		// load script
 		if( ScriptEngine.script == null )
@@ -357,7 +363,7 @@ try {
 		game.exchanger.updater.addItems();
 
 		for( ExchangeItem item : game.exchanger.updater.changes )
-			DBUtils.getInstance().updateExchange(game, item.type, item.expiredAt, item.numExchanges, item.outcomes.toString(), item.requirements.toString());
+			DBUtils.getInstance().updateExchange(item.type, game.player.id, item.expiredAt, item.numExchanges, item.outcomes.toString(), item.requirements.toString());
 
 		// create exchange data
 		SFSArray _exchanges = new SFSArray();

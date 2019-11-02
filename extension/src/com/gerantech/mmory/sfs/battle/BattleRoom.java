@@ -388,7 +388,7 @@ public class BattleRoom extends BBGRoom {
 					int res = game.exchanger.collectStars(outcomesList[i].get(r), now);
 					ExchangeItem stars = game.exchanger.items.get(ExchangeType.C104_STARS);
 					if( res == MessageTypes.RESPONSE_SUCCEED )
-						dbUtils.updateExchange(game, ExchangeType.C104_STARS, stars.expiredAt, stars.numExchanges, "", "");
+						dbUtils.updateExchange(ExchangeType.C104_STARS, game.player.id, stars.expiredAt, stars.numExchanges, "", "");
 				}
 
 				outcomeSFS.putInt(r + "", outcomesList[i].get(r));
@@ -407,13 +407,13 @@ public class BattleRoom extends BBGRoom {
 					if( dailyBattles == null )
 						dailyBattles = new ExchangeItem(ExchangeType.C29_DAILY_BATTLES, 0, 0, "", "");
 					dailyBattles.numExchanges ++;
-					dbUtils.updateExchange(game, ExchangeType.C29_DAILY_BATTLES, dailyBattles.expiredAt, dailyBattles.numExchanges, "", "");
+					dbUtils.updateExchange(ExchangeType.C29_DAILY_BATTLES, game.player.id, dailyBattles.expiredAt, dailyBattles.numExchanges, "", "");
 				}
 
 				// add rewards
 				game.player.addResources(outcomesList[i]);
 				if( earnedBook != null )
-					dbUtils.updateExchange(game, earnedBook.type,0, earnedBook.numExchanges, earnedBook.outcomesStr, "");
+					dbUtils.updateExchange(earnedBook.type, game.player.id,0, earnedBook.numExchanges, earnedBook.outcomesStr, "");
 				dbUtils.updateResources(game.player, updateMap);
 				dbUtils.insertResources(game.player, insertMap);
 			}
