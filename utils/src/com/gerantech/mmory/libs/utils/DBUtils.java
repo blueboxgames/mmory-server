@@ -226,40 +226,41 @@ public class DBUtils extends UtilBase
             return;
 
         boolean hasRankFields = false;
-        String log = "";
+        String query = "UPDATE resources SET count= CASE";
         for (int i = 0; i < keyLen; i++)
         {
             if( resources.get(keys[i]) == 0 || ResourceType.isBook(keys[i]) )
                 continue;
-
-            try {
-                log += "(" + keys[i] + "," + player.resourceIds.get(keys[i]) + "," + player.resources.get(keys[i]) + ")  ";
-                db.executeUpdate("UPDATE resources SET count = " + player.resources.get(keys[i]) + " WHERE id = " + player.resourceIds.get(keys[i]), new Object[] {});
-            } catch (SQLException e) { e.printStackTrace(); }
-
             if( !hasRankFields )
                 hasRankFields = keys[i] == ResourceType.R2_POINT;
+
+            query += " WHEN type= " + keys[i] + " THEN " + player.resources.get(keys[i]);
         }
+        query += " ELSE count END WHERE player_id= " + player.id;
+
+        try {
+            db.executeUpdate(query, new Object[] {});
+        } catch (SQLException e) { e.printStackTrace(); }
 
         // update ranking table
         if( hasRankFields )
         {
             ConcurrentHashMap<Integer, RankData> users = RankingUtils.getInstance().getUsers();
             RankData rd = new RankData(player.nickName, player.get_point());
-//            log += " map for id:" + player.id + " => point:" + player.get_point();
-            if( users.containsKey(player.id) )
+            query += "\n map for id:" + player.id + " => point:" + player.get_point();
+
+            if( users.containsKey(player.id))
                 users.replace(player.id, rd);
             else
                 users.put(player.id, rd);
         }
-        trace(log);
     }
 
     public void insertResources(Player player, IntIntMap resources)
     {
         int[] keys = resources.keys();
         int keyLen = keys.length;
-        List<Integer> res = new ArrayList<Integer>();
+        List<Integer> res = new ArrayList<>();
         for (int i = 0; i < keyLen; i++)
             if( !ResourceType.isBook(keys[i]) )
                 res.add(keys[i]);
@@ -276,14 +277,12 @@ public class DBUtils extends UtilBase
             query += "('" + player.id + "', '" + res.get(i) + "', '" + player.resources.get(res.get(i)) + "', '" + (ResourceType.isCard(res.get(i))?player.cards.get(res.get(i)).level:0) + "')";
             query += i < keyLen - 1 ? ", " : ";";
         }
-
-        int id = 0;
+        if( query == "INSERT INTO resources (`player_id`, `type`, `count`, `level`) VALUES " )
+            return;
         try{
-            id = Math.toIntExact((long) db.executeInsert(query, new Object[] {}));
+        db.executeInsert(query, new Object[] {});
         } catch (SQLException e) { e.printStackTrace(); }
-        for( int i = 0; i < keyLen; i++ )
-            player.resourceIds.put(res.get(i), id + i);
-        trace(query);
+        //trace(query);
     }
 
     // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-   EXCHANGES  -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -291,7 +290,7 @@ public class DBUtils extends UtilBase
     {
         ISFSArray ret = null;
         try {
-            ret = db.executeQuery("SELECT id, type, num_exchanges, expired_at, outcome, reqs FROM exchanges WHERE player_id=" + playerId + " OR (player_id=10000 AND expired_at > " + now + ")", new Object[]{});
+            ret = db.executeQuery("SELECT type, num_exchanges, expired_at, outcome, reqs FROM exchanges WHERE player_id=" + playerId + " OR player_id=10000", new Object[]{});
         } catch (SQLException e) { e.printStackTrace(); }
         return ret;
     }

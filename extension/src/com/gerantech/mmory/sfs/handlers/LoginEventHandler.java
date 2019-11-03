@@ -287,20 +287,6 @@ try {
 
 		// create exchanges init data
 		ISFSArray exchanges = outData.getSFSArray("exchanges");
-		IntIntMap dbItems = new IntIntMap();
-		long startTime = System.nanoTime();
-		for(int i = 0; i < exchanges.size(); i++)
-		{
-			dbItems.set(exchanges.getSFSObject(i).getInt("type"), exchanges.getSFSObject(i).getInt("id"));
-			System.out.println(exchanges.getSFSObject(i).getInt("id"));
-		}
-		long endTime = System.nanoTime();
-		System.out.println(endTime - startTime);
-
-		for(int i : dbItems.keys())
-		{
-			System.out.println(dbItems.get(i));
-		}
 		
 		// load script
 		if( ScriptEngine.script == null )
@@ -345,13 +331,6 @@ try {
 		game.player.tutorialMode = outData.getInt("tutorialMode");
 		game.player.hasOperations = outData.getBool("hasOperations");
 		game.exchanger.updater = new ExchangeUpdater(game, now);
-
-		game.player.resourceIds = new ConcurrentHashMap<>();
-		for(int i = 0; i < resources.size(); i++)
-		{
-			game.player.resourceIds.put(resources.getSFSObject(i).getInt("type"), resources.getSFSObject(i).getInt("id"));
-			resources.getSFSObject(i).removeElement("id");
-		}
 
 		for(int i = 0; i < exchanges.size(); i++)
 		{
