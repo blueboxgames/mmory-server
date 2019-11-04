@@ -35,8 +35,8 @@ public class DBUtils extends UtilBase
 {
     private final IDBManager db;
     private final Boolean DEBUG_MODE = true;
-    private final String mainDB = ext.getParentZone().getDBManager().getConfig().connectionString.split("/")[3].split("\\?")[0];
-    private final String inactiveDB = mainDB + "_inactive";
+    public final String mainDB = ext.getParentZone().getDBManager().getConfig().connectionString.split("/")[3].split("\\?")[0];
+    public final String inactiveDB = mainDB + "_inactive";
     public DBUtils()
     {
         super();
@@ -88,6 +88,7 @@ public class DBUtils extends UtilBase
                 con.commit();
                 con.setAutoCommit(true);
                 ret = "Cleaned inactive useres before " + timestamp.toString() + " ";
+                trace(ret);
             } catch(SQLException e) {
                 con.rollback();
                 e.printStackTrace();

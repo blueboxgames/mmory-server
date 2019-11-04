@@ -1,6 +1,7 @@
 package com.gerantech.mmory.sfs.administration;
 
 import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.gerantech.mmory.core.Game;
 import com.smartfoxserver.v2.entities.User;
@@ -20,7 +21,7 @@ public class PlayersGetHandler extends BaseClientRequestHandler
 		Game game = (Game) sender.getSession().getProperty("core");
 		if( !game.player.admin )
 			return;
-		String query = "SELECT id, name, password, app_version, sessions_count,  DATE_FORMAT(create_at, '%y-%m-%d  %h:%i:%s') create_at, DATE_FORMAT(last_login, '%y-%m-%d  %h:%i:%s') last_login FROM players WHERE ";
+		String query = "SELECT id, name, password, app_version, sessions_count,  DATE_FORMAT(create_at, '%y-%m-%d  %h:%i:%s') create_at, DATE_FORMAT(last_login, '%y-%m-%d  %h:%i:%s') last_login FROM " + DBUtils.getInstance().inactiveDB  +".players WHERE ";
     	if( params.containsKey("id") )
 			query += "id=" + params.getInt("id");
 		else if( params.containsKey("tag") )
