@@ -58,30 +58,65 @@ public class DBUtils extends UtilBase
             try {
                 con.setAutoCommit(false);
                 Statement statement = con.createStatement();
-                // players
-                List<String> columns = new ArrayList<String>(Arrays.asList("name", "password", "create_at", "app_version", "last_login", "sessions_count"));
-                query = "INSERT INTO " + inactiveDB + ".players SELECT * FROM " + mainDB + ".players " + getOnDuplicateKeyChanges(columns);
-                traceQuery(query);
-                statement.execute(query);
+                List<String> columns = new ArrayList<String>();
                 // ---------- Table Backups ------------
+                // accounts
+                columns = new ArrayList<String>(Arrays.asList("id","player_id","type","social_id","name","image_url","timestamp"));
+                backupTable("accounts", columns, statement);
                 // banneds
                 columns = new ArrayList<String>(Arrays.asList("id", "player_id", "udid", "imei", "message", "mode", "timestamp", "expire_at", "time"));
-                backupPlayersData("banneds", columns, statement);
+                backupTable("banneds", columns, statement);
+                // bugs
+                columns = new ArrayList<String>(Arrays.asList("id","player_id","email","description","status","report_at"));
+                backupTable("bugs", columns, statement);
+                // challenges
+                columns = new ArrayList<String>(Arrays.asList("id","type","start_at","attendees"));
+                backupTable("challenges", columns, statement);
                 // decks
                 columns = new ArrayList<String>(Arrays.asList("player_id","index","deck_index","type"));
-                backupPlayersData("decks", columns, statement);
+                backupTable("decks", columns, statement);
+                // devices
+                columns = new ArrayList<String>(Arrays.asList("player_id","model","udid","imei"));
+                backupTable("devices", columns, statement);
                 // exchanges
                 columns = new ArrayList<String>(Arrays.asList("id","type","player_id","num_exchanges","expired_at","outcome","reqs"));
-                backupPlayersData("exchanges", columns, statement);
+                backupTable("exchanges", columns, statement);
+                // friendship
+                columns = new ArrayList<String>(Arrays.asList("id","inviter_id","invitee_id","invitation_code","has_reward"));
+                backupTable("friendship", columns, statement);
+                // inbox
+                columns = new ArrayList<String>(Arrays.asList("id","type","text","sender","senderId","receiverId","data","read","utc"));
+                backupTable("inbox", columns, statement);
+                // infractions
+                columns = new ArrayList<String>(Arrays.asList("id","reporter","offender","content","lobby","offend_at","report_at","proceed"));
+                backupTable("infractions", columns, statement);
+                // lobbies
+                columns = new ArrayList<String>(Arrays.asList("id","name","bio","emblem","capacity","min_point","privacy","create_at","members","messages"));
+                backupTable("lobbies", columns, statement);
+                // messages
+                columns = new ArrayList<String>(Arrays.asList("id","type","text","senderId","receiverId","data","status","timestamp"));
+                backupTable("messages", columns, statement);
+                // operations
+                columns = new ArrayList<String>(Arrays.asList("index","player_id","score","create_at"));
+                backupTable("operations", columns, statement);
+                // players
+                columns = new ArrayList<String>(Arrays.asList("name", "password", "create_at", "app_version", "last_login", "sessions_count"));
+                backupTable("players", columns, statement);
+                // purchases
+                columns = new ArrayList<String>(Arrays.asList("player_id","id","market","token","consumed","state","time","timestamp","old_res","new_res"));
+                backupTable("purchases", columns, statement);
+                // pushtokens
+                columns = new ArrayList<String>(Arrays.asList("player_id","fcm_token","os_pid","os_token"));
+                backupTable("pushtokens", columns, statement);
                 // quests
                 columns = new ArrayList<String>(Arrays.asList("id","player_id","type","key","step","timestamp"));
-                backupPlayersData("quests", columns, statement);
+                backupTable("quests", columns, statement);
                 // resources
                 columns = new ArrayList<String>(Arrays.asList("type", "count", "level"));            
-                backupPlayersData("resources", columns, statement);
+                backupTable("resources", columns, statement);
                 // userprefs
                 columns = new ArrayList<String>(Arrays.asList("player_id","k","v"));
-                backupPlayersData("userprefs", columns, statement);
+                backupTable("userprefs", columns, statement);
                 query = "DELETE FROM " + mainDB + ".players WHERE id != 10000 AND last_login < \"" + timestamp.toString() + "\"";
                 traceQuery(query);
                 statement.execute(query);
@@ -118,9 +153,6 @@ public class DBUtils extends UtilBase
         columns = new ArrayList<String>(Arrays.asList("name", "password", "create_at", "app_version", "last_login", "sessions_count"));
         String query = "INSERT INTO " + mainDB + ".players SELECT * FROM " + inactiveDB + ".players " + getOnDuplicateKeyChanges(columns);
         try { db.executeInsert(query, new Object[] {}); } catch(SQLException e) {e.printStackTrace(); }
-        // banneds
-        columns = new ArrayList<String>(Arrays.asList("id", "player_id", "udid", "imei", "message", "mode", "timestamp", "expire_at", "time"));
-        recoverInactivePlayerFromTable("banneds", columns, playerId);
         // exchanges
         columns = new ArrayList<String>(Arrays.asList("id","type","player_id","num_exchanges","expired_at","outcome","reqs"));
         recoverInactivePlayerFromTable("exchanges", columns, playerId);
@@ -136,7 +168,7 @@ public class DBUtils extends UtilBase
         return false;
     }
 
-    private void backupPlayersData(String table, List<String> columns, Statement statement) throws SQLException {
+    private void backupTable(String table, List<String> columns, Statement statement) throws SQLException {
         String query = "INSERT INTO " + inactiveDB + "." + table + " SELECT * FROM " + mainDB + "." + table + " " + getOnDuplicateKeyChanges(columns);
         traceQuery(query);
         statement.execute(query);
