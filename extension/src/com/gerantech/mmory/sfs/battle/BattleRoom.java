@@ -89,15 +89,7 @@ public class BattleRoom extends BBGRoom {
 		this.setProperty("registeredPlayers", registeredPlayers);
 
 		int mode = this.getPropertyAsInt("mode");
-		// trace(registeredPlayers.get(0), registeredPlayers.get(1), mode);
-		String mapName = "assets/field-";
-		if (((Game) registeredPlayers.get(0)).appVersion < 2500)
-			mapName = "maps/map-";
-		else if (((Game) registeredPlayers.get(0)).appVersion < 2510)
-			mapName = "assets/map-";
-		trace(registeredPlayers.get(0), registeredPlayers.get(1), mode, mapName);
-		// if( !BattleUtils.getInstance().maps.containsKey(mode) )
-			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/" + mapName + mode + ".json", null, false).text);
+		BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".json", null, false).text);
 
 		Instant instant = Instant.now();
 		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)registeredPlayers.get(0)).appVersion);
