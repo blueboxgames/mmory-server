@@ -53,9 +53,9 @@ public class ExtensionHTTPFacade extends HttpServlet
                     result = myExtension.handleInternalMessage(key, request.getParameter(key));
                     break;
                 case CMD_GET_PLAYER_NAME_BY_IC:
+                case CMD_GET_LOBBY_NAME_BY_ID:
                     response.setContentType("application/json;charset=UTF-8");
                     response.setHeader("Cache-Control", "no-cache");
-                case CMD_GET_LOBBY_NAME_BY_ID:
                     result = "callBackFunc(" + myExtension.handleInternalMessage(key, request.getParameter(key))+ ");";
                     break;
                 case "callback":
