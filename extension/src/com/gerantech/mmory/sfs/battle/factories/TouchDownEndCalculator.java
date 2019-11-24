@@ -37,7 +37,7 @@ public class TouchDownEndCalculator extends EndCalculator
 
     Unit checkUnitPassed()
     {
-        int threshold = 24;
+        int threshold = 4;
         Unit u;
 		@SuppressWarnings("unchecked")
 		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) room.battleField.units.keys();
