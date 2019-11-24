@@ -21,6 +21,7 @@ public class ExtensionHTTPFacade extends HttpServlet
     private final static String CMD_GET_PLAYER_NAME_BY_IC = "getplayernamebyic";
     private final static String CMD_GET_LOBBY_NAME_BY_ID = "getlobbynamebyid";
     private final static String CMD_BAN = "ban";
+    private final static String CMD_CLEAN_INACTIVES = "cleanInactives";
     private final static String CMD_CUSTOM = "custom";
 
     private ISFSExtension myExtension;
@@ -46,13 +47,15 @@ public class ExtensionHTTPFacade extends HttpServlet
                 case CMD_RESET_LOBBIES_ACTIVENESS:
                 case CMD_SERVER_CHECK:
                 case CMD_CUSTOM:
+                case CMD_CLEAN_INACTIVES:
                 case CMD_BAN:
+                    response.setContentType("application/json;charset=UTF-8");
                     result = myExtension.handleInternalMessage(key, request.getParameter(key));
                     break;
                 case CMD_GET_PLAYER_NAME_BY_IC:
-                case CMD_GET_LOBBY_NAME_BY_ID:
                     response.setContentType("application/json;charset=UTF-8");
                     response.setHeader("Cache-Control", "no-cache");
+                case CMD_GET_LOBBY_NAME_BY_ID:
                     result = "callBackFunc(" + myExtension.handleInternalMessage(key, request.getParameter(key))+ ");";
                     break;
                 case "callback":

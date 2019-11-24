@@ -15,6 +15,7 @@ public class UtilBase {
             // load all settings
             ext.getParentZone().setProperty("startTime", System.currentTimeMillis());
             //RankingUtils.getInstance().fillStatistics();
+            DBUtils.getInstance().cleanInactiveUsers("720");
             RankingUtils.getInstance().fillActives();
             LobbyUtils.getInstance().loadAll();
             ChallengeUtils.getInstance().loadAll();

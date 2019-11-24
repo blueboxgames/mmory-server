@@ -97,7 +97,7 @@ public class RankingUtils extends UtilBase {
 		ConcurrentHashMap<Integer, RankData> users = new ConcurrentHashMap<>();
 
 		// fill top players
-		String query = "SELECT players.id, players.name, resources.count FROM players INNER JOIN resources ON players.id = resources.player_id WHERE resources.type = "
+		String query = "SELECT players.id, players.name, resources.count FROM " + DBUtils.getInstance().inactiveDB  +".players INNER JOIN " + DBUtils.getInstance().inactiveDB  +".resources ON players.id = resources.player_id WHERE resources.type = "
 				+ ResourceType.R2_POINT + " AND resources.count > 0";
 		ISFSArray dbResult = null;
 		try {
