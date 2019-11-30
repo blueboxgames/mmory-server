@@ -1,14 +1,13 @@
 package com.gerantech.mmory.sfs.administration;
 
-import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.libs.utils.DBUtils;
-import com.gerantech.mmory.sfs.utils.PasswordGenerator;
+import java.sql.SQLException;
+
 import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
-
-import java.sql.SQLException;
 
 /**
  * @author ManJav

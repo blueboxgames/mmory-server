@@ -1,9 +1,5 @@
 package com.gerantech.mmory.sfs.challenges.handlers;
-import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
-import com.gerantech.mmory.libs.utils.ChallengeUtils;
-import com.gerantech.mmory.libs.utils.ExchangeUtils;
-import com.gerantech.mmory.libs.data.ChallengeSFS;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.ExchangeType;
 import com.gerantech.mmory.core.constants.MessageTypes;

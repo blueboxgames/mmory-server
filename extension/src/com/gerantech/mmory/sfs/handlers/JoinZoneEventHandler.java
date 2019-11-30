@@ -1,8 +1,14 @@
 package com.gerantech.mmory.sfs.handlers;
 
-import com.gerantech.mmory.libs.utils.LobbyUtils;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.libs.utils.DBUtils;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.buddylist.BuddyList;
 import com.smartfoxserver.v2.buddylist.SFSBuddyVariable;
@@ -15,11 +21,6 @@ import com.smartfoxserver.v2.exceptions.SFSBuddyListException;
 import com.smartfoxserver.v2.exceptions.SFSException;
 import com.smartfoxserver.v2.exceptions.SFSJoinRoomException;
 import com.smartfoxserver.v2.extensions.BaseServerEventHandler;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Instant;
 
 /**
  * @author ManJav

@@ -1,11 +1,12 @@
 package com.gerantech.mmory.libs.utils;
 
-import com.gerantech.mmory.libs.data.RankData;
-import com.gerantech.mmory.core.constants.ResourceType;
-import com.smartfoxserver.v2.entities.data.ISFSArray;
-
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.gerantech.mmory.libs.data.RankData;
+import com.smartfoxserver.v2.entities.data.ISFSArray;
+
+import jdk.management.resource.ResourceType;
 
 /**
  * Created by ManJav on 7/22/2017.

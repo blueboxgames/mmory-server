@@ -1,14 +1,17 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
-import com.gerantech.mmory.sfs.utils.PasswordGenerator;
-import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import java.sql.SQLException;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.socials.Lobby;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.gerantech.mmory.libs.utils.OneSignalUtils;
+import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.smartfoxserver.v2.api.ISFSBuddyApi;
 import com.smartfoxserver.v2.buddylist.Buddy;
 import com.smartfoxserver.v2.buddylist.BuddyList;
@@ -17,8 +20,6 @@ import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.exceptions.SFSBuddyListException;
-
-import java.sql.SQLException;
 
 /**
  * Created by Babak on 8/19/2017.
