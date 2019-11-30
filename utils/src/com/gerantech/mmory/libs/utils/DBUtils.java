@@ -191,7 +191,7 @@ public class DBUtils extends UtilBase
     {
         SFSArray ret = new SFSArray();
         try {
-            ret = (SFSArray) db.executeQuery("SELECT id, type, count, level FROM resources WHERE player_id = " + playerId, new Object[] {});
+            ret = (SFSArray) db.executeQuery("SELECT id, type, count, level FROM " + liveDB + ".resources WHERE player_id = " + playerId, new Object[] {});
         } catch (SQLException e) { e.printStackTrace(); }
         return ret;
     }
@@ -204,7 +204,7 @@ public class DBUtils extends UtilBase
             return;
 
         boolean hasRankFields = false;
-        String query = "UPDATE resources SET count= CASE";
+        String query = "UPDATE " + liveDB + ".resources SET count= CASE";
         for (int i = 0; i < keyLen; i++)
         {
             if( resources.get(keys[i]) == 0 || ResourceType.isBook(keys[i]) )
@@ -247,7 +247,7 @@ public class DBUtils extends UtilBase
         if( keyLen == 0 )
             return;
 
-        String query = "INSERT INTO resources (`player_id`, `type`, `count`, `level`) VALUES ";
+        String query = "INSERT INTO " + liveDB + ".resources (`player_id`, `type`, `count`, `level`) VALUES ";
         for (int i = 0; i < keyLen; i++)
         {
             if( ResourceType.isBook(res.get(i)) )
@@ -255,7 +255,7 @@ public class DBUtils extends UtilBase
             query += "('" + player.id + "', '" + res.get(i) + "', '" + player.resources.get(res.get(i)) + "', '" + (ResourceType.isCard(res.get(i))?player.cards.get(res.get(i)).level:0) + "')";
             query += i < keyLen - 1 ? ", " : ";";
         }
-        if( query == "INSERT INTO resources (`player_id`, `type`, `count`, `level`) VALUES " )
+        if( query == "INSERT INTO " + liveDB + ".resources (`player_id`, `type`, `count`, `level`) VALUES " )
             return;
         try{
         db.executeInsert(query, new Object[] {});
@@ -268,13 +268,13 @@ public class DBUtils extends UtilBase
     {
         ISFSArray ret = null;
         try {
-            ret = db.executeQuery("SELECT type, num_exchanges, expired_at, outcome, reqs FROM exchanges WHERE player_id=" + playerId + " OR player_id=10000", new Object[]{});
+            ret = db.executeQuery("SELECT type, num_exchanges, expired_at, outcome, reqs FROM " + liveDB + ".exchanges WHERE player_id=" + playerId + " OR player_id=10000", new Object[]{});
         } catch (SQLException e) { e.printStackTrace(); }
         return ret;
     }
     public void updateExchange(int type, int playerId, int expireAt, int numExchanges, String outcomesStr, String reqsStr)
     {
-        String query = "SELECT _func_exchanges(" + type + "," + playerId + "," + numExchanges + "," + expireAt + ",'" + outcomesStr + "', '" + reqsStr + "')";
+        String query = "SELECT " + liveDB + "._func_exchanges(" + type + "," + playerId + "," + numExchanges + "," + expireAt + ",'" + outcomesStr + "', '" + reqsStr + "')";
         try {
             db.executeQuery(query, new Object[] {});
         } catch (SQLException e) { e.printStackTrace(); }
@@ -285,7 +285,7 @@ public class DBUtils extends UtilBase
     {
         ISFSArray ret = null;
         try {
-            ret = db.executeQuery("SELECT `index`,`score` FROM operations WHERE player_id=" + playerId, new Object[]{});
+            ret = db.executeQuery("SELECT `index`,`score` FROM " + liveDB + ".operations WHERE player_id=" + playerId, new Object[]{});
         } catch (SQLException e) { e.printStackTrace(); }
         return ret;
     }
@@ -293,9 +293,9 @@ public class DBUtils extends UtilBase
     {
         try {
             if( player.operations.exists( index ) )
-                db.executeUpdate("UPDATE `operations` SET `score`='" + score + "' WHERE `index`=" + index + " AND `player_id`=" + player.id + ";", new Object[] {});
+                db.executeUpdate("UPDATE " + liveDB + ".`operations` SET `score`='" + score + "' WHERE `index`=" + index + " AND `player_id`=" + player.id + ";", new Object[] {});
             else
-                db.executeInsert("INSERT INTO operations (`index`, `player_id`, `score`) VALUES ('" + index + "', '" + player.id + "', '" + score + "');", new Object[] {});
+                db.executeInsert("INSERT INTO " + liveDB + ".operations (`index`, `player_id`, `score`) VALUES ('" + index + "', '" + player.id + "', '" + score + "');", new Object[] {});
         } catch (Exception e) { e.printStackTrace(); }
     }
 
@@ -314,7 +314,7 @@ public class DBUtils extends UtilBase
         }
 
 
-        String query = "INSERT INTO decks (`player_id`, `deck_index`, `index`, `type`) VALUES ";
+        String query = "INSERT INTO " + liveDB + ".decks (`player_id`, `deck_index`, `index`, `type`) VALUES ";
         for(int i=0; i<decks.size(); i++)
         {
             query += "(" + playerId + ", " + decks.getSFSObject(i).getInt("deck_index") + ", " + decks.getSFSObject(i).getInt("index") + ",  " + decks.getSFSObject(i).getInt("type") + ")" ;
@@ -331,7 +331,7 @@ public class DBUtils extends UtilBase
     {
         ISFSArray ret = null;
         try {
-            ret = db.executeQuery("SELECT * FROM decks WHERE player_id = " + playerId, new Object[] {});
+            ret = db.executeQuery("SELECT * FROM " + liveDB + ".decks WHERE player_id = " + playerId, new Object[] {});
         } catch (SQLException e) { e.printStackTrace(); }
         return ret;
     }
@@ -340,10 +340,9 @@ public class DBUtils extends UtilBase
     {
         player.decks.get(deckIndex).set(index, type);
         try {
-            String query = "UPDATE decks SET decks.`type` = "+ type +" WHERE " +
-                    "NOT EXISTS (SELECT 1 FROM (" +
-                    "SELECT 1 FROM decks WHERE decks.player_id = "+ player.id +" AND decks.deck_index = "+ deckIndex +" AND decks.`type` = "+ type +") as c1)" +
-                    "AND decks.player_id = "+ player.id +" AND decks.deck_index = "+ deckIndex +" AND decks.`index` = " + index;
+            String query = "UPDATE " + liveDB + ".decks SET `type` = "+ type +" WHERE " +
+                    "NOT EXISTS (SELECT 1 FROM ( SELECT 1 FROM " + liveDB + ".decks WHERE " + liveDB + ".decks.player_id = "+ player.id +" AND " + liveDB + ".decks.deck_index = "+ deckIndex +" AND " + liveDB + ".decks.`type` = "+ type +") as c1)" + " AND " +
+                    "player_id = "+ player.id +" AND deck_index = "+ deckIndex +" AND `index` = " + index;
 
             trace(query);
             db.executeUpdate(query, new Object[]{});
@@ -356,7 +355,7 @@ public class DBUtils extends UtilBase
     // _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-   OTHERS  -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
     public void upgradeBuilding(Player player, int type, int level)
     {
-        String query = "UPDATE `resources` SET `level`='" + level + "' WHERE `type`=" + type + " AND `player_id`=" + player.id + ";";
+        String query = "UPDATE " + liveDB + ".`resources` SET `level`='" + level + "' WHERE `type`=" + type + " AND `player_id`=" + player.id + ";";
         try {
         db.executeUpdate(query, new Object[] {});
         } catch (Exception e) { e.printStackTrace(); }
@@ -377,7 +376,7 @@ public class DBUtils extends UtilBase
     {
         ISFSArray ret = null;
         try {
-            ret = db.executeQuery("SELECT k,v FROM userprefs WHERE player_id=" + id, new Object[]{});
+            ret = db.executeQuery("SELECT k,v FROM " + liveDB + ".userprefs WHERE player_id=" + id, new Object[]{});
         } catch (SQLException e) { e.printStackTrace(); }
 
         for( int i=0; i < ret.size(); i ++ )
@@ -400,7 +399,7 @@ public class DBUtils extends UtilBase
     {
         String result = "";
         try {
-            db.executeUpdate("UPDATE `exchanges` SET `num_exchanges`= 0 WHERE `type`=29 AND `num_exchanges` != 0;", new Object[] {});
+            db.executeUpdate("UPDATE " + liveDB + ".`exchanges` SET `num_exchanges`= 0 WHERE `type`=29 AND `num_exchanges` != 0;", new Object[] {});
         } catch (SQLException e) { return "Query failed"; }
 
         // reset disconnected in-battle players
