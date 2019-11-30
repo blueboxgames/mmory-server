@@ -78,7 +78,7 @@ public class ExchangeUtils extends UtilBase
         // add new card into selected deck
         if( deckLen < game.player.getSelectedDeck().keys().length )
         {
-            String query = "INSERT INTO decks (`player_id`, `deck_index`, `index`, `type`) VALUES (" + game.player.id + ", " + game.player.selectedDeckIndex + ", " + deckLen + ",  " + game.player.getSelectedDeck().get(deckLen) + ");";
+            String query = "INSERT INTO " + DBUtils.getInstance().liveDB + ".decks (`player_id`, `deck_index`, `index`, `type`) VALUES (" + game.player.id + ", " + game.player.selectedDeckIndex + ", " + deckLen + ",  " + game.player.getSelectedDeck().get(deckLen) + ");";
             try {
             ext.getParentZone().getDBManager().executeInsert(query, new Object[]{});
             } catch (Exception e) {  e.printStackTrace(); return MessageTypes.RESPONSE_UNKNOWN_ERROR; }
