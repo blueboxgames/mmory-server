@@ -38,7 +38,6 @@ public class RoadRewardHandler extends BBGClientRequestHandler
 		ISFSArray outcomes = ExchangeUtils.getInstance().getRewards(mapChangeCallback);
 		if( outcomes.size() > 0 )
 			params.putSFSArray("outcomes", outcomes);
-		trace(params.getDump());
 		send(Commands.COLLECT_ROAD_REWARD, response, params, sender);
 	}
 }
