@@ -35,8 +35,8 @@ public class DBUtils extends UtilBase
 {
     private final IDBManager db;
     private final Boolean DEBUG_MODE = true;
-    public final String mainDB = ext.getParentZone().getDBManager().getConfig().connectionString.split("/")[3].split("\\?")[0];
-    public final String inactiveDB = mainDB + "_inactive";
+    private final String _DB = ext.getParentZone().getDBManager().getConfig().connectionString.split("/")[3].split("\\?")[0];
+    public final String liveDB = _DB + "_live";
     public DBUtils()
     {
         super();
