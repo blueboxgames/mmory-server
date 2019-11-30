@@ -195,7 +195,7 @@ try {
 		try { res = dbManager.executeQuery("SELECT name, password, sessions_count FROM players WHERE id=" + id, new Object[]{});
 			if( res.size() == 0 )
 			{
-				DBUtils.getInstance().recoverFromInactives(id);
+				DBUtils.getInstance().restore(id);
 				res = dbManager.executeQuery("SELECT name, password, sessions_count FROM players WHERE id=" + id, new Object[]{});
 			}
 		} catch(SQLException e) { e.printStackTrace(); }

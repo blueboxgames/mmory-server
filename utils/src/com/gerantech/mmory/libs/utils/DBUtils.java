@@ -95,25 +95,13 @@ public class DBUtils extends UtilBase
         return ret;
     }
 
-    public Boolean recoverFromInactives(int playerId) {
-        List<String> columns = new ArrayList<String>();
-        // players
-        columns = new ArrayList<String>(Arrays.asList("name", "password", "create_at", "app_version", "last_login", "sessions_count"));
-        String query = "INSERT INTO " + mainDB + ".players SELECT * FROM " + inactiveDB + ".players " + getOnDuplicateKeyChanges(columns);
-        try { db.executeInsert(query, new Object[] {}); } catch(SQLException e) {e.printStackTrace(); }
-        // exchanges
-        columns = new ArrayList<String>(Arrays.asList("id","type","player_id","num_exchanges","expired_at","outcome","reqs"));
-        recoverInactivePlayerFromTable("exchanges", columns, playerId);
-        // quests
-        columns = new ArrayList<String>(Arrays.asList("id","player_id","type","key","step","timestamp"));
-        recoverInactivePlayerFromTable("quests", columns, playerId);
-        // resources
-        columns = new ArrayList<String>(Arrays.asList("type", "count", "level"));            
-        recoverInactivePlayerFromTable("resources", columns, playerId);
-        // userprefs
-        columns = new ArrayList<String>(Arrays.asList("player_id","k","v"));
-        recoverInactivePlayerFromTable("userprefs", columns, playerId);
-        return false;
+    public void restore(int playerId) {
+        restorePlayer(playerId, "id",          "players",      new String[]{"name","password","create_at","app_version","last_login","sessions_count"});
+        restorePlayer(playerId, "player_id",   "decks",        new String[]{"player_id","type","index","deck_index"});
+        restorePlayer(playerId, "player_id",   "exchanges",    new String[]{"player_id","type","num_exchanges","expired_at","outcome","reqs"});
+        restorePlayer(playerId, "player_id",   "quests",       new String[]{"player_id","type","key","step","timestamp"});
+        restorePlayer(playerId, "player_id",   "resources",    new String[]{"player_id","type","count","level"});
+        restorePlayer(playerId, "player_id",   "userprefs",    new String[]{"player_id","k","v"});
     }
 
     private void backupTable(Statement statement, String table, String[] columns) throws SQLException {
@@ -122,13 +110,8 @@ public class DBUtils extends UtilBase
         statement.execute(query);
     }
 
-    private void recoverInactivePlayerFromTable(String table, List<String> columns, int playerId)
-    {
-        String query =  "INSERT INTO " + mainDB + "." + table +
-                        " SELECT " + inactiveDB + "." + table + ".* FROM " + inactiveDB +
-                        "." + table + " INNER JOIN " + inactiveDB + ".players ON players.id=" + table + ".player_id " +
-                        " WHERE player_id=" + playerId +
-                        " " + getOnDuplicateKeyChanges(columns);
+    private void restorePlayer(int playerId, String idName, String table, String[] columns) {
+        String query =  "INSERT INTO " + liveDB + "." + table + " SELECT * FROM " + table + " WHERE " + idName + "=" + playerId + getOnDuplicateKeyChanges(columns);
         traceQuery(query);
         try {
             db.executeInsert(query, new Object[]{});
