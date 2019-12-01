@@ -110,16 +110,18 @@ try {
 		{
 			// retrieve user that saved account before
 			try {
-				ISFSArray res = dbManager.executeQuery("SELECT player_id FROM devices WHERE udid='" + deviceUDID + "' AND model='" + deviceModel + deviceIMEI + "'", new Object[]{});
-				if ( res.size() > 0 )
+				ISFSArray devices = dbManager.executeQuery("SELECT player_id FROM devices WHERE udid='" + deviceUDID + "' AND model='" + deviceModel + deviceIMEI + "'", new Object[]{});
+				if( devices.size() > 0 )
 				{
-					ISFSArray res2 = dbManager.executeQuery("SELECT id, name, password FROM players WHERE id=" + res.getSFSObject(0).getInt("player_id"), new Object[]{});
-					if ( res2.size() > 0 )
+					ISFSArray players = dbManager.executeQuery("SELECT id, name, password FROM " + DBUtils.getInstance().liveDB + ".players WHERE id=" + devices.getSFSObject(0).getInt("player_id"), new Object[]{});
+					if( players.size() < 1 )
+						players = dbManager.executeQuery("SELECT id, name, password FROM players WHERE id=" + devices.getSFSObject(0).getInt("player_id"), new Object[]{});
+					if ( players.size() > 0 )
 					{
 						outData.putBool("exists", true);
-						outData.putInt("id", res2.getSFSObject(0).getInt("id"));
-						outData.putText("name", res2.getSFSObject(0).getText("name"));
-						outData.putText("password", res2.getSFSObject(0).getText("password"));
+						outData.putInt("id", players.getSFSObject(0).getInt("id"));
+						outData.putText("name", players.getSFSObject(0).getText("name"));
+						outData.putText("password", players.getSFSObject(0).getText("password"));
 						return;
 					}
 				}
@@ -128,17 +130,17 @@ try {
 
 		password = PasswordGenerator.generate().toString();
 
-		// Insert to DataBase
+		// Insert into database
 		int playerId = 0;
 		try {
-			playerId = Math.toIntExact((Long)dbManager.executeInsert("INSERT INTO players (name, password) VALUES ('guest', '"+password+"');", new Object[] {}));
+			playerId = Math.toIntExact((Long)dbManager.executeInsert("INSERT INTO " + DBUtils.getInstance().liveDB + ".players (name, password) VALUES ('guest', '" + password + "');", new Object[] {}));
 			outData.putUtfString(SFSConstants.NEW_LOGIN_NAME, playerId + "");
 		} catch (SQLException e) { e.printStackTrace(); }
 
 		// _-_-_-_-_-_-_-_-_-_-_-_-_-_-_- INSERT INITIAL RESOURCES -_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-		// get initial user resources
+		// Get initial user resources
 		SFSArray resources = new SFSArray();
-		for (int i : loginData.resources.keys())
+		for( int i : loginData.resources.keys() )
 		{
 			SFSObject so = new SFSObject();
 
