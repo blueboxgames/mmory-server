@@ -198,7 +198,7 @@ try {
 			if( res.size() == 0 )
 			{
 				DBUtils.getInstance().restore(id);
-				res = dbManager.executeQuery("SELECT name, password, sessions_count FROM players WHERE id=" + id, new Object[]{});
+				res = dbManager.executeQuery("SELECT name, password, sessions_count FROM " + DBUtils.getInstance().liveDB + ".players WHERE id=" + id, new Object[]{});
 			}
 		} catch(SQLException e) { e.printStackTrace(); }
 
