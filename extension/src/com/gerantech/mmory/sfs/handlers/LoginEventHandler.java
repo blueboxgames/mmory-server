@@ -220,7 +220,7 @@ try {
 		// outData.putInt("lastLogin", Math.toIntExact(userData.getLong("last_login")/ 1000));
 		outData.putInt("sessionsCount", userData.getInt("sessions_count"));
 		outData.putSFSArray("resources", dbUtils.getResources(id));
-		outData.putSFSArray("operations", dbUtils.getOperations(id));
+		outData.putSFSArray("operations", new SFSArray());
 		outData.putSFSArray("exchanges", dbUtils.getExchanges(id, (int)Instant.now().getEpochSecond()));
 		outData.putSFSArray("quests", new SFSArray());
 		outData.putSFSArray("prefs", dbUtils.getPrefs(id, inData.getInt("appver")));
