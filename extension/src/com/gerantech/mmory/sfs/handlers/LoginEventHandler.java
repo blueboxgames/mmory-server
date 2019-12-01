@@ -149,7 +149,7 @@ try {
 			resources.addSFSObject( so );
 		}
 
-		String query = "INSERT INTO resources (`player_id`, `type`, `count`, `level`) VALUES ";
+		String query = "INSERT INTO " + DBUtils.getInstance().liveDB + ".resources (`player_id`, `type`, `count`, `level`) VALUES ";
 		for(int i=0; i<resources.size(); i++)
 		{
 			query += "('" + playerId + "', '" + resources.getSFSObject(i).getInt("type") + "', '" + resources.getSFSObject(i).getInt("count") + "', '" + resources.getSFSObject(i).getInt("level") + "')" ;
@@ -192,7 +192,7 @@ try {
 
 		int id = Integer.parseInt(name);
 		ISFSArray res = null;
-		try { res = dbManager.executeQuery("SELECT name, password, sessions_count FROM players WHERE id=" + id, new Object[]{});
+		try { res = dbManager.executeQuery("SELECT name, password, sessions_count FROM " + DBUtils.getInstance().liveDB + ".players WHERE id=" + id, new Object[]{});
 			if( res.size() == 0 )
 			{
 				DBUtils.getInstance().restore(id);

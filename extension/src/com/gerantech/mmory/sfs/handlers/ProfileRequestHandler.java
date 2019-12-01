@@ -25,7 +25,7 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 		int playerId = params.getInt("id");
 
 		//  -=-=-=-=-=-=-=-=-  add resources data  -=-=-=-=-=-=-=-=-
-		String query = "SELECT type, count, level FROM resources WHERE player_id = " + playerId + (params.containsKey("am") ? ";" : " AND (type<13);") ;
+		String query = "SELECT type, count, level FROM " + DBUtils.getInstance().liveDB + ".resources WHERE player_id = " + playerId + (params.containsKey("am") ? ";" : " AND (type<13);") ;
 		try {
 			params.putSFSArray("resources", dbManager.executeQuery(query, new Object[]{}));
 		} catch (SQLException e) { e.printStackTrace(); }
@@ -56,7 +56,7 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 
 		//  -=-=-=-=-=-=-=-=-  add player deck  -=-=-=-=-=-=-=-=-
 		try {
-			params.putSFSArray("decks", dbManager.executeQuery("SELECT decks.`type`, resources.`level` FROM decks INNER JOIN resources ON decks.player_id = resources.player_id AND decks.`type` = resources.`type` WHERE decks.player_id = "+ playerId +" AND decks.deck_index = 0", new Object[]{}));
+			params.putSFSArray("decks", dbManager.executeQuery("SELECT " + DBUtils.getInstance().liveDB + ".decks.`type`, " + DBUtils.getInstance().liveDB + ".resources.`level` FROM " + DBUtils.getInstance().liveDB + ".decks INNER JOIN " + DBUtils.getInstance().liveDB + ".resources ON " + DBUtils.getInstance().liveDB + ".decks.player_id = " + DBUtils.getInstance().liveDB + ".resources.player_id AND decks.`type` = " + DBUtils.getInstance().liveDB + ".resources.`type` WHERE " + DBUtils.getInstance().liveDB + ".decks.player_id = "+ playerId +" AND " + DBUtils.getInstance().liveDB + ".decks.deck_index = 0", new Object[]{}));
 		} catch (SQLException e) { trace(e.getMessage()); }
 
 

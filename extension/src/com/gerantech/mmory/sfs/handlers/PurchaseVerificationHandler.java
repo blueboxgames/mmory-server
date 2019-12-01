@@ -197,7 +197,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		ISFSArray res = null;
 		try {
 			res = getParentExtension().getParentZone().getDBManager().executeQuery(
-					"SELECT count From resources WHERE player_id = " + playerID + " AND type = 1003", new Object[] {});
+					"SELECT count From " + DBUtils.getInstance().liveDB + ".resources WHERE player_id = " + playerID + " AND type = 1003", new Object[] {});
 		} catch (SQLException e) { e.printStackTrace(); }
 
 		if (res != null && res.size() > 0)
