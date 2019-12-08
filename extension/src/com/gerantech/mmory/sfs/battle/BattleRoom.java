@@ -202,6 +202,7 @@ public class BattleRoom extends BBGRoom {
 			{
 				Card card = this.battleField.games.__get(side).player.cards.get(type);
 				units.addSFSObject(getSFSUnit(type, id, side, card.level, x, y));
+				params.putDouble("time", time);
 				params.putSFSArray("units", units);
 				send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
 				return id;
