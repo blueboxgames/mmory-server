@@ -25,20 +25,30 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 		int playerId = params.getInt("id");
 
 		//  -=-=-=-=-=-=-=-=-  add resources data  -=-=-=-=-=-=-=-=-
-		String query = "SELECT type, count, level FROM " + DBUtils.getInstance().liveDB + ".resources WHERE player_id = " + playerId + (params.containsKey("am") ? ";" : " AND (type<13);") ;
+		String query = "SELECT type, count, level FROM " + DBUtils.getInstance().liveDB + ".resources WHERE player_id = " + playerId + (params.containsKey("am") ? ";" : " AND (type<13);");
+		ISFSArray resources = null;
+		boolean isOld = false;
 		try {
-			params.putSFSArray("resources", dbManager.executeQuery(query, new Object[]{}));
+			resources = dbManager.executeQuery(query, new Object[]{});
+			isOld = resources.size() < 1;
+			if( isOld )
+			{
+				query = "SELECT type, count, level FROM resources WHERE player_id = " + playerId + (params.containsKey("am") ? ";" : " AND (type<13);");
+				resources = dbManager.executeQuery(query, new Object[]{});
+			}
 		} catch (SQLException e) { e.printStackTrace(); }
+		params.putSFSArray("resources", resources);
+		String liveDB = isOld ? "" : (DBUtils.getInstance().liveDB + ".");
 
 		//  -=-=-=-=-=-=-=-=-  add player data  -=-=-=-=-=-=-=-=-
 		if( params.containsKey("pd") )
 		{
-			query = "SELECT * FROM players WHERE id=" + playerId + " Limit 1;";
-			ISFSArray dataArray = null;
+			query = "SELECT * FROM " + liveDB + "players WHERE id=" + playerId + " Limit 1;";
+			ISFSArray players = null;
 			try {
-				dataArray = dbManager.executeQuery(query, new Object[]{});
+				players = dbManager.executeQuery(query, new Object[]{});
 			} catch (SQLException e) { e.printStackTrace(); }
-			params.putSFSObject("pd", dataArray.getSFSObject(0));
+			params.putSFSObject("pd", players.getSFSObject(0));
 		}
 
 		//  -=-=-=-=-=-=-=-=-  add lobby data  -=-=-=-=-=-=-=-=-
@@ -55,14 +65,14 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 		params.putText("tag", PasswordGenerator.getInvitationCode(playerId));
 
 		//  -=-=-=-=-=-=-=-=-  add player deck  -=-=-=-=-=-=-=-=-
+		query = "SELECT " + liveDB + "decks.`type`, " + liveDB + "resources.`level` FROM " + liveDB + "decks INNER JOIN " + 
+		liveDB + "resources ON " + liveDB + "decks.player_id = " + liveDB + "resources.player_id AND decks.`type` = " + liveDB + "resources.`type` WHERE " + 
+		liveDB + "decks.player_id = " + playerId + " AND " + liveDB + "decks.deck_index = 0";
 		try {
-			params.putSFSArray("decks", dbManager.executeQuery("SELECT " + DBUtils.getInstance().liveDB + ".decks.`type`, " + DBUtils.getInstance().liveDB + ".resources.`level` FROM " + DBUtils.getInstance().liveDB + ".decks INNER JOIN " + DBUtils.getInstance().liveDB + ".resources ON " + DBUtils.getInstance().liveDB + ".decks.player_id = " + DBUtils.getInstance().liveDB + ".resources.player_id AND decks.`type` = " + DBUtils.getInstance().liveDB + ".resources.`type` WHERE " + DBUtils.getInstance().liveDB + ".decks.player_id = "+ playerId +" AND " + DBUtils.getInstance().liveDB + ".decks.deck_index = 0", new Object[]{}));
+			params.putSFSArray("decks", dbManager.executeQuery(query, new Object[]{}));
 		} catch (SQLException e) { trace(e.getMessage()); }
-
-
-
 
 		//trace(params.getDump());
 		send(Commands.PROFILE, params, sender);
-    }
+	}
 }
