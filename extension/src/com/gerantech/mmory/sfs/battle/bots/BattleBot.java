@@ -336,6 +336,9 @@ public class BattleBot
         if( defaultIndex  != 0 )
             defaultIndex = 0;
 
+        // Ceil the x and y before passing to summon.
+        x = Math.ceil(x);
+        y = Math.ceil(y);
         
         Point2 summonPoint = mirrorSummon(x,y,cardType);
         if( CardTypes.isSpell(cardType) )
