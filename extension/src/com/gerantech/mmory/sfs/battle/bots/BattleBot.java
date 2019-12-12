@@ -26,7 +26,7 @@ public class BattleBot
     /** Time between each summon that bot commits. */
     static final private int SUMMON_DELAY = 1060;
     /** Debug flag. */
-    static final private boolean DEBUG_MODE = false;
+    // static final private boolean DEBUG_MODE = false;
     /** Middle summon X position threshold. */
     static final private double SUMMON_X_THRESHOLD = 200;
     /** Know the player bot is playing with. */
@@ -61,6 +61,38 @@ public class BattleBot
     // Noob counter should be found using battlefield difficauly.
     // NoobCounter = ABS( log(difficauly+1) - 3 )
     private double noobCounter;
+
+    /**--------- Logging ---------*/
+    /** Enable or disable logging. */
+    static final private boolean LOG_ENABLED = false;
+    /** Logs general information about bot. */
+    static final private int LOG_GENERAL = 0x1;
+    /** Logs selections of bot and it's card decision. */
+    static final private int LOG_TYPESELECT = 0x10;
+    /** Logs everything. */
+    static final private int LOG_VERBOSE = 0x1000000;
+    /** Stores log flags */
+    private int logFlags = 0x0;
+    /** Log buffer */
+    private String logBuffer = "";
+    private void flushLogBuffer()
+    {
+        this.logBuffer = "";
+    }
+    /** Log flag getter. */
+    private boolean getLogFlag(int flag)
+    {
+        return (this.logFlags &= flag) == flag ? true : false;
+    }
+    /** Log flag setter. */
+    private void setFlag(int flag, boolean isTrue)
+    {
+        if( isTrue )
+            this.logFlags |= flag;
+        else
+            this.logFlags ^= flag;
+    }
+
     /**
      * A trainable bot to play instead of player.
      * @param battleRoom
@@ -79,7 +111,7 @@ public class BattleBot
         this.speedCoefficent = (double) scriptRef.__get(4);
         this.battleRoom = battleRoom;
         this.battleField = battleRoom.battleField;
-        this.noobCounter = Math.abs( Math.log( (double) battleField.difficulty ) - 3 );
+        this.noobCounter = Math.log( Math.abs( (double) battleField.difficulty - 3 ) );
         this.sidePreference = headOrTail();
         this.shouldPlayRandom = 1 - ( battleField.difficulty * 0.5 ) < Math.random();
 
@@ -87,7 +119,24 @@ public class BattleBot
         this.chatParams.putDouble("ready", battleField.now + 15000);
 
         this.player = battleField.games.__get(0).player;
-        this.trace("p-point:" + player.getResource(ResourceType.R2_POINT), "b-point:"+ battleField.games.__get(1).player.getResource(ResourceType.R2_POINT), " winRate:" + player.getResource(ResourceType.R16_WIN_RATE), "difficulty:" + battleField.difficulty, "noobCounter:" + noobCounter, "noobiness:" + noobCounter*SUMMON_DELAY);
+
+        // Set log flags
+        this.setFlag(LOG_GENERAL, true);
+        this.setFlag(LOG_TYPESELECT, false);
+        this.setFlag(LOG_VERBOSE, true);
+
+        if( getLogFlag(LOG_GENERAL) )
+        {
+            this.logBuffer += "General\n---------------\n";
+            this.logBuffer += "Player Points: " + player.getResource(ResourceType.R2_POINT) + "\n";
+            this.logBuffer += "Bot Points: " + battleField.games.__get(1).player.getResource(ResourceType.R2_POINT) + "\n";
+            this.logBuffer += "Win-rate: " + player.getResource(ResourceType.R16_WIN_RATE) + "\n";
+            this.logBuffer += "Difficulty: " + battleField.difficulty + "\n";
+            this.logBuffer += "noobCounter: " + noobCounter + "\n";
+
+            this.trace(this.logBuffer);
+            this.flushLogBuffer();
+        }
     }
 
     public void reset()
@@ -97,8 +146,29 @@ public class BattleBot
 
     public void update()
     {
-        if( battleField.state < BattleField.STATE_2_STARTED && (player.get_battleswins() < 3 || Math.random() < 0.3) )
+        /** Don't summon if battle is not started. */
+        if( battleField.state < BattleField.STATE_2_STARTED )
+        {
+            // if( this.logBuffer != "" && getLogFlag(LOG_VERBOSE) )
+            // {
+            //     this.logBuffer += "Bot\n---------------\n";
+            //     this.logBuffer += "battle not started.\n";
+            // }
             return;
+        }
+        /** Don't summon if mode is not 1 and dice roll says not to */
+        else if( this.battleField.field.mode != 1 && (player.get_battleswins() < 3 || Math.random() < 0.3) )
+        {
+            // if( this.logBuffer != "" && getLogFlag(LOG_VERBOSE) )
+            // {
+            //     this.logBuffer += "Bot\n---------------\n";
+            //     this.logBuffer += "battle is not touch down and random says not to summon.\n";
+            // }
+            return;
+        }
+        // this.trace(this.logBuffer);
+        // this.flushLogBuffer();
+
         summonCard();
         updateChatProcess();
     }
@@ -118,7 +188,17 @@ public class BattleBot
                 lastSummonInterval = battleField.now + ( SUMMON_DELAY * this.noobCounter ); 
         }
         if( lastSummonInterval > battleField.now )
+        {
+            if( getLogFlag(LOG_VERBOSE) )
+            {
+                if( this.logBuffer != "Bot\n---Waiting\n" )
+                {
+                    this.logBuffer = "Bot\n---Waiting\n";
+                    this.trace(this.logBuffer);
+                }
+            }
             return;
+        }
 
         // Player and Bot Targets.
         Unit playerHead = null;
@@ -203,6 +283,16 @@ public class BattleBot
             cardType = battleField.decks.get(1)._queue[defaultIndex];
             if( CardTypes.isSpell(cardType) && battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
             {
+                if( getLogFlag(LOG_VERBOSE) )
+                {
+                    // Double flush buffer, multiple log should not happend.
+                    // this is a cause of deadlock.
+                    this.flushLogBuffer();
+                    this.logBuffer = "Bot\n---\n";
+                    this.logBuffer += "Spell in touchdown skipped.\n";
+                    this.trace(this.logBuffer);
+                    this.flushLogBuffer();
+                }
                 skipCard(cardType);
                 return;
             }
@@ -213,10 +303,9 @@ public class BattleBot
                 return;
             }
 
-            if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) )// waiting for more elixir to create waves
-            {
+            // waiting for more elixir to create waves
+            if( (double)battleField.elixirUpdater.bars.__get(1) < CoreUtils.clamp(battleField.difficulty * 0.7, 4, 9.5) )
                 return;
-            }
         }
         else
         {
@@ -308,7 +397,8 @@ public class BattleBot
                 }
             }
 
-            if( CardTypes.isSpell(cardType) )// drop spell
+            // Drop spell
+            if( CardTypes.isSpell(cardType) )
             {
                 // Change spell if hero it's hero and a lot hp.
                 if( CardTypes.isHero(playerHead.card.type) && playerHead.health > playerHead.cardHealth * 0.3 )
@@ -335,6 +425,9 @@ public class BattleBot
         if( defaultIndex  != 0 )
             defaultIndex = 0;
 
+        // Ceil the x and y before passing to summon.
+        x = Math.ceil(x);
+        y = Math.ceil(y);
         
         Point2 summonPoint = mirrorSummon(x,y,cardType);
         if( CardTypes.isSpell(cardType) )
@@ -343,21 +436,15 @@ public class BattleBot
         }
         else 
         {
-            // id = battleRoom.summonUnit(1, cardType, validatedX(x,y), validatedY(x,y), this.battleField.now);
             id = battleRoom.summonUnit(1, cardType, summonPoint.x, summonPoint.y, this.battleField.now);
             trace("Bot tries to summon at: ("+x +","+ y+") | Validated point: (" + summonPoint.x +","+  summonPoint.y+")");
         }
-        // id = battleRoom.summonUnit(1, cardType, x, y, this.battleField.now);
 
         if( id >= 0 )
         {
             lastSummonInterval = battleField.now + SUMMON_DELAY;
             return;
         }
-//
-//        // fake stronger bot
-//        if( player.get_battleswins() > 3 )
-//            battleField.elixirSpeeds.__set(1, battleRoom.endCalculator.ratio() > 1 ? 1 + battleField.difficulty * 0.04 : 1);
     }
 
     private void skipCard(int cardType)
@@ -573,7 +660,7 @@ public class BattleBot
     }
     private void trace(Object... args)
     {
-        if( DEBUG_MODE )
+        if( LOG_ENABLED )
             battleRoom.trace(args);
     }
 }
