@@ -1,6 +1,5 @@
 package com.gerantech.mmory.libs.utils;
 
-import java.lang.reflect.Array;
 import java.sql.SQLException;
 
 import com.gerantech.mmory.core.Game;
@@ -12,6 +11,8 @@ import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
+
+import haxe.root.Array;
 
 /**
  * Created by ManJav on 8/27/2018.
