@@ -308,7 +308,8 @@ public class BattleBot
                 }
             }
 
-            if( CardTypes.isSpell(cardType) )// drop spell
+            // Drop spell
+            if( CardTypes.isSpell(cardType) )
             {
                 // Change spell if hero it's hero and a lot hp.
                 if( CardTypes.isHero(playerHead.card.type) && playerHead.health > playerHead.cardHealth * 0.3 )
@@ -343,21 +344,15 @@ public class BattleBot
         }
         else 
         {
-            // id = battleRoom.summonUnit(1, cardType, validatedX(x,y), validatedY(x,y), this.battleField.now);
             id = battleRoom.summonUnit(1, cardType, summonPoint.x, summonPoint.y, this.battleField.now);
             trace("Bot tries to summon at: ("+x +","+ y+") | Validated point: (" + summonPoint.x +","+  summonPoint.y+")");
         }
-        // id = battleRoom.summonUnit(1, cardType, x, y, this.battleField.now);
 
         if( id >= 0 )
         {
             lastSummonInterval = battleField.now + SUMMON_DELAY;
             return;
         }
-//
-//        // fake stronger bot
-//        if( player.get_battleswins() > 3 )
-//            battleField.elixirSpeeds.__set(1, battleRoom.endCalculator.ratio() > 1 ? 1 + battleField.difficulty * 0.04 : 1);
     }
 
     private void skipCard(int cardType)
