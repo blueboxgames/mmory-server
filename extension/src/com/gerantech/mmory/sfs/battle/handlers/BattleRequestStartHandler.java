@@ -50,8 +50,7 @@ try {
         this.league = game.player.get_arena(0);
         this.mode = ScriptEngine.getInt(ScriptEngine.T41_CHALLENGE_MODE, this.index, game.player.id, null, null);
         this.type = ScriptEngine.getInt(ScriptEngine.T42_CHALLENGE_TYPE, this.index, null, null, null);
-        IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, this.type, null, null, null));
-
+        IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, this.index, null, null, null));
         if( !game.player.has(cost) )
         {
             params.putInt("response", MessageTypes.RESPONSE_NOT_ENOUGH_REQS);

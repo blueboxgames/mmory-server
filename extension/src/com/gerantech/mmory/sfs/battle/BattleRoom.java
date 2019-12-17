@@ -348,7 +348,7 @@ public class BattleRoom extends BBGRoom {
 			outcomeSFS.putText("name", game.player.nickName);
 			outcomeSFS.putInt("score", endCalculator.scores[i]);
 
-			outcomesList[i] = Outcome.get(this.battleField, this.getPropertyAsInt("type"), i, endCalculator.scores[i], endCalculator.scores[i==0?1:0]);
+			outcomesList[i] = Outcome.get(this.battleField, this.getPropertyAsInt("index"), i, endCalculator.scores[i], endCalculator.scores[i==0?1:0]);
 			//trace("i:", i, "scores:"+scores[i], "ratio:"+(float)numBuildings[i] / (float)numBuildings[i==0?1:0] );
 
 			IntIntMap insertMap = new IntIntMap();
