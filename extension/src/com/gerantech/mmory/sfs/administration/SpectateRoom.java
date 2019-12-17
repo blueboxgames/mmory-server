@@ -1,12 +1,22 @@
 package com.gerantech.mmory.sfs.administration;
 
-import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.sfs.battle.handlers.BattleLeaveRequestHandler;
-import com.gerantech.mmory.libs.utils.LobbyUtils;
-import com.gerantech.mmory.libs.data.LobbySFS;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimerTask;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.data.LobbySFS;
+import com.gerantech.mmory.libs.utils.BattleUtils;
+import com.gerantech.mmory.libs.utils.LobbyUtils;
+import com.gerantech.mmory.sfs.battle.handlers.BattleLeaveRequestHandler;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
@@ -15,12 +25,6 @@ import com.smartfoxserver.v2.entities.data.SFSObject;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSRoomVariable;
 import com.smartfoxserver.v2.extensions.SFSExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimerTask;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 public class SpectateRoom extends SFSExtension
 {
@@ -40,19 +44,19 @@ public class SpectateRoom extends SFSExtension
 		@Override
 		public void run() {
 			ISFSArray reservedRooms = room.getVariable("rooms").getSFSArrayValue();
-
 			SFSArray battles = SFSArray.newInstance();
 			SFSObject battle;
-			List<Room> rooms = getParentZone().getRoomListFromGroup(room.getName());
 			int numRooms = 0;
-			for ( Room r : rooms )
+			Set<Map.Entry<Integer, BBGRoom>> entries = BattleUtils.getInstance().rooms.entrySet();
+			for( Map.Entry<Integer, BBGRoom> entry : entries )
 			{
-				if( (int)r.getProperty("state") != BattleField.STATE_2_STARTED )
+				BBGRoom r = entry.getValue();
+				if( r.getPropertyAsInt("state") != BattleField.STATE_2_STARTED )
 					continue;
 				battle = new SFSObject();
 				battle.putInt("id", r.getId());
 				battle.putText("name", r.getName());
-				battle.putInt("startAt", (Integer)r.getProperty("startAt"));
+				battle.putInt("startAt", r.getPropertyAsInt("startAt"));
 				ISFSArray players = new SFSArray();
 
 				ArrayList<?> registeredPlayers = (ArrayList<?>)r.getProperty("registeredPlayers");
