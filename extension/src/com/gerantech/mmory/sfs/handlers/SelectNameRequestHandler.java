@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.libs.utils.BanUtils;
+import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.ExchangeType;
@@ -57,8 +58,8 @@ public class SelectNameRequestHandler extends BaseClientRequestHandler
 		}
 
 		IDBManager dbManager = getParentExtension().getParentZone().getDBManager();
-  		try {
-			dbManager.executeUpdate("UPDATE `players` SET `name`='" + name + "' WHERE `id`=" + game.player.id + ";", new Object[] {});
+		try {
+			dbManager.executeUpdate("UPDATE " + DBUtils.getInstance().liveDB + ".`players` SET `name`='" + name + "' WHERE `id`=" + game.player.id + ";", new Object[] {});
 		} catch (SQLException e) {
 			params.putText("errorCode", e.getErrorCode() + "");
 			trace(e.getMessage());
