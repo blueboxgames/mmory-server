@@ -15,6 +15,7 @@ import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
+import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
@@ -52,9 +53,9 @@ public class BattleUtils extends UtilBase
             }
         }
 
-        int league = ((Game)owner.getSession().getProperty("core")).player.get_arena(0);
-
-        boolean singleMode = league == 0;
+        Player player = ((Game)owner.getSession().getProperty("core")).player;
+        int league = player.get_arena(0);
+        boolean singleMode = player.get_battleswins() < ScriptEngine.getInt(ScriptEngine.T61_BATTLE_NUM_TUTORS, player.id, null, null, null);
         Map<Object, Object> roomProperties = new HashMap<>();
         roomProperties.put("index", index);
         roomProperties.put("mode", mode);
