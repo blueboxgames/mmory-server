@@ -157,7 +157,7 @@ public class BattleBot
             return;
         }
         /** Don't summon if mode is not 1 and dice roll says not to */
-        else if( this.battleField.field.mode != 1 && (player.get_battleswins() < 3 || Math.random() < 0.3) )
+        else if( ( this.battleField.field.mode != 1 || this.battleField.field.mode != 2 ) && (player.get_battleswins() < 3 || Math.random() < 0.3) )
         {
             // if( this.logBuffer != "" && getLogFlag(LOG_VERBOSE) )
             // {
