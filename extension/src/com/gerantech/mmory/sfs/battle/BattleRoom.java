@@ -301,8 +301,11 @@ public class BattleRoom extends BBGRoom {
 
 	private void pokeBot()
 	{
+		/* 
+		// Does not let bot to start, bot summon state should not rely on state.
 		if( getState() < BattleField.STATE_1_CREATED || getState() > BattleField.STATE_4_ENDED )
 			return;
+		*/
 		bot.update();
 	}
 
