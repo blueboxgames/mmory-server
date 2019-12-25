@@ -426,13 +426,21 @@ public class BattleBot
         x = Math.ceil(x);
         y = Math.ceil(y);
         
-        Point2 summonPoint = mirrorSummon(x,y,cardType);
+        
         if( CardTypes.isSpell(cardType) )
         {
             id = battleRoom.summonUnit(1, cardType, x, y, this.battleField.now);
         }
         else 
         {
+            if( y > BattleField.HEIGHT * 0.3 )
+            {
+                if( x < (BattleField.WIDTH * 0.5) && x > (BattleField.WIDTH * 0.25) )
+                    CoreUtils.clamp(x, 0, BattleField.WIDTH * 0.25);
+                if( x > (BattleField.WIDTH * 0.5) && x < (BattleField.WIDTH * 0.75) )
+                    CoreUtils.clamp(x, (BattleField.WIDTH * 0.75), BattleField.WIDTH );
+            }
+            Point2 summonPoint = mirrorSummon(x,y,cardType);
             id = battleRoom.summonUnit(1, cardType, summonPoint.x, summonPoint.y, this.battleField.now);
             trace("Bot tries to summon at: ("+x +","+ y+") | Validated point: (" + summonPoint.x +","+  summonPoint.y+")");
         }
