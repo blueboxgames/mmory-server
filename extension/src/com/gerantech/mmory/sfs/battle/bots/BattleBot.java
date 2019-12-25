@@ -332,11 +332,6 @@ public class BattleBot
                             }
                         }
                     }
-                    else
-                    {
-                        trace("BattleBot: 8: return");
-                        return;
-                    }
                 }
             }
 
