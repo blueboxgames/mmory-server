@@ -26,7 +26,7 @@ public class BattleBot
     /** Time between each summon that bot commits. */
     static final private int SUMMON_DELAY = 1060;
     /** Debug flag. */
-    // static final private boolean DEBUG_MODE = false;
+    // static final private boolean DEBUG_MODE = true;
     /** Middle summon X position threshold. */
     static final private double SUMMON_X_THRESHOLD = 200;
     /** Know the player bot is playing with. */
@@ -64,7 +64,7 @@ public class BattleBot
 
     /**--------- Logging ---------*/
     /** Enable or disable logging. */
-    static final private boolean LOG_ENABLED = false;
+    static final private boolean LOG_ENABLED = true;
     /** Logs general information about bot. */
     static final private int LOG_GENERAL = 0x1;
     /** Logs selections of bot and it's card decision. */
@@ -146,28 +146,25 @@ public class BattleBot
 
     public void update()
     {
-        /** Don't summon if battle is not started. */
-        if( battleField.state < BattleField.STATE_2_STARTED )
+        /** With randomness of:
+         * * 1/5 -> no summon
+         * * 4/5 -> do summon
+         * bot won't summon.
+         */
+        if( Math.random() < 0.2 )
         {
-            // if( this.logBuffer != "" && getLogFlag(LOG_VERBOSE) )
-            // {
-            //     this.logBuffer += "Bot\n---------------\n";
-            //     this.logBuffer += "battle not started.\n";
-            // }
+            trace("BattleBot: 1: randomness summon return.");
             return;
         }
         /** Don't summon if mode is not 1 and dice roll says not to */
-        else if( ( this.battleField.field.mode != 1 || this.battleField.field.mode != 2 ) && (player.get_battleswins() < 3 || Math.random() < 0.3) )
+        else if( this.battleField.field.mode == 0 )
         {
-            // if( this.logBuffer != "" && getLogFlag(LOG_VERBOSE) )
-            // {
-            //     this.logBuffer += "Bot\n---------------\n";
-            //     this.logBuffer += "battle is not touch down and random says not to summon.\n";
-            // }
-            return;
+            if( player.get_battleswins() < 1 )
+            {
+                trace("BattleBot: 2: bosscar less than 1 win return.");
+                return;
+            }
         }
-        // this.trace(this.logBuffer);
-        // this.flushLogBuffer();
 
         summonCard();
         updateChatProcess();
@@ -175,10 +172,6 @@ public class BattleBot
 
     private void summonCard()
     {
-        // Don't summon during tutorial of mode 0.
-        if( player.get_battleswins() < 1 && this.battleField.field.mode == 0 )
-            return;
-
         // Don't rapid summon.
         if( lastSummonInterval == 0 )
         {
@@ -189,14 +182,7 @@ public class BattleBot
         }
         if( lastSummonInterval > battleField.now )
         {
-            if( getLogFlag(LOG_VERBOSE) )
-            {
-                if( this.logBuffer != "Bot\n---Waiting\n" )
-                {
-                    this.logBuffer = "Bot\n---Waiting\n";
-                    this.trace(this.logBuffer);
-                }
-            }
+            trace("BattleBot: 4: rapid summon return");
             return;
         }
 
@@ -253,8 +239,6 @@ public class BattleBot
                 // bottom of bot troops
                 if( botHead == null || botHead.y < u.y || botHead.health > u.health )
                     botHead = u;
-                // Change side preference to bot.
-                sidePreference = BattleField.WIDTH * 0.5 > botHead.x ? 0 : 1;
             }
         }
 
@@ -294,12 +278,14 @@ public class BattleBot
                     this.flushLogBuffer();
                 }
                 skipCard(cardType);
+                trace("BattleBot: 5: return");
                 return;
             }
 
             if( cardType == 109 && battleField.difficulty > 1 )
             {
                 skipCard(cardType);
+                trace("BattleBot: 6: return");
                 return;
             }
 
@@ -309,6 +295,8 @@ public class BattleBot
         }
         else
         {
+            if( botHead != null )
+                sidePreference = BattleField.WIDTH * 0.5 > botHead.x ? 0 : 1;
             int cardIndex = 0;
             if( shouldUseSpell && battleField.difficulty > 1 )
             {
@@ -339,12 +327,11 @@ public class BattleBot
                             if( cardType == 109 )
                             {
                                 skipCard(cardType);
+                                trace("BattleBot: 7: return");
                                 return;
                             }
                         }
                     }
-                    else
-                        return;
                 }
             }
 
@@ -385,7 +372,7 @@ public class BattleBot
             
             if( isBuilding(cardType) )
             {
-                if( playerHead.y > BattleField.HEIGHT * 0.6 )
+                if( playerHead.y < BattleField.HEIGHT * 0.6 )
                 {
                     x = getBuildingPosition().x;
                     y = getBuildingPosition().y;
@@ -393,6 +380,7 @@ public class BattleBot
                 else
                 {
                     skipCard(cardType);
+                    trace("BattleBot: 9: return");
                     return;
                 }
             }
@@ -412,6 +400,7 @@ public class BattleBot
                 if( botHead == null || CardTypes.isTroop(botHead.card.type) )
                 {
                     skipCard(cardType);
+                    trace("BattleBot: 10: return");
                     return;
                 }
                 y = botHead.y - 300; //summon healer for covering
@@ -420,7 +409,10 @@ public class BattleBot
 
         // when battlefield is empty
         if( botHead == null && cardType == 109 )// skip spells and healer
+        {
+            trace("BattleBot: 11: return");
             return;
+        }
 
         if( defaultIndex  != 0 )
             defaultIndex = 0;
@@ -429,13 +421,21 @@ public class BattleBot
         x = Math.ceil(x);
         y = Math.ceil(y);
         
-        Point2 summonPoint = mirrorSummon(x,y,cardType);
+        
         if( CardTypes.isSpell(cardType) )
         {
             id = battleRoom.summonUnit(1, cardType, x, y, this.battleField.now);
         }
         else 
         {
+            if( y > BattleField.HEIGHT * 0.3 )
+            {
+                if( x < (BattleField.WIDTH * 0.5) && x > (BattleField.WIDTH * 0.25) )
+                    CoreUtils.clamp(x, 0, BattleField.WIDTH * 0.25);
+                if( x > (BattleField.WIDTH * 0.5) && x < (BattleField.WIDTH * 0.75) )
+                    CoreUtils.clamp(x, (BattleField.WIDTH * 0.75), BattleField.WIDTH );
+            }
+            Point2 summonPoint = mirrorSummon(x,y,cardType);
             id = battleRoom.summonUnit(1, cardType, summonPoint.x, summonPoint.y, this.battleField.now);
             trace("Bot tries to summon at: ("+x +","+ y+") | Validated point: (" + summonPoint.x +","+  summonPoint.y+")");
         }
@@ -443,6 +443,7 @@ public class BattleBot
         if( id >= 0 )
         {
             lastSummonInterval = battleField.now + SUMMON_DELAY;
+            trace("BattleBot: 12: return");
             return;
         }
     }
