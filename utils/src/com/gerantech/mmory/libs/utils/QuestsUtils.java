@@ -96,7 +96,7 @@ public class QuestsUtils extends UtilBase
         // trace("new ==> " + quest.toString());
 
         // update DB
-        String query = "UPDATE quests SET `type`=" + quest.type + ", `key`=" + quest.key + ", step=" + quest.nextStep + " WHERE `id`=" + quest.id;
+        String query = "UPDATE " + DBUtils.getInstance().liveDB + ".quests SET `type`=" + quest.type + ", `key`=" + quest.key + ", step=" + quest.nextStep + " WHERE `id`=" + quest.id;
         trace(query);
         try {
             ext.getParentZone().getDBManager().executeUpdate(query, new Object[]{});
