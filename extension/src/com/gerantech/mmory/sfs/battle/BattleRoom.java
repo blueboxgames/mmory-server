@@ -237,6 +237,7 @@ public class BattleRoom extends BBGRoom {
 
 	public void sendNewRoundResponse(int winner, int unitId)
 	{
+		this.updateReservesData();
 		SFSObject params = new SFSObject();
 		params.putInt("winner", winner);
 		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )

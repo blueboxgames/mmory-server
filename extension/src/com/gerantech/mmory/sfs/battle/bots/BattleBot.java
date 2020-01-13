@@ -64,7 +64,7 @@ public class BattleBot
 
     /**--------- Logging ---------*/
     /** Enable or disable logging. */
-    static final private boolean LOG_ENABLED = true;
+    static final private boolean LOG_ENABLED = false;
     /** Logs general information about bot. */
     static final private int LOG_GENERAL = 0x1;
     /** Logs selections of bot and it's card decision. */
