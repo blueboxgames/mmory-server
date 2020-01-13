@@ -64,7 +64,7 @@ public class BattleBot
 
     /**--------- Logging ---------*/
     /** Enable or disable logging. */
-    static final private boolean LOG_ENABLED = true;
+    static final private boolean LOG_ENABLED = false;
     /** Logs general information about bot. */
     static final private int LOG_GENERAL = 0x1;
     /** Logs selections of bot and it's card decision. */
@@ -121,9 +121,9 @@ public class BattleBot
         this.player = battleField.games.__get(0).player;
 
         // Set log flags
-        this.setFlag(LOG_GENERAL, true);
+        this.setFlag(LOG_GENERAL, false);
         this.setFlag(LOG_TYPESELECT, false);
-        this.setFlag(LOG_VERBOSE, true);
+        this.setFlag(LOG_VERBOSE, false);
 
         if( getLogFlag(LOG_GENERAL) )
         {
