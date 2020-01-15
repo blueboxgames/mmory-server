@@ -438,8 +438,8 @@ public class BattleBot
             if( playerHead.y > BattleField.HEIGHT * 0.6 )
             {
                 // With randomness of half 0.5
-                if( Math.random() > 0.5 )
-                    y = Math.random() * BattleField.HEIGHT * 0.5;
+                // if( Math.random() > 0.5 )
+                y = Math.random() * BattleField.HEIGHT * 0.4;
             }
             if( y > BattleField.HEIGHT * 0.3 )
             {
