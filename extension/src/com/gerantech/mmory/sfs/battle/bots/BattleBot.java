@@ -393,7 +393,7 @@ public class BattleBot
             }
 
             // Drop spell
-            if( CardTypes.isSpell(cardType) && !CardTypes.isSpell(cardType) )
+            if( CardTypes.isSpell(cardType) )
             {
                 // Change spell if hero it's hero and a lot hp.
                 if( CardTypes.isHero(playerHead.card.type) && playerHead.health > playerHead.cardHealth * 0.3 )
