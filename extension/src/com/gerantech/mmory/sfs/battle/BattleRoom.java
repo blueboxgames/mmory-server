@@ -126,6 +126,9 @@ public class BattleRoom extends BBGRoom {
 					double battleDuration = battleField.getDuration();
 					if( battleField.now - unitsUpdatedAt >= 500 )
 					{
+						if( registeredPlayers.get(0).appVersion < 3000 )
+							updateReservesData();
+
 						if( singleMode && battleDuration > 4 )
 							pokeBot();
 						unitsUpdatedAt = battleField.now;
