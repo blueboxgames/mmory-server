@@ -204,10 +204,17 @@ public class BattleRoom extends BBGRoom {
 
 		int id = this.battleField.summonUnit(type, side, x, y, time);
 
+		SFSObject params = new SFSObject();
+		if( id == MessageTypes.RESPONSE_NOT_ALLOWED )
+		{
+			params.putDouble("now", this.battleField.now);
+			send(Commands.BATTLE_SUMMON_UNIT, params, getPlayersList().get(side));
+			return id;
+		}
+
 		if( id > -1 )
 		{
 			SFSArray units = new SFSArray();
-			SFSObject params = new SFSObject();
 
 			if( CardTypes.isSpell(type) )
 			{
