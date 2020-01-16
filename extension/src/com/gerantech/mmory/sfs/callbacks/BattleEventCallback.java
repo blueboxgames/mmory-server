@@ -38,10 +38,15 @@ public class BattleEventCallback implements EventCallback
             if( battleRoom.battleField.units.get(id).card.type >= 201 )
             {
                 int other = battleRoom.battleField.units.get(id).side == 0 ? 1 : 0;
-                if( id < 2 )
-                    battleRoom.endCalculator.scores[other] = Math.min(3, battleRoom.endCalculator.scores[other] + 3);
-                else if( id < 6 )
-                    battleRoom.endCalculator.scores[other] ++;
+                if( id < 6 )
+                {
+                    battleRoom.battleField.units.get(id).hit(100);
+                    battleRoom.updateReservesData();
+                    if( id < 2 )
+                        battleRoom.endCalculator.scores[other] = Math.min(3, battleRoom.endCalculator.scores[other] + 3);
+                    else
+                        battleRoom.endCalculator.scores[other] ++;
+                }
 
                 battleRoom.sendNewRoundResponse(other, 0);
             }

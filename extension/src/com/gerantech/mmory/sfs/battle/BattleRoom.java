@@ -126,7 +126,6 @@ public class BattleRoom extends BBGRoom {
 					double battleDuration = battleField.getDuration();
 					if( battleField.now - unitsUpdatedAt >= 500 )
 					{
-						updateReservesData();
 						if( singleMode && battleDuration > 4 )
 							pokeBot();
 						unitsUpdatedAt = battleField.now;
@@ -141,7 +140,7 @@ public class BattleRoom extends BBGRoom {
 		trace(getName(), "created.");
 	}
 
-	private void updateReservesData()
+	public void updateReservesData()
 	{
 		reservedUnitIds = getChangedUnits();
 		if( reservedUnitIds == null )
@@ -173,12 +172,16 @@ public class BattleRoom extends BBGRoom {
 		@SuppressWarnings("unchecked")
 		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleField.units.keys();	
 		while (iterator.hasNext())
-			ret.add(iterator.next());
+		{
+			int uid = iterator.next();
+			if( battleField.units.get(uid).health >= 0 )
+				ret.add(uid);
+		}
 		
 		if( reservedUnitIds == null )
 			return ret;
 
-		if( !DEBUG_MODE && reservedUnitIds.size() != ret.size()|| DEBUG_MODE )
+		if( reservedUnitIds.size() != ret.size() )
 			return ret;
 
 		for (int i = 0; i < ret.size(); i++)
@@ -242,7 +245,6 @@ public class BattleRoom extends BBGRoom {
 
 	public void sendNewRoundResponse(int winner, int unitId)
 	{
-		this.updateReservesData();
 		SFSObject params = new SFSObject();
 		params.putInt("winner", winner);
 		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
@@ -334,7 +336,6 @@ public class BattleRoom extends BBGRoom {
 
 	private void end(double battleDuration)
 	{
-		this.updateReservesData();
 		setState( BattleField.STATE_4_ENDED );
 		trace(this.getName(), "ended duration:" + battleDuration, " (" + this.battleField.field.times.toString() + ")");
 
