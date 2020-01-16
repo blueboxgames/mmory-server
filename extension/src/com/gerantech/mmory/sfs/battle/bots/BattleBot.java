@@ -166,8 +166,11 @@ public class BattleBot
             }
         }
 
-        summonCard();
-        updateChatProcess();
+        if( battleRoom.getState() >= BattleField.STATE_2_STARTED )
+        {
+            summonCard();
+            updateChatProcess();
+        }
     }
 
     private void summonCard()

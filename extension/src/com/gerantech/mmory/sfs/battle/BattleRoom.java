@@ -106,10 +106,15 @@ public class BattleRoom extends BBGRoom {
 			bot = new BattleBot(this);
 
 			// sometimes auto start battle
-			if( singleMode && (battleField.difficulty > 5 || Math.random() > 0.5) && !registeredPlayers.get(0).player.inTutorial() )
+			if( Math.random() > 0.2 && !registeredPlayers.get(0).player.inTutorial() )
 				setState( BattleField.STATE_2_STARTED );
+			else
+				setState( BattleField.STATE_1_CREATED );
 		}
-		setState( BattleField.STATE_1_CREATED );
+		else
+		{
+			setState( BattleField.STATE_1_CREATED );
+		}
 
 		timer = SmartFoxServer.getInstance().getTaskScheduler().scheduleAtFixedRate(new TimerTask() {
 			@Override
@@ -329,6 +334,7 @@ public class BattleRoom extends BBGRoom {
 
 	private void end(double battleDuration)
 	{
+		this.updateReservesData();
 		setState( BattleField.STATE_4_ENDED );
 		trace(this.getName(), "ended duration:" + battleDuration, " (" + this.battleField.field.times.toString() + ")");
 
