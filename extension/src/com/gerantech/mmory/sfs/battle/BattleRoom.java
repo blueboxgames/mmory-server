@@ -106,10 +106,15 @@ public class BattleRoom extends BBGRoom {
 			bot = new BattleBot(this);
 
 			// sometimes auto start battle
-			if( singleMode && (battleField.difficulty > 5 || Math.random() > 0.5) && !registeredPlayers.get(0).player.inTutorial() )
+			if( Math.random() > 0.2 && !registeredPlayers.get(0).player.inTutorial() )
 				setState( BattleField.STATE_2_STARTED );
+			else
+				setState( BattleField.STATE_1_CREATED );
 		}
-		setState( BattleField.STATE_1_CREATED );
+		else
+		{
+			setState( BattleField.STATE_1_CREATED );
+		}
 
 		timer = SmartFoxServer.getInstance().getTaskScheduler().scheduleAtFixedRate(new TimerTask() {
 			@Override
@@ -121,7 +126,9 @@ public class BattleRoom extends BBGRoom {
 					double battleDuration = battleField.getDuration();
 					if( battleField.now - unitsUpdatedAt >= 500 )
 					{
-						updateReservesData();
+						if( registeredPlayers.get(0).appVersion < 3000 )
+							updateReservesData();
+
 						if( singleMode && battleDuration > 4 )
 							pokeBot();
 						unitsUpdatedAt = battleField.now;
@@ -136,7 +143,7 @@ public class BattleRoom extends BBGRoom {
 		trace(getName(), "created.");
 	}
 
-	private void updateReservesData()
+	public void updateReservesData()
 	{
 		reservedUnitIds = getChangedUnits();
 		if( reservedUnitIds == null )
@@ -168,12 +175,16 @@ public class BattleRoom extends BBGRoom {
 		@SuppressWarnings("unchecked")
 		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleField.units.keys();	
 		while (iterator.hasNext())
-			ret.add(iterator.next());
+		{
+			int uid = iterator.next();
+			if( battleField.units.get(uid).health >= 0 )
+				ret.add(uid);
+		}
 		
 		if( reservedUnitIds == null )
 			return ret;
 
-		if( !DEBUG_MODE && reservedUnitIds.size() != ret.size()|| DEBUG_MODE )
+		if( reservedUnitIds.size() != ret.size() )
 			return ret;
 
 		for (int i = 0; i < ret.size(); i++)
@@ -193,10 +204,17 @@ public class BattleRoom extends BBGRoom {
 
 		int id = this.battleField.summonUnit(type, side, x, y, time);
 
+		SFSObject params = new SFSObject();
+		if( id == MessageTypes.RESPONSE_NOT_ALLOWED )
+		{
+			params.putDouble("now", this.battleField.now);
+			send(Commands.BATTLE_SUMMON_UNIT, params, getPlayersList().get(side));
+			return id;
+		}
+
 		if( id > -1 )
 		{
 			SFSArray units = new SFSArray();
-			SFSObject params = new SFSObject();
 
 			if( CardTypes.isSpell(type) )
 			{

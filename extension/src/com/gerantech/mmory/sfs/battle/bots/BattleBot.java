@@ -64,7 +64,7 @@ public class BattleBot
 
     /**--------- Logging ---------*/
     /** Enable or disable logging. */
-    static final private boolean LOG_ENABLED = true;
+    static final private boolean LOG_ENABLED = false;
     /** Logs general information about bot. */
     static final private int LOG_GENERAL = 0x1;
     /** Logs selections of bot and it's card decision. */
@@ -121,9 +121,9 @@ public class BattleBot
         this.player = battleField.games.__get(0).player;
 
         // Set log flags
-        this.setFlag(LOG_GENERAL, true);
+        this.setFlag(LOG_GENERAL, false);
         this.setFlag(LOG_TYPESELECT, false);
-        this.setFlag(LOG_VERBOSE, true);
+        this.setFlag(LOG_VERBOSE, false);
 
         if( getLogFlag(LOG_GENERAL) )
         {
@@ -166,8 +166,11 @@ public class BattleBot
             }
         }
 
-        summonCard();
-        updateChatProcess();
+        if( battleRoom.getState() >= BattleField.STATE_2_STARTED )
+        {
+            summonCard();
+            updateChatProcess();
+        }
     }
 
     private void summonCard()
@@ -194,6 +197,8 @@ public class BattleBot
         Unit u = null;
         double playerHeadBounty = 0;
         boolean shouldUseSpell = false;
+        int leftCount = 0;
+        int rightCount = 0;
 		@SuppressWarnings("unchecked")
 		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleField.units.keys();
 		while (iterator.hasNext())
@@ -236,12 +241,17 @@ public class BattleBot
             }
             else
             {
+                if( u.x > BattleField.WIDTH * 0.5 )
+                    rightCount++;
+                else if ( u.x <  BattleField.WIDTH * 0.5 )
+                    leftCount++;
                 // bottom of bot troops
                 if( botHead == null || botHead.y < u.y || botHead.health > u.health )
                     botHead = u;
             }
         }
 
+        this.sidePreference = leftCount >= rightCount ? 0 : 1;
         // Start of bot card summoning unit.
         int cardType;
         int id;
@@ -253,7 +263,7 @@ public class BattleBot
             if( battleField.field.mode == Challenge.MODE_0_HQ )
             {
                 y = BattleField.HEIGHT * 0.45;
-                if( this.sidePreference < 1 && battleField.difficulty > 3 )
+                if( this.sidePreference < 1 )
                     x = (BattleField.WIDTH - ( Math.random() * BattleField.PADDING )) - BattleField.PADDING;
                 else
                     x = (Math.random() * BattleField.PADDING) + BattleField.PADDING;
@@ -370,7 +380,7 @@ public class BattleBot
                 x = playerHead.x;
             y = isRanged(cardType) ? playerHead.y + ( Math.sin( summonDegree ) * battleField.decks.get(1).get(cardType).bulletRangeMax ) : playerHead.y;
             
-            if( isBuilding(cardType) )
+            if( isBuilding(cardType) && !CardTypes.isSpell(cardType) )
             {
                 if( playerHead.y < BattleField.HEIGHT * 0.6 )
                 {
@@ -428,6 +438,15 @@ public class BattleBot
         }
         else 
         {
+            if( playerHead != null )
+            {
+                if( playerHead.y > BattleField.HEIGHT * 0.6 )
+                {
+                    // With randomness of half 0.5
+                    // if( Math.random() > 0.5 )
+                    y = Math.random() * BattleField.HEIGHT * 0.4;
+                }
+            }
             if( y > BattleField.HEIGHT * 0.3 )
             {
                 if( x < (BattleField.WIDTH * 0.5) && x > (BattleField.WIDTH * 0.25) )
