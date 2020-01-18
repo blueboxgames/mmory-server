@@ -15,7 +15,6 @@ import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-import haxe.ds._IntMap.IntMapKeyIterator;
 import haxe.root.Array;
 
 /**
@@ -199,12 +198,10 @@ public class BattleBot
         boolean shouldUseSpell = false;
         int leftCount = 0;
         int rightCount = 0;
-		@SuppressWarnings("unchecked")
-		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleField.units.keys();
-		while (iterator.hasNext())
+        for( int i = 0; i < battleField.units.length ; i++ )
         {
-			int k = iterator.next();
-            u = battleField.units.get(k);
+            u = battleField.units.__get(i);
+			int k = u.id;
             if( !CardTypes.isTroop(k) || u.state < GameObject.STATE_2_MORTAL )
                 continue;
             
