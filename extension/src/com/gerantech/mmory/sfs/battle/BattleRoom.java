@@ -42,8 +42,6 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-import haxe.ds._IntMap.IntMapKeyIterator;
-
 public class BattleRoom extends BBGRoom {
 	static boolean DEBUG_MODE = false;
 	public BattleField battleField;
@@ -156,7 +154,7 @@ public class BattleRoom extends BBGRoom {
 		 * TEST_FLAG: Code bellow sneds some test information about changed units.
 		 */
 
-		if( DEBUG_MODE )
+		/* if( DEBUG_MODE )
 		{
 			List<String> testData = new ArrayList<>();
 			for ( int k:reservedUnitIds )
@@ -165,21 +163,16 @@ public class BattleRoom extends BBGRoom {
 				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
 			}
 			units.putUtfStringArray("testData", testData);
-		}
+		} */
 		send("u", units, getUserList());
 	}
 
 	private List<Integer> getChangedUnits()
 	{
 		List<Integer> ret = new ArrayList<>();
-		@SuppressWarnings("unchecked")
-		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) battleField.units.keys();	
-		while (iterator.hasNext())
-		{
-			int uid = iterator.next();
-			if( battleField.units.get(uid).health >= 0 )
-				ret.add(uid);
-		}
+		for( int i = 0; i < battleField.units.length ; i++ )
+			if( battleField.units.__get(i).health >= 0 )
+				ret.add(battleField.units.__get(i).id);
 		
 		if( reservedUnitIds == null )
 			return ret;
@@ -226,10 +219,10 @@ public class BattleRoom extends BBGRoom {
 				return id;
 			}
 
-			Unit unit = this.battleField.units.get(id);
+			Unit unit = this.battleField.getUnit(id);
 			for (int i = id; i > id - unit.card.quantity; i--)
 			{
-				unit = this.battleField.units.get(i);
+				unit = this.battleField.getUnit(i);
 				unit.eventCallback = eventCallback;
 
 				units.addSFSObject(getSFSUnit(type, unit.id, side, unit.card.level, unit.x, unit.y));

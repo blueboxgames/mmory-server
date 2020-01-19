@@ -4,9 +4,7 @@ import com.gerantech.mmory.core.battle.units.Unit;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
-import haxe.ds.IntMap;
-import haxe.ds._IntMap.IntMapKeyIterator;
-
+import haxe.root.Array;
 public class UnitData {
     public double x;
     public double y;
@@ -30,13 +28,11 @@ public class UnitData {
         return ret;
     }
 
-    public static SFSArray toSFSArray(IntMap<?> unitMap)
+    public static SFSArray toSFSArray(Array<Unit> units)
     {
         SFSArray ret = new SFSArray();
-		@SuppressWarnings("unchecked")
-		IntMapKeyIterator<Integer> iterator = (IntMapKeyIterator<Integer>) unitMap.keys();
-		while (iterator.hasNext())
-            ret.addSFSObject(toSFS((Unit) unitMap.get(iterator.next())));
+        for(int i = 0; i < units.length ; i++ )
+            ret.addSFSObject(toSFS(units.__get(i)));
         return ret;
     }
 }
