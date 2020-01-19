@@ -201,6 +201,8 @@ public class BattleBot
         for( int i = 0; i < battleField.units.length ; i++ )
         {
             u = battleField.units.__get(i);
+            if( u.disposed() )
+                continue;
 			int k = u.id;
             if( !CardTypes.isTroop(k) || u.state < GameObject.STATE_2_MORTAL )
                 continue;

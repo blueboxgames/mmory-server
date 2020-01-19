@@ -39,9 +39,11 @@ public class TouchDownEndCalculator extends EndCalculator
         Unit u;
         for( int i = 0; i < room.battleField.units.length ; i++ )
         {
-           u = room.battleField.units.__get(i);
-           if( (u.side == 0 && u.y <= threshold) || (u.side == 1 && u.y >= BattleField.HEIGHT - threshold) )
-               return u;
+            u = room.battleField.units.__get(i);
+            if( u.disposed() )
+                continue;
+            if( (u.side == 0 && u.y <= threshold) || (u.side == 1 && u.y >= BattleField.HEIGHT - threshold) )
+                return u;
         }
         return null;
     }

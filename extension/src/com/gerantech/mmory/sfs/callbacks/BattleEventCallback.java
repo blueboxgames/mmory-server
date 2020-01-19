@@ -19,7 +19,11 @@ public class BattleEventCallback implements EventCallback
     {
         this.battleRoom = battleRoom;
         for( int i = 0 ; i < this.battleRoom.battleField.units.length ; i++ )
+        {
+            if(this.battleRoom.battleField.units.__get(i).disposed())
+                continue;
             this.battleRoom.battleField.units.__get(i).eventCallback = this;
+        }
     }
 
     @Override

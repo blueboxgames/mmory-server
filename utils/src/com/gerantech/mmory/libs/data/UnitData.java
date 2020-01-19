@@ -33,8 +33,9 @@ public class UnitData {
         SFSArray ret = new SFSArray();
         for(int i = 0; i < unitMap.length ; i++ )
         {
+            if( unitMap.__get(i).disposed() )
+                continue;
             ret.addSFSObject(toSFS((Unit) unitMap.__get(i)));
-            System.out.println(unitMap.__get(i));
         }
         return ret;
     }
