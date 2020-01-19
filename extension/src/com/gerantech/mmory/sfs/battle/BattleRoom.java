@@ -171,11 +171,8 @@ public class BattleRoom extends BBGRoom {
 	{
 		List<Integer> ret = new ArrayList<>();
 		for( int i = 0; i < battleField.units.length ; i++ )
-        {
-			Unit unit = battleField.units.__get(i);
-			if( unit.health >= 0 )
-				ret.add(unit.id);
-		}
+			if( battleField.units.__get(i).health >= 0 )
+				ret.add(battleField.units.__get(i).id);
 		
 		if( reservedUnitIds == null )
 			return ret;
