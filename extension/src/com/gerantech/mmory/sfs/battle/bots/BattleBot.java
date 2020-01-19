@@ -52,6 +52,7 @@ public class BattleBot
 
     // Bot summoning side preference. 0 -> Right; 1-> Left
     private int sidePreference;
+    private boolean forceSide = false;
 
     // Bot summoning random
     private boolean shouldPlayRandom;
@@ -437,6 +438,13 @@ public class BattleBot
         }
         else 
         {
+            // Force summon at left side if in tutorial.
+            if( player.get_battleswins() < 3 )
+            {
+                this.sidePreference = 1;
+                this.forceSide = true;
+            }
+
             if( playerHead != null )
             {
                 if( playerHead.y > BattleField.HEIGHT * 0.6 )
@@ -453,6 +461,15 @@ public class BattleBot
                 if( x > (BattleField.WIDTH * 0.5) && x < (BattleField.WIDTH * 0.75) )
                     CoreUtils.clamp(x, (BattleField.WIDTH * 0.75), BattleField.WIDTH );
             }
+
+            // Forcing summon like mirror.
+            if( this.forceSide && this.sidePreference == 0 )
+                if( x < BattleField.WIDTH * 0.5 )
+                    x += ( BattleField.WIDTH * 0.5 );
+            if( this.forceSide && this.sidePreference == 1 )
+                if( x > BattleField.WIDTH * 0.5 )
+                    x -= BattleField.WIDTH * 0.5;
+            
             Point2 summonPoint = mirrorSummon(x,y,cardType);
             id = battleRoom.summonUnit(1, cardType, summonPoint.x, summonPoint.y, this.battleField.now);
             trace("Bot tries to summon at: ("+x +","+ y+") | Validated point: (" + summonPoint.x +","+  summonPoint.y+")");

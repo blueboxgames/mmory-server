@@ -27,6 +27,7 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 		//  -=-=-=-=-=-=-=-=-  add resources data  -=-=-=-=-=-=-=-=-
 		String query = "SELECT type, count, level FROM " + DBUtils.getInstance().liveDB + ".resources WHERE player_id = " + playerId + (params.containsKey("am") ? ";" : " AND (type<13);");
 		ISFSArray resources = null;
+		ISFSArray supData = null;
 		boolean isOld = false;
 		try {
 			resources = dbManager.executeQuery(query, new Object[]{});
@@ -36,8 +37,21 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 				query = "SELECT type, count, level FROM resources WHERE player_id = " + playerId + (params.containsKey("am") ? ";" : " AND (type<13);");
 				resources = dbManager.executeQuery(query, new Object[]{});
 			}
+			if( params.containsKey("am") )
+			{
+				query = "SELECT id, create_at, model FROM " + DBUtils.getInstance().liveDB + ".players INNER JOIN devices ON players.id=devices.player_id WHERE id=" + playerId;
+				supData = dbManager.executeQuery(query, new Object[]{});
+				isOld = supData.size() < 1;
+				if( isOld )
+				{
+					query = "SELECT id, create_at, model FROM players INNER JOIN devices ON players.id=devices.player_id WHERE id=" + playerId;
+					supData = dbManager.executeQuery(query, new Object[]{});
+				}
+			}
 		} catch (SQLException e) { e.printStackTrace(); }
 		params.putSFSArray("resources", resources);
+		if( supData != null )
+			params.putSFSArray("supData", supData);
 		String liveDB = isOld ? "" : (DBUtils.getInstance().liveDB + ".");
 
 		//  -=-=-=-=-=-=-=-=-  add player data  -=-=-=-=-=-=-=-=-
