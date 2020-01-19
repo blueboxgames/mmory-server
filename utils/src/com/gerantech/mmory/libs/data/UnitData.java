@@ -28,11 +28,11 @@ public class UnitData {
         return ret;
     }
 
-    public static SFSArray toSFSArray(Array<Unit> unitMap)
+    public static SFSArray toSFSArray(Array<Unit> units)
     {
         SFSArray ret = new SFSArray();
-        for(int i = 0; i < unitMap.length ; i++ )
-            ret.addSFSObject(toSFS((Unit) unitMap.__get(i)));
+        for(int i = 0; i < units.length ; i++ )
+            ret.addSFSObject(toSFS(units.__get(i)));
         return ret;
     }
 }
