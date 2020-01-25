@@ -361,6 +361,54 @@ public class DBUtils extends UtilBase
         return "";
     }
 
+    public boolean playerExists(int id)
+    {
+        // Case1: Exists In Live Database
+        String queryString = "SELECT * FROM " + this.liveDB + ".players WHERE id = " + id + " LIMIT 1";
+        try {
+            if( db.executeQuery(queryString, new Object[]{}).size() == 0 )
+            {
+                // Case2: Exists in main database.
+                queryString = "SELECT * FROM players WHERE id = " + id + " LIMIT 1";
+                if( db.executeQuery(queryString,  new Object[]{}).size() == 0 )
+                    return false;
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public ISFSObject getPlayerById(int id)
+    {
+        ISFSArray player = null;
+
+        // Case1: Exists In Live Database
+        String queryString = "SELECT * FROM " + this.liveDB + ".players WHERE id = " + id + " LIMIT 1";
+        try {
+            player = db.executeQuery(queryString, new Object[]{});
+        } catch (SQLException e) {
+            return null;
+        }
+        // Case2: Exists In main Database
+        if( player.size() == 0 )
+            queryString = "SELECT * FROM players WHERE id = " + id + " LIMIT 1";
+        try {
+            player = db.executeQuery(queryString, new Object[]{});
+        } catch (SQLException e) {
+            return null;
+        }
+        // Case3: Player does not exist at all:
+        if( player.size() == 0 )
+            player = null;
+
+        if( player != null && player.getSFSObject(0).size() > 0 )
+            return player.getSFSObject(0);
+        
+        return null;
+    }
+
     public String getPlayerNameById(int id)
     {
         try {

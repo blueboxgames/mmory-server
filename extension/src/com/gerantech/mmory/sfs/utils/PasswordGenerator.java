@@ -73,6 +73,12 @@ public class PasswordGenerator
 		return Integer.parseInt( invitationCode.split("z")[1] ,35 );
 	}
 
+	public static boolean checkReferralCode(String refCode)
+	{
+		String[] refs = refCode.split("z");
+		return ( Integer.parseInt( refs[0] ,30 ) == Integer.parseInt( refs[1] ,35 ) );
+	}
+
 	public static String getRestoreCode(int playerId)
 	{
 		return Integer.toString( playerId,35) + "z" + Integer.toString((int)Instant.now().getEpochSecond(),35 );
