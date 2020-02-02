@@ -8,6 +8,7 @@ import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.socials.Lobby;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.FCMUtils;
 import com.gerantech.mmory.libs.utils.InboxUtils;
@@ -162,7 +163,7 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
         }
 
         // Send friendship notification to inviter inbox
-        InboxUtils.getInstance().send(MessageTypes.M50_URL, msg, inviteeId, inviterId, "k2k://open?controls=tabs&dashTab=3&socialTab=2" );
+        InboxUtils.getInstance().send(MessageTypes.M50_URL, msg, BanUtils.SYSTEM_ID, inviterId, "k2k://open?controls=tabs&dashTab=3&socialTab=2" );
         FCMUtils.getInstance().send(msg, "k2k://open?controls=tabs&dashTab=3&socialTab=2", inviterId);
         send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_SUCCEED, params, sender);
     }
