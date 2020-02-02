@@ -161,6 +161,7 @@ try {
 			dbManager.executeInsert(query, new Object[] {});
 		} catch (SQLException e) { e.printStackTrace(); }
 
+		addFriends(resources, playerId);
 		session.setProperty("joinedRoomId", -1);
 
 		// send data to user
@@ -215,13 +216,16 @@ try {
 			return;
 		}
 
+		SFSArray resources = dbUtils.getResources(id);
+		addFriends(resources, id);
+
 		// Retrieve player data from db
 		outData.putInt("id", id);
 		outData.putText("name", userData.getText("name"));
 		// outData.putInt("createAt", Math.toIntExact(userData.getLong("create_at") / 1000));
 		// outData.putInt("lastLogin", Math.toIntExact(userData.getLong("last_login")/ 1000));
 		outData.putInt("sessionsCount", userData.getInt("sessions_count"));
-		outData.putSFSArray("resources", dbUtils.getResources(id));
+		outData.putSFSArray("resources", resources);
 		outData.putSFSArray("operations", new SFSArray());
 		outData.putSFSArray("exchanges", dbUtils.getExchanges(id, (int)Instant.now().getEpochSecond()));
 		outData.putSFSArray("quests", new SFSArray());
@@ -235,6 +239,14 @@ try {
 		outData.putBool("inBattle", joinedRoomId > -1 );
 		//outData.putSFSArray("challenges", ChallengeUtils.getInstance().getChallengesOfAttendee(-1, game.player, false));
 		initiateCore(session, inData, outData, loginData);
+	}
+
+	private void addFriends(SFSArray resources, int id) {
+		SFSObject so = new SFSObject();
+		so.putInt("type", ResourceType.R27_FRIENDS);
+		so.putInt("count", Math.toIntExact(DBUtils.getInstance().getFriendships(id, "count(*)").getSFSObject(0).getLong("count(*)")));
+		so.putInt("level", 0);
+		resources.addSFSObject(so);
 	}
 
 	private void initiateCore(ISession session, ISFSObject inData, ISFSObject outData, LoginData loginData)

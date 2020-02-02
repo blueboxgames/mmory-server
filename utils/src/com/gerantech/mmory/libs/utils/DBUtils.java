@@ -303,6 +303,18 @@ public class DBUtils extends UtilBase
         return result;
     }
 
+    public ISFSArray getFriendships(int playerId, String coloumns)
+    {
+        if( coloumns == null )
+            coloumns = "*";
+        String query = "SELECT " + coloumns + " FROM friendship WHERE invitee_id=" + playerId + " OR inviter_id="+ playerId;
+        ISFSArray result = null;
+        try {
+            result = db.executeQuery(query, new Object[]{});
+        } catch (Exception e) { e.printStackTrace(); }
+        return result;
+    }
+
 
     public ISFSArray getPrefs(int id, int appVersion)
     {
