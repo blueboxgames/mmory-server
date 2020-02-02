@@ -57,7 +57,13 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
         int inviteeId = game.player.id;
         String inviteeName = inviteeId + "";
         trace("Invitation Code", invitationCode);
-        int inviterId = PasswordGenerator.recoverPlayerId(invitationCode);
+        int inviterId;
+        try {
+            inviterId = PasswordGenerator.recoverPlayerId(invitationCode);
+        } catch (Exception e ) {
+            send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
+            return;
+        }
         String inviterName = inviterId + "";
         boolean existsUDID = false;
         trace("inviteeId", inviteeId, "inviterId", inviterId);
