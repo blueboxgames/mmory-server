@@ -128,8 +128,6 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
             queryStr = "SELECT inviter_id FROM friendship WHERE invitee_id="+ inviteeId + " AND inviter_id="+ inviterId + " OR invitee_id="+ inviterId + " AND inviter_id="+ inviteeId;
             trace("QUERY: ", queryStr);
             sfsArray = dbManager.executeQuery(queryStr, new Object[]{});
-            trace("Query Size!" + sfsArray.size());
-            trace(existsUDID);
             // Inviter reward consumption if invitee is new player
             if( !existsUDID && sfsArray.size() == 0 )
             {
@@ -164,8 +162,8 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
         }
 
         // Send friendship notification to inviter inbox
-        InboxUtils.getInstance().send(MessageTypes.M50_URL, msg, inviteeId, inviterId, "towers://open?controls=tabs&dashTab=3&socialTab=2" );
-        FCMUtils.getInstance().send(msg, "towers://open?controls=tabs&dashTab=3&socialTab=2", inviterId);
+        InboxUtils.getInstance().send(MessageTypes.M50_URL, msg, inviteeId, inviterId, "k2k://open?controls=tabs&dashTab=3&socialTab=2" );
+        FCMUtils.getInstance().send(msg, "k2k://open?controls=tabs&dashTab=3&socialTab=2", inviterId);
         send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_SUCCEED, params, sender);
     }
 

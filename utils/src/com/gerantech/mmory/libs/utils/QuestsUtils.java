@@ -116,10 +116,10 @@ public class QuestsUtils extends UtilBase
         // initialize first quests
         if( player.quests.length == 0 )
         {
-            player.quests.push( Quest.instantiate(player, Quest.TYPE_3_BATTLES) );
-            player.quests.push( Quest.instantiate(player, Quest.TYPE_7_CARD_COLLECT) );
-            player.quests.push( Quest.instantiate(player, Quest.TYPE_8_CARD_UPGRADE) );
-            player.quests.push( Quest.instantiate(player, Quest.TYPE_9_BOOK_OPEN) );
+            player.quests.push( Quest.instantiate(player, Quest.TYPE_10_RATING) );
+            player.quests.push( Quest.instantiate(player, Quest.TYPE_12_INSTAGRAM) );
+            player.quests.push( Quest.instantiate(player, Quest.TYPE_13_FRIENDSHIP) );
+            player.quests.push( Quest.instantiate(player, Quest.TYPE_1_LEAGUEUP) );
         }
 
         if( player.quests.length >= Quest.MAX_QUESTS ) // check quests is full
