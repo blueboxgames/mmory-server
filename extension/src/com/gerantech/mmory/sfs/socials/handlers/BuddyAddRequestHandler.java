@@ -8,9 +8,10 @@ import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.socials.Lobby;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
+import com.gerantech.mmory.libs.utils.FCMUtils;
 import com.gerantech.mmory.libs.utils.InboxUtils;
-import com.gerantech.mmory.libs.utils.OneSignalUtils;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.smartfoxserver.v2.api.ISFSBuddyApi;
 import com.smartfoxserver.v2.buddylist.Buddy;
@@ -57,7 +58,13 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
         int inviteeId = game.player.id;
         String inviteeName = inviteeId + "";
         trace("Invitation Code", invitationCode);
-        int inviterId = PasswordGenerator.recoverPlayerId(invitationCode);
+        int inviterId;
+        try {
+            inviterId = PasswordGenerator.recoverPlayerId(invitationCode);
+        } catch (Exception e ) {
+            send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
+            return;
+        }
         String inviterName = inviterId + "";
         boolean existsUDID = false;
         trace("inviteeId", inviteeId, "inviterId", inviterId);
@@ -90,7 +97,7 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
         if( inviteeUDID != null )
         {
             try {
-                existsUDID = dbManager.executeQuery("SELECT COUNT(*) FROM devices WHERE udid='" + inviteeUDID + "'", new Object[]{}).size() > 0;
+                existsUDID = dbManager.executeQuery("SELECT COUNT(*) FROM devices WHERE udid='" + inviteeUDID + "'", new Object[]{}).size() > 1;
                 trace("existsUDID", existsUDID);
             } catch (SQLException e) { e.printStackTrace(); }
         }
@@ -111,7 +118,7 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
             {
                 // Invitee reward consumption
                 game.player.resources.increase(ResourceType.R4_CURRENCY_HARD, Lobby.buddyInviteeReward);
-                queryStr = "UPDATE " + DBUtils.getInstance().liveDB + ".resources SET count=" + game.player.get_hards() + " WHERE type=1003 AND player_id=" + inviteeId + ";";
+                queryStr = "UPDATE " + DBUtils.getInstance().liveDB + ".resources SET count=" + game.player.get_hards() + " WHERE type="+ ResourceType.R4_CURRENCY_HARD + " AND player_id=" + inviteeId + ";";
                 trace("add reward query:", queryStr);
                 dbManager.executeUpdate(queryStr, new Object[] {});
                 params.putInt("rewardType", ResourceType.R4_CURRENCY_HARD);
@@ -122,11 +129,10 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
             queryStr = "SELECT inviter_id FROM friendship WHERE invitee_id="+ inviteeId + " AND inviter_id="+ inviterId + " OR invitee_id="+ inviterId + " AND inviter_id="+ inviteeId;
             trace("QUERY: ", queryStr);
             sfsArray = dbManager.executeQuery(queryStr, new Object[]{});
-
             // Inviter reward consumption if invitee is new player
             if( !existsUDID && sfsArray.size() == 0 )
             {
-                queryStr = "UPDATE " + DBUtils.getInstance().liveDB + ".resources SET count=count+" + Lobby.buddyInviterReward + " WHERE type=1003 AND player_id=" + inviterId + ";";
+                queryStr = "UPDATE " + DBUtils.getInstance().liveDB + ".resources SET count=count+" + Lobby.buddyInviterReward + " WHERE type="+ ResourceType.R4_CURRENCY_HARD + " AND player_id=" + inviterId + ";";
                 trace("add reward query:", queryStr);
                 dbManager.executeUpdate(queryStr, new Object[] {});
                 msg = (game.player.nickName.equals("guest")?"یه نفر":game.player.nickName) + " باهات رفیق شد و تو هم " + Lobby.buddyInviterReward + " تا جواهر جایزه گرفتی. ";
@@ -157,8 +163,8 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
         }
 
         // Send friendship notification to inviter inbox
-        InboxUtils.getInstance().send(MessageTypes.M50_URL, msg, inviteeId, inviterId, "towers://open?controls=tabs&dashTab=3&socialTab=2" );
-        OneSignalUtils.getInstance().send(msg, null, inviterId);
+        InboxUtils.getInstance().send(MessageTypes.M50_URL, msg, BanUtils.SYSTEM_ID, inviterId, "k2k://open?controls=tabs&dashTab=3&socialTab=2" );
+        FCMUtils.getInstance().send(msg, "k2k://open?controls=tabs&dashTab=3&socialTab=2", inviterId);
         send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_SUCCEED, params, sender);
     }
 
