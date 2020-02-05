@@ -9,7 +9,7 @@ import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
 public class BBGClientRequestHandler extends BaseClientRequestHandler
 {
-    protected IDBManager dbManager() {
+    protected IDBManager getDBManager() {
         return getParentExtension().getParentZone().getDBManager();
     }
 

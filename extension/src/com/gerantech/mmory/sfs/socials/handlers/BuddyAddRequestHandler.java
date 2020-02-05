@@ -27,29 +27,12 @@ import com.smartfoxserver.v2.exceptions.SFSBuddyListException;
  */
 public class BuddyAddRequestHandler extends BBGClientRequestHandler
 {
-    /*private static final int zOK = 0;
-    private static final int zINVALID_INVITATION_CODE = -1;
-    private static final int zALREADY_FRIEND = -2;
-    private static final int zUSER_ADD_HIMSELF = -3;
-    private static final int zANOTHER_USER_SAME_PHONE = -4;
-
-    public static var RESPONSE_SENT:Int = 1;
-    public static var RESPONSE_SUCCEED:Int = 0;
-    public static var RESPONSE_NOT_ALLOWED:Int = -1;
-    public static var RESPONSE_ALREADY_SENT:Int = -3;
-    public static var RESPONSE_NOT_FOUND:Int = -4;
-    public static var RESPONSE_UNKNOWN_ERROR:Int = -5;
-    public static var RESPONSE_NOT_ENOUGH_REQS:Int = -6;
-    public static var RESPONSE_MUST_WAIT:Int = -7;*/
-
     private ISFSArray sfsArray;
-    private IDBManager dbManager;
     private ISFSBuddyApi buddyApi;
     public void handleClientRequest(User sender, ISFSObject params)
     {
         BuddyList buddies;
         buddyApi = getParentExtension().getBuddyApi();
-        dbManager = getParentExtension().getParentZone().getDBManager();
         Game game = ((Game)sender.getSession().getProperty("core"));
 
         String invitationCode = params.getText("invitationCode");
@@ -113,14 +96,14 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
             // Invitee already consumed first invitation reward if query has result.
             String queryStr = "SELECT invitee_id FROM friendship WHERE invitee_id="+ inviteeId + " OR inviter_id="+ inviteeId;
             trace("QUERY: ", queryStr);
-            sfsArray = dbManager.executeQuery(queryStr, new Object[]{});
+            sfsArray = getDBManager().executeQuery(queryStr, new Object[]{});
             if( sfsArray.size() == 0 )
             {
                 // Invitee reward consumption
                 game.player.resources.increase(ResourceType.R4_CURRENCY_HARD, Lobby.buddyInviteeReward);
                 queryStr = "UPDATE " + DBUtils.getInstance().liveDB + ".resources SET count=" + game.player.get_hards() + " WHERE type="+ ResourceType.R4_CURRENCY_HARD + " AND player_id=" + inviteeId + ";";
                 trace("add reward query:", queryStr);
-                dbManager.executeUpdate(queryStr, new Object[] {});
+                getDBManager().executeUpdate(queryStr, new Object[] {});
                 params.putInt("rewardType", ResourceType.R4_CURRENCY_HARD);
                 params.putInt("rewardCount", Lobby.buddyInviteeReward);
             }
@@ -128,25 +111,25 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
             // Inviter invited invitee before if query has result.
             queryStr = "SELECT inviter_id FROM friendship WHERE invitee_id="+ inviteeId + " AND inviter_id="+ inviterId + " OR invitee_id="+ inviterId + " AND inviter_id="+ inviteeId;
             trace("QUERY: ", queryStr);
-            sfsArray = dbManager.executeQuery(queryStr, new Object[]{});
+            sfsArray = getDBManager().executeQuery(queryStr, new Object[]{});
             // Inviter reward consumption if invitee is new player
             if( !existsUDID && sfsArray.size() == 0 )
             {
                 queryStr = "UPDATE " + DBUtils.getInstance().liveDB + ".resources SET count=count+" + Lobby.buddyInviterReward + " WHERE type="+ ResourceType.R4_CURRENCY_HARD + " AND player_id=" + inviterId + ";";
                 trace("add reward query:", queryStr);
-                dbManager.executeUpdate(queryStr, new Object[] {});
+                getDBManager().executeUpdate(queryStr, new Object[] {});
                 msg = (game.player.nickName.equals("guest")?"یه نفر":game.player.nickName) + " باهات رفیق شد و تو هم " + Lobby.buddyInviterReward + " تا جواهر جایزه گرفتی. ";
             }
 
             // create friendship if not exists
             queryStr = "SELECT invitee_id FROM friendship WHERE invitee_id=" + inviteeId + " AND inviter_id=" + inviterId;
             trace("QUERY: ", queryStr);
-            sfsArray = dbManager.executeQuery(queryStr, new Object[]{});
+            sfsArray = getDBManager().executeQuery(queryStr, new Object[]{});
             if( sfsArray.size() == 0 )
             {
                 queryStr = "INSERT INTO friendship (inviter_id, invitee_id, invitation_code, has_reward) VALUES (" + inviterId + ", " + inviteeId + ", '" + invitationCode + "', 0)";
                 trace("INSERT to DB:", queryStr);
-                dbManager.executeInsert(queryStr, new Object[]{});
+                getDBManager().executeInsert(queryStr, new Object[]{});
             }
 
             buddyApi.addBuddy(sender, inviterName, false, true, false);
@@ -172,7 +155,7 @@ public class BuddyAddRequestHandler extends BBGClientRequestHandler
     {
         trace("QUERY: ", queryStr);
         try {
-            sfsArray = dbManager.executeQuery(queryStr, new Object[]{});
+            sfsArray = getDBManager().executeQuery(queryStr, new Object[]{});
         } catch (SQLException e) {
             send(Commands.BUDDY_ADD, e.getErrorCode(), params, sender);
             e.printStackTrace();

@@ -1,21 +1,20 @@
 package com.gerantech.mmory.sfs.administration.ban;
 
-import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.List;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
+import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
-import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-
-import java.sql.SQLException;
-import java.time.Instant;
-import java.util.List;
 
 /**
  * @author ManJav
@@ -29,10 +28,9 @@ public class BanHandler extends BBGClientRequestHandler
 			return;
 		// get name
 		ISFSArray players = null;
-		IDBManager db = getParentExtension().getParentZone().getDBManager();
 		String query = "SELECT name FROM players WHERE id=" + params.getInt("id");
 		try {
-			players = db.executeQuery(query, new Object[]{});
+			players = getDBManager().executeQuery(query, new Object[]{});
 		} catch (SQLException e) { e.printStackTrace(); }
 		if( players == null || players.size() == 0 )
 		{

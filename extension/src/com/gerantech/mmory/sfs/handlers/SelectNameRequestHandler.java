@@ -2,29 +2,27 @@ package com.gerantech.mmory.sfs.handlers;
 
 import java.sql.SQLException;
 
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.constants.ExchangeType;
+import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
-import com.gerantech.mmory.core.Game;
-import com.gerantech.mmory.core.constants.ExchangeType;
-import com.gerantech.mmory.core.constants.MessageTypes;
-import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 import com.smartfoxserver.v2.util.filters.FilteredMessage;
 
 /**
  * @author ManJav
  *
  */
-public class SelectNameRequestHandler extends BaseClientRequestHandler 
+public class SelectNameRequestHandler extends BBGClientRequestHandler 
 {
 	public SelectNameRequestHandler() {}
-
 	public void handleClientRequest(User sender, ISFSObject params)
-    {
+	{
 		Game game = ((Game)sender.getSession().getProperty("core"));
 
 		String name = params.getUtfString("name");
@@ -57,9 +55,8 @@ public class SelectNameRequestHandler extends BaseClientRequestHandler
 			}
 		}
 
-		IDBManager dbManager = getParentExtension().getParentZone().getDBManager();
 		try {
-			dbManager.executeUpdate("UPDATE " + DBUtils.getInstance().liveDB + ".`players` SET `name`='" + name + "' WHERE `id`=" + game.player.id + ";", new Object[] {});
+			getDBManager().executeUpdate("UPDATE " + DBUtils.getInstance().liveDB + ".`players` SET `name`='" + name + "' WHERE `id`=" + game.player.id + ";", new Object[] {});
 		} catch (SQLException e) {
 			params.putText("errorCode", e.getErrorCode() + "");
 			trace(e.getMessage());
@@ -67,5 +64,5 @@ public class SelectNameRequestHandler extends BaseClientRequestHandler
 		game.player.nickName = name;
 		params.putInt("response", MessageTypes.RESPONSE_SUCCEED);
 		send(Commands.SELECT_NAME, params, sender);
-    }
+	}
 }

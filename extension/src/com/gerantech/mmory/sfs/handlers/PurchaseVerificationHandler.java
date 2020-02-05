@@ -13,6 +13,7 @@ import com.gerantech.mmory.core.constants.ExchangeType;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.exchanges.ExchangeItem;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.libs.utils.ConfigUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
@@ -21,7 +22,6 @@ import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 import com.smartfoxserver.v2.extensions.ExtensionLogLevel;
 
 import org.apache.http.HttpStatus;
@@ -32,7 +32,7 @@ import org.apache.http.message.BasicNameValuePair;
  * @author ManJav
  *
  */
-public class PurchaseVerificationHandler extends BaseClientRequestHandler
+public class PurchaseVerificationHandler extends BBGClientRequestHandler
 {
 	private ExchangeItem item;
 	private Properties props = ConfigUtils.getInstance().load(ConfigUtils.DEFAULT);
@@ -188,7 +188,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 				+ "') ON DUPLICATE KEY UPDATE consumed = VALUES(consumed), state = VALUES(state)";
 		trace(query);
 		try {
-			getParentExtension().getParentZone().getDBManager().executeInsert(query, new Object[] {});
+			getDBManager().executeInsert(query, new Object[] {});
 		} catch (SQLException e) { e.printStackTrace(); }
 	}
 
@@ -196,7 +196,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 	{
 		ISFSArray res = null;
 		try {
-			res = getParentExtension().getParentZone().getDBManager().executeQuery(
+			res = getDBManager().executeQuery(
 					"SELECT count From " + DBUtils.getInstance().liveDB + ".resources WHERE player_id = " + playerID + " AND type = 1003", new Object[] {});
 		} catch (SQLException e) { e.printStackTrace(); }
 
@@ -210,7 +210,7 @@ public class PurchaseVerificationHandler extends BaseClientRequestHandler
 		String query = "UPDATE `purchases` SET `consumed`=0 WHERE `token`='" + token + "'";
 		trace(query);
 		try {
-			getParentExtension().getParentZone().getDBManager().executeUpdate(query, new Object[] {});
+			getDBManager().executeUpdate(query, new Object[] {});
 		} catch (SQLException e) { e.printStackTrace(); }
 	}
 

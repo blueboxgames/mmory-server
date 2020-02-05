@@ -35,7 +35,7 @@ public class GetBannedDataHandler extends BBGClientRequestHandler
 		trace(query);
 		ISFSArray bannes = null;
 		try {
-			bannes = getParentExtension().getParentZone().getDBManager().executeQuery(query, new Object[]{});
+			bannes = getDBManager().executeQuery(query, new Object[]{});
 		} catch (SQLException e) { e.printStackTrace(); }
 
 		// get all ban messages

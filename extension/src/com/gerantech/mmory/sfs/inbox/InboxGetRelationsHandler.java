@@ -1,25 +1,25 @@
 package com.gerantech.mmory.sfs.inbox;
 
-import com.gerantech.mmory.libs.Commands;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
+import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author ManJav
  *
  */
-public class InboxGetRelationsHandler extends BaseClientRequestHandler
+public class InboxGetRelationsHandler extends BBGClientRequestHandler
 {
 	public void handleClientRequest(User sender, ISFSObject params)
-    {
+	{
 		Game game = ((Game)sender.getSession().getProperty("core"));
 		int me = params.containsKey("me") ?  params.getInt("me") : game.player.id;
 		ISFSArray relations = InboxUtils.getInstance().getRelations(me, params.getInt("id"), game.player.admin ? 100 : 40);
@@ -42,12 +42,11 @@ public class InboxGetRelationsHandler extends BaseClientRequestHandler
 					query += " OR";
 			}
 			try {
-				getParentExtension().getParentZone().getDBManager().executeUpdate(query, new Object[]{});
+				getDBManager().executeUpdate(query, new Object[]{});
 			} catch (SQLException e) { e.printStackTrace(); }
 		}
 
 		params.putSFSArray("data", relations);
 		send(Commands.INBOX_GET_RELATIONS, params, sender);
-		
 	}
 }
