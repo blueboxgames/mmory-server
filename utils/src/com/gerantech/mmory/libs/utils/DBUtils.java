@@ -153,7 +153,7 @@ public class DBUtils extends UtilBase
 
         // update ranking table
         if( hasRankFields )
-            RankingUtils.getInstance().update(player.id, -1, player.get_point(), RankData.STATUS_NAN);;
+            RankingUtils.getInstance().update(player.id, null, player.get_point(), RankData.STATUS_NAN);;
     }
 
     public void insertResources(Player player, IntIntMap resources)

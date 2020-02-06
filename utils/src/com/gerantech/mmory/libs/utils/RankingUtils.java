@@ -110,6 +110,11 @@ public class RankingUtils extends UtilBase {
 		return r;
 	}
 
+	public int getPoint(int id) {
+		ConcurrentHashMap<Integer, RankData> users = this.getUsers();
+		return users.containsKey(id) ? users.get(id).point : 0;
+	}
+
 	public void fillActives() {
 		if (ext.getParentZone().containsProperty("ranking"))
 			return;
