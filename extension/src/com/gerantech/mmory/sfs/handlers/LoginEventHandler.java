@@ -2,7 +2,6 @@ package com.gerantech.mmory.sfs.handlers;
 
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.InitData;
@@ -364,13 +363,8 @@ try {
 			_exchanges.addSFSObject(ExchangeUtils.toSFS(game.exchanger.items.get(t)));
 		outData.putSFSArray("exchanges", _exchanges);
 
-		// init and update in memory data base
-		ConcurrentHashMap<Integer, RankData> users = RankingUtils.getInstance().getUsers();
-		RankData rd = new RankData(game.player.nickName,  game.player.get_point());
-		if( users.containsKey(game.player.id))
-			users.replace(game.player.id, rd);
-		else
-			users.put(game.player.id, rd);
+		// init or update in memory data base
+		RankingUtils.getInstance().update(game.player.id, game.player.nickName,  game.player.get_point(), RankData.STATUS_ON);
 
 		// insert quests in registration or get in next time
 		ISFSArray quests = QuestsUtils.getInstance().getAll(game.player.id);

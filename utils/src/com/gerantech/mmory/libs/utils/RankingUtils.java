@@ -89,6 +89,26 @@ public class RankingUtils extends UtilBase {
 	public ConcurrentHashMap<Integer, RankData> getUsers() {
 		return (ConcurrentHashMap<Integer, RankData>) ext.getParentZone().getProperty("ranking");
 	}
+	
+	public RankData update(int id, String name, int point, int status) {
+		ConcurrentHashMap<Integer, RankData> users = this.getUsers();
+		RankData r = null;
+		if( users.containsKey(id))
+		{
+			r = users.get(id);
+			if( name != null )
+				r.name = name;
+			if( point > -1 )
+				r.point = point;
+			if( status > -1 )
+				r.status = status;
+			users.replace(id, r);
+			return r;
+		}
+		r = new RankData(name == null ? "?" : name, point == -1 ? 0 : point, status == -1 ? 0 : status);
+		users.put(id, r);
+		return r;
+	}
 
 	public void fillActives() {
 		if (ext.getParentZone().containsProperty("ranking"))
@@ -107,12 +127,9 @@ public class RankingUtils extends UtilBase {
 		}
 
 		for (int p = 0; p < dbResult.size(); p++)
-			users.put(dbResult.getSFSObject(p).getInt("id"),
-					new RankData(dbResult.getSFSObject(p).getUtfString("name"), dbResult.getSFSObject(p).getInt("count")));
-		trace(
-				"filled in-memory tops in " + (System.currentTimeMillis() - (long) ext.getParentZone().getProperty("startTime"))
-						+ " milliseconds. -> uers:",
-				users.size());
+			users.put(dbResult.getSFSObject(p).getInt("id"), new RankData(dbResult.getSFSObject(p).getUtfString("name"), dbResult.getSFSObject(p).getInt("count"), RankData.STATUS_OFF));
+		trace("filled in-memory tops in " + (System.currentTimeMillis() - (long) ext.getParentZone().getProperty("startTime"))
+						+ " milliseconds. -> uers:", users.size());
 
 		// fill fake tops
 		/*

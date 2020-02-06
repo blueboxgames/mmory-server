@@ -12,10 +12,11 @@ public class RankData implements Serializable
 	public String name;
 	public int point;
 	public int status = 0;
-	public RankData(String name, int point)
+	public RankData(String name, int point, int status)
 	{
 		super();
 		this.name = name;
 		this.point = point;
+		this.status = status;
 	}
 }
