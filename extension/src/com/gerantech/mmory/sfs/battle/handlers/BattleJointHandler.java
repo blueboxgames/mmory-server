@@ -15,17 +15,17 @@ import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.libs.data.RankData;
 import com.gerantech.mmory.libs.data.UnitData;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
+import com.gerantech.mmory.libs.utils.RankingUtils;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.smartfoxserver.v2.SmartFoxServer;
-import com.smartfoxserver.v2.buddylist.SFSBuddyVariable;
 import com.smartfoxserver.v2.core.ISFSEvent;
 import com.smartfoxserver.v2.core.SFSEventParam;
 import com.smartfoxserver.v2.core.SFSEventType;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-import com.smartfoxserver.v2.exceptions.SFSBuddyListException;
 import com.smartfoxserver.v2.extensions.BaseServerEventHandler;
 
 public class BattleJointHandler extends BaseServerEventHandler {
@@ -59,12 +59,6 @@ public class BattleJointHandler extends BaseServerEventHandler {
 				if (players.get(i).equals(user)) {
 					sendBattleData(players.get(i));
 				}
-				/*
-				 * else if( !players.get(i).isNpc() ) { SFSObject sfsO = new SFSObject();
-				 * sfsO.putText("user", ((Game)
-				 * user.getSession().getProperty("core")).player.nickName); send("battleRejoin",
-				 * sfsO, players.get(i)); }
-				 */
 			}
 			return;
 		}
@@ -78,7 +72,6 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		if (room.getPropertyAsInt("friendlyMode") == 0) {
 			int delay = 5000;// Math.max(12000, player.get_arena(0) * 400 + 7000);
 			// trace(room.getName(), waitingPeak, room.getPlayersList().size(),
-			// room.getOwner().getName());
 
 			room.autoJoinTimer = SmartFoxServer.getInstance().getTaskScheduler().schedule(new TimerTask() {
 				@Override
@@ -136,7 +129,6 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		params.putInt("friendlyMode", room.battleField.friendlyMode);
 		params.putBool("singleMode", room.getPropertyAsBool("singleMode"));
 		params.putSFSArray("units", UnitData.toSFSArray(room.battleField.units));
-		boolean isSpectator = room.isSpectator(user);
 		ArrayList<?> registeredPlayers = (ArrayList<?>) room.getProperty("registeredPlayers");
 		int i = 0;
 		for (Object o : registeredPlayers)
@@ -165,18 +157,9 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			i++;
 		}
 
+		if( !room.isSpectator(user) )
+			RankingUtils.getInstance().update(game.player.id, game.player.nickName,  game.player.get_point(), RankData.STATUS_BUSY);
+	
 		send(Commands.BATTLE_START, params, user);
-
-		if (!isSpectator) {
-			user.getBuddyProperties().setState("Occupied");
-			user.getBuddyProperties().setVariable(new SFSBuddyVariable("br", room.getId()));
-			user.getBuddyProperties().setVariable(new SFSBuddyVariable("$point", user.getVariable("point").getIntValue()));
-
-			try {
-				getParentExtension().getBuddyApi().setBuddyVariables(user, user.getBuddyProperties().getVariables(), true, true);
-			} catch (SFSBuddyListException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 }
