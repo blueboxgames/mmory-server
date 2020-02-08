@@ -57,8 +57,8 @@ public class MMOryExtension extends SFSExtension
 		// Add billing upgrade handler
 		addRequestHandler(Commands.CARD_UPGRADE, CardUpgradeHandler.class);
 		addRequestHandler(Commands.COLLECT_ROAD_REWARD, RoadCollectRewardHandler.class);
-
-        // Add rank handler
+		
+		// Add rank handler
 		addRequestHandler(Commands.RANK, RankRequestHandler.class);
 		addRequestHandler(Commands.SELECT_NAME, SelectNameRequestHandler.class);
 		addRequestHandler(Commands.EXCHANGE, ExchangeHandler.class);
@@ -67,7 +67,7 @@ public class MMOryExtension extends SFSExtension
 		addRequestHandler(Commands.CHANGE_DECK, ChangeDeckHandler.class);
 		addRequestHandler(Commands.PREFS, UserPrefsRequestHandler.class);
 		addRequestHandler(Commands.REGISTER_PUSH, RegisterPushHandler.class);
-
+		
 		// Social handlers
 		addRequestHandler(Commands.LOBBY_DATA, LobbyDataHandler.class);
 		addRequestHandler(Commands.LOBBY_JOIN, LobbyJoinHandler.class);
@@ -75,10 +75,11 @@ public class MMOryExtension extends SFSExtension
 		addRequestHandler(Commands.LOBBY_CREATE, LobbyCreateHandler.class);
 		addRequestHandler(Commands.LOBBY_PUBLIC, LobbyPublicRequestHandler.class);
 		addRequestHandler(Commands.LOBBY_REMOVE, LobbyRemoveHandler.class);
-
+		
 		addRequestHandler(Commands.BUDDY_ADD, FriendAddRequestHandler.class);
+		addRequestHandler(Commands.BUDDY_REMOVE, FriendRemoveRequestHandler.class);
 		addRequestHandler(Commands.BUDDY_BATTLE, BuddyBattleRequestHandler.class);
-
+		
 		addRequestHandler(Commands.BUDDY_DATA, FriendDataHandler.class);
 		
 		addRequestHandler(Commands.PROFILE, ProfileRequestHandler.class);
