@@ -80,7 +80,7 @@ public class MMOryExtension extends SFSExtension
 		addRequestHandler(Commands.BUDDY_REMOVE, BuddyRemoveRequestHandler.class);
 		addRequestHandler(Commands.BUDDY_BATTLE, BuddyBattleRequestHandler.class);
 
-		addRequestHandler(Commands.BUDDY_DATA, FriendAddRequestHandler.class);
+		addRequestHandler(Commands.BUDDY_DATA, FriendDataHandler.class);
 		
 		addRequestHandler(Commands.PROFILE, ProfileRequestHandler.class);
 

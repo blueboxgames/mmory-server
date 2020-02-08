@@ -28,20 +28,21 @@ public class FriendsUtils extends UtilBase {
         if (ext.getParentZone().containsProperty("Friends"))
             return;
 
-        ISFSArray Friendships = new SFSArray();
+        ISFSArray rows = new SFSArray();
         try {
-            Friendships = ext.getParentZone().getDBManager().executeQuery("SELECT * FROM friendship;", new Object[] {});
+            rows = ext.getParentZone().getDBManager().executeQuery("SELECT * FROM friendship;", new Object[] {});
         } catch (SQLException e) { e.printStackTrace(); }
 
-        Map<Integer, Friends> Friends = new ConcurrentHashMap<>();
+        Map<Integer, Friends> friends = new ConcurrentHashMap<>();
         ISFSObject f;
         Friends fSFS;
-        for (int i = 0; i < Friends.size(); i++) {
-            f = Friendships.getSFSObject(i);
-            fSFS = new Friends(f.getInt("id"), f.getInt("inviter"), f.getInt("invitee"), f.getInt("inviterStep"), f.getInt("inviteeStep"));
-            Friends.put(fSFS.id, fSFS);
+        for (int i = 0; i < rows.size(); i++) {
+            f = rows.getSFSObject(i);
+            //trace(f.getDump());
+            fSFS = new Friends(f.getInt("id"), f.getInt("inviter_id"), f.getInt("invitee_id"), f.getInt("inviter_step"), f.getInt("invitee_step"), f.getInt("state"));
+            friends.put(fSFS.id, fSFS);
         }
-        ext.getParentZone().setProperty("friends", Friends);
+        ext.getParentZone().setProperty("friends", friends);
         trace("loaded Friends data in " + (System.currentTimeMillis() - (long) ext.getParentZone().getProperty("startTime")) + " milliseconds.");
     }
 
@@ -73,10 +74,11 @@ public class FriendsUtils extends UtilBase {
         SFSArray data = new SFSArray();
         for (Friends f : friends) {
           fid = f.inviter == playerId ? f.invitee : f.inviter;
+            // trace("ss", playerId, fid, f.state);
           rank = RankingUtils.getInstance().getUsers().get(fid);
           SFSObject item = new SFSObject();
           item.putInt("id", fid);
-          item.putInt("step", f.inviter == playerId ? f.inviteeStep : f.inviterStep);
+            item.putInt("step", f.inviter == playerId ? f.inviterStep : f.inviteeStep);
           item.putInt("point", rank.point);
           item.putInt("status", rank.status);
           item.putUtfString("name", rank.name);
