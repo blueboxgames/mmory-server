@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.socials.Friends;
 import com.gerantech.mmory.libs.data.RankData;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
@@ -58,88 +57,78 @@ public class FriendsUtils extends UtilBase {
         return null;
     }
 
-    public List<Friends> getFriends(int playerId) {
+    public List<Friends> getFriends(int playerId, int state) {
         List<Friends> ret = new ArrayList<>();
         Set<Map.Entry<Integer, Friends>> entries = this.getAll().entrySet();
         for (Map.Entry<Integer, Friends> entry : entries)
-            if (entry.getValue().inviter == playerId || entry.getValue().invitee == playerId)
+            if( (state == -1 || state == entry.getValue().state) && (entry.getValue().inviter == playerId || entry.getValue().invitee == playerId) )
                 ret.add(entry.getValue());
         return ret;
     }
 
-    public SFSArray getFriendList(int playerId) {
-        List<Friends> friends = getFriends(playerId);
+    public SFSArray getFriendList(int playerId, int state) {
+        List<Friends> friends = getFriends(playerId, state);
         int fid;
         RankData rank = null;
         SFSArray data = new SFSArray();
         for (Friends f : friends) {
-          fid = f.inviter == playerId ? f.invitee : f.inviter;
+            fid = f.inviter == playerId ? f.invitee : f.inviter;
             // trace("ss", playerId, fid, f.state);
-          rank = RankingUtils.getInstance().getUsers().get(fid);
-          SFSObject item = new SFSObject();
-          item.putInt("id", fid);
+            rank = RankingUtils.getInstance().getUsers().get(fid);
+            SFSObject item = new SFSObject();
+            item.putInt("id", fid);
             item.putInt("step", f.inviter == playerId ? f.inviterStep : f.inviteeStep);
-          item.putInt("point", rank.point);
-          item.putInt("status", rank.status);
-          item.putUtfString("name", rank.name);
-          data.addSFSObject(item);
+            item.putInt("point", rank.point);
+            item.putInt("status", rank.status);
+            item.putUtfString("name", rank.name);
+            data.addSFSObject(item);
         }
         return data;
     }
 
-    public Friends getFriendship(int left, int right)
+    public Friends getFriendship(int left, int right, int state)
     {
         Set<Map.Entry<Integer, Friends>> entries = this.getAll().entrySet();
         for (Map.Entry<Integer, Friends> entry : entries)
-            if( (entry.getValue().inviter == left && entry.getValue().invitee == right) || (entry.getValue().invitee == left && entry.getValue().inviter == right) )
+            if( (state == -1 || state == entry.getValue().state) && (entry.getValue().inviter == left && entry.getValue().invitee == right) || (entry.getValue().invitee == left && entry.getValue().inviter == right) )
                 return entry.getValue();
         return null;
     }
 
     public Friends create(int inviter, int invitee, int inviterStep, int inviteeStep)
     {
-        Friends friends = getFriendship(inviter, invitee);
-        if( friends != null )
+        Friends friendship = getFriendship(inviter, invitee, -1);
+        if( friendship != null )
         {
-            friends.inviterStep = friends.inviter == inviter ? inviterStep : inviteeStep;
-            friends.inviteeStep = friends.inviter == inviter ? inviteeStep : inviterStep;
-            this.update(friends);
-            return friends;
+            friendship.inviterStep = friendship.inviter == inviter ? inviterStep : inviteeStep;
+            friendship.inviteeStep = friendship.inviter == inviter ? inviteeStep : inviterStep;
+            this.update(friendship);
+            return friendship;
         }
 
-        String query = "INSERT INTO friends (inviter_id, invitee_id, inviter_step, invitee_step) VALUES (" + inviter + ", " + invitee + ", " + inviterStep + ", " + inviteeStep + ")";
+        String query = "INSERT INTO friendship (inviter_id, invitee_id, inviter_step, invitee_step) VALUES (" + inviter + ", " + invitee + ", " + inviterStep + ", " + inviteeStep + ")";
         int id;
         Friends ret = null;
         try {
             id = Math.toIntExact((Long)ext.getParentZone().getDBManager().executeInsert(query, new Object[] {}));
-            ret = new Friends(id, inviter, invitee, inviterStep, inviteeStep);
+            ret = new Friends(id, inviter, invitee, inviterStep, inviteeStep, 0);
             this.getAll().put(id, ret);
         } catch (SQLException e) {  e.printStackTrace(); }
         return ret;
     }
 
-    public void update(Friends Friends)
+    public void update(Friends friendship)
     {
-        this.getAll().put(Friends.id, Friends);
-        String query = "UPDATE friends SET " +
-        "inviter_id=" + Friends.inviter + "invitee_id=" + Friends.invitee + 
-        "inviter_step=" + Friends.inviterStep + "invitee_step=" + Friends.inviteeStep + 
-        " WHERE id = " + Friends.id;
+        // ConcurrentHashMap<Integer, Friends> friends = this.getAll();
+        // friends.replace(friendship.id, friendship);
+        // ext.getParentZone().setProperty("friends", friends);
+
+        String query = "UPDATE friendship SET " +
+        "inviter_id=" + friendship.inviter + ", invitee_id=" + friendship.invitee + 
+        ", inviter_step=" + friendship.inviterStep + ", invitee_step=" + friendship.inviteeStep + 
+        ", state=" + friendship.state + " WHERE id = " + friendship.id;
         try {
             ext.getParentZone().getDBManager().executeUpdate(query, new Object[]{});
         } catch (SQLException e) {  e.printStackTrace(); }
-    }
-    
-    public int delete(int id)
-    {
-        ConcurrentHashMap<Integer, Friends> all = this.getAll();
-        if( !all.contains(id) )
-            return MessageTypes.RESPONSE_NOT_FOUND;
-        
-        all.remove(id);
-        try {
-            ext.getParentZone().getDBManager().executeUpdate("DELETE * FROM friendship WHERE id=" + id, new Object[]{});
-        } catch (SQLException e) {  e.printStackTrace(); }
-        return MessageTypes.RESPONSE_SUCCEED;
     }
 }
