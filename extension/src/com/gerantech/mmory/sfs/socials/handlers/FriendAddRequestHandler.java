@@ -25,7 +25,7 @@ public class FriendAddRequestHandler extends BBGClientRequestHandler {
     public void handleClientRequest(final User sender, final ISFSObject params) {
         Game game = ((Game) sender.getSession().getProperty("core"));
 
-        String invitationCode = params.getText("invitationCode");
+        String invitationCode = params.getText("ic");
 
         int inviteeId = game.player.id;
         int inviterId;

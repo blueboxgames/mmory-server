@@ -24,7 +24,7 @@ public class FriendsUtils extends UtilBase {
 
     public void loadAll() {
         // TODOL lazy Friendship loading
-        if (ext.getParentZone().containsProperty("Friends"))
+        if (ext.getParentZone().containsProperty("friends"))
             return;
 
         ISFSArray rows = new SFSArray();
