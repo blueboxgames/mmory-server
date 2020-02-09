@@ -73,14 +73,14 @@ public class FriendsUtils extends UtilBase {
         SFSArray data = new SFSArray();
         for (Friends f : friends) {
             fid = f.inviter == playerId ? f.invitee : f.inviter;
-            // trace("ss", playerId, fid, f.state);
             rank = RankingUtils.getInstance().getUsers().get(fid);
             SFSObject item = new SFSObject();
             item.putInt("id", fid);
             item.putInt("step", f.inviter == playerId ? f.inviterStep : f.inviteeStep);
-            item.putInt("point", rank.point);
-            item.putInt("status", rank.status);
-            item.putUtfString("name", rank.name);
+            item.putInt("start", f.inviter == playerId ? f.inviteeStart : f.inviterStart);
+            item.putInt("point", rank == null ? 0 : rank.point);
+            item.putInt("status", rank == null ? 0 : rank.status);
+            item.putUtfString("name", rank == null ? "?" : rank.name);
             data.addSFSObject(item);
         }
         return data;
