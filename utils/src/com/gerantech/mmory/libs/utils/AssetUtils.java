@@ -21,12 +21,16 @@ public class AssetUtils extends UtilBase
     {
 		return (AssetUtils) UtilBase.get(AssetUtils.class);
     }
+
+    public String baseURL;
     
     public void loadAll()
     {
         // Initial MD5's
         if( ext.getParentZone().containsProperty("assets") )
             return;
+
+        baseURL = ConfigUtils.getInstance().load(ConfigUtils.DEFAULT).getProperty("assetsBaseURL");
 
         ISFSObject ret = new SFSObject();
         try {
@@ -35,16 +39,19 @@ public class AssetUtils extends UtilBase
         
         Iterator<Entry<String, SFSDataWrapper>> iterator = ret.iterator();
         while( iterator.hasNext() )
-            this.addMd5(ret.getSFSObject(iterator.next().getKey()));
+            this.addMd5(iterator.next().getKey(), ret);
         ext.getParentZone().setProperty("assets", ret);
+        trace("loaded assets in " + (System.currentTimeMillis() - (long) ext.getParentZone().getProperty("startTime")) + " milliseconds.");
     }
 
-    private void addMd5(ISFSObject item)
+    private void addMd5(String key, ISFSObject assets)
     {
-        String result = null;
+        String md5 = null;
+        ISFSObject item = assets.getSFSObject(key);
         try {
-            result = DigestUtils.md5Hex(Files.newInputStream(Paths.get("www/" + new URI(item.getUtfString("url")).getPath())));
+            md5 = DigestUtils.md5Hex(Files.newInputStream(Paths.get("www/" + new URI(baseURL + key).getPath())));
         } catch(Exception e) { e.printStackTrace(); }
-        item.putUtfString("md5", result);
+        item.putText("md5", md5);
+        item.putText("url", baseURL + key);
     }
 }

@@ -16,6 +16,7 @@ import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.data.RankData;
+import com.gerantech.mmory.libs.utils.AssetUtils;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
@@ -255,6 +256,7 @@ try {
 		outData.putInt("tutorialMode", 1);
 		outData.putInt("noticeVersion", loginData.noticeVersion);
 		outData.putInt("forceVersion", loginData.forceVersion);
+		outData.putText("assetsBaseURL", AssetUtils.getInstance().baseURL);
 		outData.putText("coreVersion", loginData.coreVersion);
 		outData.putText("invitationCode", PasswordGenerator.getInvitationCode(outData.getInt("id")));
 		outData.putBool("hasQuests", true);
