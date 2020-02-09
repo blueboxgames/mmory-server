@@ -80,19 +80,21 @@ public class FriendAddRequestHandler extends BBGClientRequestHandler {
         }
 
         // Finaly create friendship
-        int inviterStep = game.friendRoad.calculateStep(RankingUtils.getInstance().getPoint(inviteeId));
-        int inviteeStep = game.friendRoad.calculateStep(RankingUtils.getInstance().getPoint(inviterId));
+        int inviterStart = RankingUtils.getInstance().getPoint(inviterId);
+        int inviteeStart = RankingUtils.getInstance().getPoint(inviteeId);
+        int inviterStep = game.friendRoad.calculateStep(inviteeStart);
+        int inviteeStep = game.friendRoad.calculateStep(inviterStart);
         if( friendship == null )
         {
-            FriendsUtils.getInstance().create(inviterId, inviteeId, -1, -1);
+            FriendsUtils.getInstance().create(inviterId, inviteeId, -1, -1, inviterStart, inviteeStart);
         }
         else
         {
             // reach to one step before current
-            if( friendship.inviterStep < inviterStep )
-                friendship.inviterStep = inviterStep;
-            if( friendship.inviteeStep < inviteeStep )
-                friendship.inviteeStep = inviteeStep;
+            friendship.inviterStep = friendship.inviterStep < inviterStep ? inviterStep : friendship.inviterStep;
+            friendship.inviteeStep = friendship.inviteeStep < inviteeStep ? inviteeStep : friendship.inviteeStep;
+            friendship.inviterStart = friendship.inviterStart < inviterStart ? inviterStart : friendship.inviterStart;
+            friendship.inviteeStart = friendship.inviteeStart < inviteeStart ? inviteeStart : friendship.inviteeStart;
             friendship.state = Friends.STATE_NORMAL;
             FriendsUtils.getInstance().update(friendship);
         }

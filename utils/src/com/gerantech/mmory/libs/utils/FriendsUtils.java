@@ -38,7 +38,7 @@ public class FriendsUtils extends UtilBase {
         for (int i = 0; i < rows.size(); i++) {
             f = rows.getSFSObject(i);
             //trace(f.getDump());
-            fSFS = new Friends(f.getInt("id"), f.getInt("inviter_id"), f.getInt("invitee_id"), f.getInt("inviter_step"), f.getInt("invitee_step"), f.getInt("state"));
+            fSFS = new Friends(f.getInt("id"), f.getInt("inviter_id"), f.getInt("invitee_id"), f.getInt("inviter_step"), f.getInt("invitee_step"), f.getInt("inviter_start"), f.getInt("invitee_start"), f.getInt("state"));
             friends.put(fSFS.id, fSFS);
         }
         ext.getParentZone().setProperty("friends", friends);
@@ -95,23 +95,25 @@ public class FriendsUtils extends UtilBase {
         return null;
     }
 
-    public Friends create(int inviter, int invitee, int inviterStep, int inviteeStep)
+    public Friends create(int inviter, int invitee, int inviterStep, int inviteeStep, int inviterStart, int inviteeStart)
     {
         Friends friendship = getFriendship(inviter, invitee, -1);
         if( friendship != null )
         {
             friendship.inviterStep = friendship.inviter == inviter ? inviterStep : inviteeStep;
             friendship.inviteeStep = friendship.inviter == inviter ? inviteeStep : inviterStep;
+            friendship.inviterStart = friendship.inviter == inviter ? inviterStart : inviteeStart;
+            friendship.inviteeStart = friendship.inviter == inviter ? inviteeStart : inviterStart;
             this.update(friendship);
             return friendship;
         }
 
-        String query = "INSERT INTO friendship (inviter_id, invitee_id, inviter_step, invitee_step) VALUES (" + inviter + ", " + invitee + ", " + inviterStep + ", " + inviteeStep + ")";
+        String query = "INSERT INTO friendship (inviter_id, invitee_id, inviter_step, invitee_step, inviter_start, invitee_start) VALUES (" + inviter + ", " + invitee + ", " + inviterStep + ", " + inviteeStep + ", " + inviterStart + ", " + inviteeStart + ")";
         int id;
         Friends ret = null;
         try {
             id = Math.toIntExact((Long)ext.getParentZone().getDBManager().executeInsert(query, new Object[] {}));
-            ret = new Friends(id, inviter, invitee, inviterStep, inviteeStep, 0);
+            ret = new Friends(id, inviter, invitee, inviterStep, inviteeStep, inviterStart, inviteeStart, 0);
             this.getAll().put(id, ret);
         } catch (SQLException e) {  e.printStackTrace(); }
         return ret;
@@ -123,10 +125,11 @@ public class FriendsUtils extends UtilBase {
         // friends.replace(friendship.id, friendship);
         // ext.getParentZone().setProperty("friends", friends);
 
-        String query = "UPDATE friendship SET " +
-        "inviter_id=" + friendship.inviter + ", invitee_id=" + friendship.invitee + 
+        String query = "UPDATE friendship SET" +
+        "  inviter_id=" + friendship.inviter + ", invitee_id=" + friendship.invitee + 
         ", inviter_step=" + friendship.inviterStep + ", invitee_step=" + friendship.inviteeStep + 
-        ", state=" + friendship.state + " WHERE id = " + friendship.id;
+        ", inviter_start=" + friendship.inviterStart + ", invitee_start=" + friendship.inviteeStart + 
+        ", state=" + friendship.state + " WHERE id=" + friendship.id;
         try {
             ext.getParentZone().getDBManager().executeUpdate(query, new Object[]{});
         } catch (SQLException e) {  e.printStackTrace(); }
