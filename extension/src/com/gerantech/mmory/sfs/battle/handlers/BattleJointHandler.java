@@ -113,7 +113,6 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			if( response != MessageTypes.RESPONSE_SUCCEED )
 			{
 				params.putInt("response", response);
-				// TODO: See how this works?
 				send(Commands.BATTLE_START, params, user);
 				return;
 			}
@@ -161,6 +160,6 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		if( !room.isSpectator(user) )
 			RankingUtils.getInstance().update(game.player.id, game.player.nickName,  game.player.get_point(), RankData.STATUS_BUSY);
 	
-		send(Commands.BATTLE_ASSET_SYNC, params, user);
+		send(Commands.BATTLE_START, params, user);
 	}
 }

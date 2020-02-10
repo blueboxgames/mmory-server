@@ -43,15 +43,28 @@ public class BattleReadyHandler extends BBGClientRequestHandler {
         }
         else
         {
-            this.room.setProperty("readyPlayers", this.room.getPropertyAsInt("readyPlayers")+1 );
+            boolean shouldIncrement = true;
+            List<User> players = room.getPlayersList();
+			for (int i = 0; i < players.size(); i++) {
+				if (players.get(i).equals(user)) {
+					shouldIncrement = false;
+				}
+            }
+            
+            if( shouldIncrement )
+                this.room.setProperty("readyPlayers", this.room.getPropertyAsInt("readyPlayers")+1 );
         }
 
         if( this.room.getUsersByType(BBGRoom.USER_TYPE_PLAYER).size() == this.room.getPropertyAsInt("readyPlayers") )
         {
-            this.room.start();
+            List<User> players = room.getPlayersList();
+			for (int i = 0; i < players.size(); i++) {
+				if (players.get(i).equals(user)) {
+					this.room.start();
+				}
+			}
             List<User> users = this.room.getPlayersList();
             send(Commands.BATTLE_READY, MessageTypes.RESPONSE_SUCCEED, params, users);
-            send(Commands.BATTLE_START, MessageTypes.RESPONSE_SUCCEED, params, users);
             return;
         }
     }
