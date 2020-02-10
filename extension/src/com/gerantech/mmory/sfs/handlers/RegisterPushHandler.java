@@ -1,25 +1,25 @@
 package com.gerantech.mmory.sfs.handlers;
 
+import java.sql.SQLException;
+
+import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
-
-import com.gerantech.mmory.core.Game;
-import java.sql.SQLException;
 
 /**
  * @author ManJav
  *
  */
-public class RegisterPushHandler extends BaseClientRequestHandler
+public class RegisterPushHandler extends BBGClientRequestHandler
 {
 
 	public RegisterPushHandler() {}
 
 	public void handleClientRequest(User sender, ISFSObject params)
 	{
-		IDBManager dbManager = getParentExtension().getParentZone().getDBManager();
+		IDBManager dbManager = getDBManager();
 
 		try{
 

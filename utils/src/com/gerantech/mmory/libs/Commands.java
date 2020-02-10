@@ -50,12 +50,13 @@ public class Commands
     public static final String LOBBY_REPORT = "lobbyReport";
     public static final String LOBBY_PUBLIC = "lobbyPublic";
     public static final String LOBBY_REMOVE = "lobbyRemove";
-
     public static final String LOBBY_PUBLIC_MESSAGE = "m";
+
     public static final String BUDDY_ADD = "buddyAdd";
     public static final String BUDDY_REMOVE = "buddyRemove";
-
     public static final String BUDDY_BATTLE = "buddyBattle";
+    public static final String BUDDY_DATA = "buddyData";
+
     public static final String INBOX_GET_THREADS = "inboxGetThreads";
     public static final String INBOX_GET_RELATIONS = "inboxGetRelations";
     public static final String INBOX_OPEN = "inboxOpen";

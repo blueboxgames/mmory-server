@@ -1,21 +1,21 @@
 package com.gerantech.mmory.sfs.administration.issues;
 
-import com.gerantech.mmory.libs.Commands;
+import java.sql.SQLException;
+
 import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
+import com.gerantech.mmory.libs.Commands;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
-
-import java.sql.SQLException;
 
 /**
  * @author ManJav
  *
  */
-public class IssueGetHandler extends BaseClientRequestHandler
+public class IssueGetHandler extends BBGClientRequestHandler
 {
 	public void handleClientRequest(User sender, ISFSObject params)
-    {
+	{
 		Game game = ((Game)sender.getSession().getProperty("core"));
 		if( !game.player.admin )
 			return;
@@ -26,8 +26,8 @@ public class IssueGetHandler extends BaseClientRequestHandler
 		query += " ORDER BY bugs.id DESC LIMIT 100;";
 
  		try {
-			params.putSFSArray("issues", getParentExtension().getParentZone().getDBManager().executeQuery(query, new Object[] {}));
+			params.putSFSArray("issues", getDBManager().executeQuery(query, new Object[] {}));
 		} catch (SQLException e) { e.printStackTrace(); }
 		send(Commands.ISSUE_GET, params, sender);
-    }
+	}
 }

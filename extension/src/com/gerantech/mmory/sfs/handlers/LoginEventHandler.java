@@ -2,7 +2,6 @@ package com.gerantech.mmory.sfs.handlers;
 
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.InitData;
@@ -17,6 +16,7 @@ import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.data.RankData;
+import com.gerantech.mmory.libs.utils.AssetUtils;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
@@ -256,6 +256,7 @@ try {
 		outData.putInt("tutorialMode", 1);
 		outData.putInt("noticeVersion", loginData.noticeVersion);
 		outData.putInt("forceVersion", loginData.forceVersion);
+		outData.putText("assetsBaseURL", AssetUtils.getInstance().baseURL);
 		outData.putText("coreVersion", loginData.coreVersion);
 		outData.putText("invitationCode", PasswordGenerator.getInvitationCode(outData.getInt("id")));
 		outData.putBool("hasQuests", true);
@@ -364,13 +365,8 @@ try {
 			_exchanges.addSFSObject(ExchangeUtils.toSFS(game.exchanger.items.get(t)));
 		outData.putSFSArray("exchanges", _exchanges);
 
-		// init and update in memory data base
-		ConcurrentHashMap<Integer, RankData> users = RankingUtils.getInstance().getUsers();
-		RankData rd = new RankData(game.player.nickName,  game.player.get_point());
-		if( users.containsKey(game.player.id))
-			users.replace(game.player.id, rd);
-		else
-			users.put(game.player.id, rd);
+		// init or update in memory data base
+		RankingUtils.getInstance().update(game.player.id, game.player.nickName,  game.player.get_point(), RankData.STATUS_ON);
 
 		// insert quests in registration or get in next time
 		ISFSArray quests = QuestsUtils.getInstance().getAll(game.player.id);

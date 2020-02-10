@@ -24,7 +24,7 @@ public class InfractionsDeleteHandler extends BBGClientRequestHandler
 		}
 
 		try {
-			getParentExtension().getParentZone().getDBManager().executeUpdate("DELETE FROM infractions WHERE id=" + params.getInt("id"), new Object[]{});
+			getDBManager().executeUpdate("DELETE FROM infractions WHERE id=" + params.getInt("id"), new Object[]{});
 		} catch (SQLException e) {e.printStackTrace();}
 
 		send(Commands.INFRACTIONS_DELETE, MessageTypes.RESPONSE_SUCCEED, params, sender);

@@ -29,13 +29,7 @@ public class RankRequestHandler extends BaseClientRequestHandler
 		Game game = ((Game)sender.getSession().getProperty("core"));
 
 		Map<Integer, RankData> users = RankingUtils.getInstance().getUsers();
-		RankData rd = new RankData(game.player.nickName,  game.player.get_point());
-		if( users.containsKey(game.player.id))
-			users.replace(game.player.id, rd);
-		else
-			users.put(game.player.id, rd);
-
-		RankData playerRD = users.get(game.player.id);
+		RankData playerRD = RankingUtils.getInstance().update(game.player.id, game.player.nickName,  game.player.get_point(), RankData.STATUS_ON);
 		SFSArray players = new SFSArray();
 		if( users.size() == 0 )
 		{
@@ -43,7 +37,6 @@ public class RankRequestHandler extends BaseClientRequestHandler
 			send("rank", params, sender);
 			return;
 		}
-
 
 		// a comparator which helps to sort in descending order of point field
 		Comparator<? super Map.Entry<Integer, RankData>> descendingComparator2 = (e1, e2) -> e2.getValue().point - e1.getValue().point;

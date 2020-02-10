@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
@@ -22,9 +23,8 @@ import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
 import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.exceptions.SFSCreateRoomException;
 import com.smartfoxserver.v2.exceptions.SFSJoinRoomException;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
-public class LobbyPublicRequestHandler extends BaseClientRequestHandler
+public class LobbyPublicRequestHandler extends BBGClientRequestHandler
 {
     private static AtomicInteger roomId = new AtomicInteger();
 
@@ -36,7 +36,7 @@ public class LobbyPublicRequestHandler extends BaseClientRequestHandler
             String queryStr = "INSERT INTO devices(`player_id`, `model`, `udid`, `imei`) VALUES (" + player.id + ", '', '', '" + params.getText("imei") + "') ON DUPLICATE KEY UPDATE imei='" + params.getText("imei") + "'";
             // trace(queryStr);
             try {
-                getParentExtension().getParentZone().getDBManager().executeUpdate(queryStr, new Object[]{});
+                getDBManager().executeUpdate(queryStr, new Object[]{});
             } catch (SQLException e) { e.printStackTrace(); }
         }
 

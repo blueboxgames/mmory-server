@@ -2,26 +2,24 @@ package com.gerantech.mmory.sfs.handlers;
 
 import java.sql.SQLException;
 
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
-import com.smartfoxserver.v2.db.IDBManager;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
 /**
  * @author ManJav
  *
  */
-public class ProfileRequestHandler extends BaseClientRequestHandler
+public class ProfileRequestHandler extends BBGClientRequestHandler
 {
 	public void handleClientRequest(User sender, ISFSObject params)
     {
-		IDBManager dbManager = getParentExtension().getParentZone().getDBManager();
 		int playerId = params.getInt("id");
 
 		//  -=-=-=-=-=-=-=-=-  add resources data  -=-=-=-=-=-=-=-=-
@@ -30,22 +28,22 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 		ISFSArray supData = null;
 		boolean isOld = false;
 		try {
-			resources = dbManager.executeQuery(query, new Object[]{});
+			resources = getDBManager().executeQuery(query, new Object[]{});
 			isOld = resources.size() < 1;
 			if( isOld )
 			{
 				query = "SELECT type, count, level FROM resources WHERE player_id = " + playerId + (params.containsKey("am") ? ";" : " AND (type<13);");
-				resources = dbManager.executeQuery(query, new Object[]{});
+				resources = getDBManager().executeQuery(query, new Object[]{});
 			}
 			if( params.containsKey("am") )
 			{
 				query = "SELECT id, create_at, model FROM " + DBUtils.getInstance().liveDB + ".players INNER JOIN devices ON players.id=devices.player_id WHERE id=" + playerId;
-				supData = dbManager.executeQuery(query, new Object[]{});
+				supData = getDBManager().executeQuery(query, new Object[]{});
 				isOld = supData.size() < 1;
 				if( isOld )
 				{
 					query = "SELECT id, create_at, model FROM players INNER JOIN devices ON players.id=devices.player_id WHERE id=" + playerId;
-					supData = dbManager.executeQuery(query, new Object[]{});
+					supData = getDBManager().executeQuery(query, new Object[]{});
 				}
 			}
 		} catch (SQLException e) { e.printStackTrace(); }
@@ -60,7 +58,7 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 			query = "SELECT * FROM " + liveDB + "players WHERE id=" + playerId + " Limit 1;";
 			ISFSArray players = null;
 			try {
-				players = dbManager.executeQuery(query, new Object[]{});
+				players = getDBManager().executeQuery(query, new Object[]{});
 			} catch (SQLException e) { e.printStackTrace(); }
 			params.putSFSObject("pd", players.getSFSObject(0));
 		}
@@ -83,7 +81,7 @@ public class ProfileRequestHandler extends BaseClientRequestHandler
 		liveDB + "resources ON " + liveDB + "decks.player_id = " + liveDB + "resources.player_id AND decks.`type` = " + liveDB + "resources.`type` WHERE " + 
 		liveDB + "decks.player_id = " + playerId + " AND " + liveDB + "decks.deck_index = 0";
 		try {
-			params.putSFSArray("decks", dbManager.executeQuery(query, new Object[]{}));
+			params.putSFSArray("decks", getDBManager().executeQuery(query, new Object[]{}));
 		} catch (SQLException e) { trace(e.getMessage()); }
 
 		//trace(params.getDump());

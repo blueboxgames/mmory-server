@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.LoginData;
@@ -146,7 +145,7 @@ public class DBUtils extends UtilBase
 
             query += " WHEN type= " + keys[i] + " THEN " + player.resources.get(keys[i]);
         }
-        query += " ELSE count END WHERE player_id= " + player.id;
+        query += " ELSE count END WHERE player_id=" + player.id;
 
         try {
             db.executeUpdate(query, new Object[] {});
@@ -154,16 +153,7 @@ public class DBUtils extends UtilBase
 
         // update ranking table
         if( hasRankFields )
-        {
-            ConcurrentHashMap<Integer, RankData> users = RankingUtils.getInstance().getUsers();
-            RankData rd = new RankData(player.nickName, player.get_point());
-            query += "\n map for id:" + player.id + " => point:" + player.get_point();
-
-            if( users.containsKey(player.id))
-                users.replace(player.id, rd);
-            else
-                users.put(player.id, rd);
-        }
+            RankingUtils.getInstance().update(player.id, null, player.get_point(), RankData.STATUS_NAN);;
     }
 
     public void insertResources(Player player, IntIntMap resources)
