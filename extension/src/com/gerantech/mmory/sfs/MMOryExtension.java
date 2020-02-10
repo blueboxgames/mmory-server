@@ -48,6 +48,7 @@ public class MMOryExtension extends SFSExtension
 
 		// Add startBattle request handler
 		addRequestHandler(Commands.BATTLE_START, BattleRequestStartHandler.class);
+		addRequestHandler(Commands.BATTLE_READY, BattleReadyHandler.class);
 		addRequestHandler(Commands.BATTLE_CANCEL, BattleRequestCancelHandler.class);
 
 		addRequestHandler(Commands.BATTLE_LEAVE, BattleLeaveRequestHandler.class);
