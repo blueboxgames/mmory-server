@@ -42,7 +42,7 @@ public class FriendsUtils extends UtilBase {
             friends.put(fSFS.id, fSFS);
         }
         ext.getParentZone().setProperty("friends", friends);
-        trace("loaded Friends data in " + (System.currentTimeMillis() - (long) ext.getParentZone().getProperty("startTime")) + " milliseconds.");
+        trace("loaded friends data in " + (System.currentTimeMillis() - (long) ext.getParentZone().getProperty("startTime")) + " milliseconds.");
     }
 
     @SuppressWarnings("unchecked")
