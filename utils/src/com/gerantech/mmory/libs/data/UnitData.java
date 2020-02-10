@@ -32,7 +32,10 @@ public class UnitData {
     {
         SFSArray ret = new SFSArray();
         for(int i = 0; i < units.length ; i++ )
-            ret.addSFSObject(toSFS(units.__get(i)));
+        {
+            if( units.__get(i).health >= 0 )
+                ret.addSFSObject(toSFS(units.__get(i)));
+        }
         return ret;
     }
 }
