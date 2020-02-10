@@ -113,7 +113,11 @@ public class BattleRoom extends BBGRoom {
 		{
 			setState( BattleField.STATE_1_CREATED );
 		}
+		trace(getName(), "created.");
+	}
 
+	public void start()
+	{
 		timer = SmartFoxServer.getInstance().getTaskScheduler().scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {
@@ -124,9 +128,6 @@ public class BattleRoom extends BBGRoom {
 					double battleDuration = battleField.getDuration();
 					if( battleField.now - unitsUpdatedAt >= 500 )
 					{
-						if( registeredPlayers.get(0).appVersion < 3000 )
-							updateReservesData();
-
 						if( singleMode && battleDuration > 4 )
 							pokeBot();
 						unitsUpdatedAt = battleField.now;
@@ -138,7 +139,7 @@ public class BattleRoom extends BBGRoom {
 			}
 		}, 0, BattleField.DELTA_TIME, TimeUnit.MILLISECONDS);
 
-		trace(getName(), "created.");
+		trace(getName(), "started.");
 	}
 
 	public void updateReservesData()

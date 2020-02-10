@@ -5,6 +5,7 @@ package com.gerantech.mmory.libs;
  */
 public class Commands
 {
+    public static final String BATTLE_ASSET_SYNC = "battleAssetSync";
     public static final String BATTLE_START = "battleStart";
     public static final String BATTLE_CANCEL = "battleCancel";
     public static final String BATTLE_LEAVE = "battleLeave";
