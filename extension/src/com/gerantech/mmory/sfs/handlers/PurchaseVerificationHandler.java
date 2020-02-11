@@ -36,7 +36,7 @@ public class PurchaseVerificationHandler extends BBGClientRequestHandler
 {
 	private ExchangeItem item;
 	private Properties props = ConfigUtils.getInstance().load(ConfigUtils.DEFAULT);
-	private static String packageName = "air.com.grantech.k2k";
+	private static String packageName = "com.grantech.k2k";
 	private String accessToken_cafebazaar = props.getProperty("cafebazaarAccessToken");
 
 	public PurchaseVerificationHandler() { }
