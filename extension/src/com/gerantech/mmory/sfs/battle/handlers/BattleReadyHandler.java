@@ -1,5 +1,6 @@
 package com.gerantech.mmory.sfs.battle.handlers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gerantech.mmory.core.constants.MessageTypes;
@@ -37,25 +38,26 @@ public class BattleReadyHandler extends BBGClientRequestHandler {
 
         if( !this.room.containsProperty("readyPlayers") )
         {
-            this.room.setProperty("readyPlayers", 1);
-            if( this.room.getUsersByType(BBGRoom.USER_TYPE_PLAYER).size() > 1 )
+            List<User> roomPlayers = new ArrayList<User>();
+            roomPlayers.add(user);
+            this.room.setProperty("readyPlayers", roomPlayers);
+            if( this.room.getMaxUsers() > 1 )
                 send(Commands.BATTLE_READY, MessageTypes.RESPONSE_MUST_WAIT, params, user);
         }
         else
         {
-            boolean shouldIncrement = true;
             List<User> players = room.getPlayersList();
+            @SuppressWarnings("unchecked")
+            List<User> readyPlayers = (List<User>) room.getProperty("readyPlayers");
 			for (int i = 0; i < players.size(); i++) {
 				if (players.get(i).equals(user)) {
-					shouldIncrement = false;
+                    readyPlayers.add(user);
 				}
             }
-            
-            if( shouldIncrement && room.getUserType(user) == BBGRoom.USER_TYPE_PLAYER )
-                this.room.setProperty("readyPlayers", this.room.getPropertyAsInt("readyPlayers")+1 );
         }
 
-        if( this.room.getUsersByType(BBGRoom.USER_TYPE_PLAYER).size() == this.room.getPropertyAsInt("readyPlayers") )
+        List<?> readyList = (List<?>) this.room.getProperty("readyPlayers");
+        if( this.room.getMaxUsers() == readyList.size() )
         {
             if( room.getUserType(user) != BBGRoom.USER_TYPE_PLAYER )
             {

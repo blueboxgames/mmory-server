@@ -62,6 +62,13 @@ try {
             send(Commands.BATTLE_START, params, sender);
             return;
         }
+
+        if( friendlyMode == 1 )
+        {
+            send(Commands.BATTLE_START, params, sender);
+            return;
+        }
+
         this.joinUser(sender);
 } catch (Exception | Error e) { e.printStackTrace(); }
     }
