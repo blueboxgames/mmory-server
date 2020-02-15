@@ -95,7 +95,7 @@ public class BattleUtils extends UtilBase
      */
     public void join(BBGRoom room, User user, String spectatedUser)
     {
-        if( room.isFull() )
+        if( room.isFull() && spectatedUser == "" )
         {
             trace(ExtensionLogLevel.ERROR, "Battle room " + room.getName() + " is full.");
             return;

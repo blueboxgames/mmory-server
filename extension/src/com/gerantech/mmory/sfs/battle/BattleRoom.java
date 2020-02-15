@@ -497,6 +497,11 @@ public class BattleRoom extends BBGRoom {
 
 		if( this.battleField != null )
 			battleField.dispose();
+		
+		/**
+		 * Room must be removed at the end of battle else we find wrong room.
+		 */
+		BattleUtils.getInstance().remove(this);
 		//battleField = null;
 	}
 

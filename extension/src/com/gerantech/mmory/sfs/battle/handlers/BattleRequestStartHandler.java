@@ -39,7 +39,12 @@ try {
         this.index = params.getInt("index");
         if( params.containsKey("spectatedUser") )
         {
-            BBGRoom room = BattleUtils.getInstance().rooms.get(this.index);
+            BBGRoom room;
+            if( index >= 0 )
+                room = BattleUtils.getInstance().rooms.get(this.index);
+            else 
+                room = BattleUtils.getInstance().find(Integer.parseInt(params.getText("spectatedUser")), BattleField.STATE_2_STARTED, BattleField.STATE_4_ENDED);
+            
             if( room != null )
                 BattleUtils.getInstance().join(room, sender, params.getText("spectatedUser"));
             return;
