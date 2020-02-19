@@ -31,9 +31,7 @@ public class ConfigUtils extends UtilBase
 		try {
 			properties.load(new FileInputStream(name));
 		}
-		catch (IOException e) {
-			// getLogger().error("Could not load config: " + name);
-		}
+		catch (IOException e) { e.printStackTrace(); }
 		this.propertyList.put(name, properties);
 		return properties;
 	}
