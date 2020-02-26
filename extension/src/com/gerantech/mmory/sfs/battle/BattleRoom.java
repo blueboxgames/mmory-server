@@ -43,7 +43,7 @@ import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
 public class BattleRoom extends BBGRoom {
-	static boolean DEBUG_MODE = false;
+	public boolean debugMode;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
 	public ScheduledFuture<?> autoJoinTimer;
@@ -58,6 +58,7 @@ public class BattleRoom extends BBGRoom {
 	public void init(int id, CreateRoomSettings settings) {
 		super.init(id, settings);
 		battleField = new BattleField();
+		battleField.debugMode = this.debugMode;
 		setState(BattleField.STATE_0_WAITING);
 	}
 
@@ -154,7 +155,7 @@ public class BattleRoom extends BBGRoom {
 		 * TEST_FLAG: Code bellow sneds some test information about changed units.
 		 */
 
-		/* if( DEBUG_MODE )
+		if( this.debugMode )
 		{
 			List<String> testData = new ArrayList<>();
 			for ( int k:reservedUnitIds )

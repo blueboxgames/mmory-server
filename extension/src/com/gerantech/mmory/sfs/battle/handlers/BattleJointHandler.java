@@ -128,6 +128,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		params.putInt("mode", room.getPropertyAsInt("mode"));
 		params.putInt("friendlyMode", room.battleField.friendlyMode);
 		params.putBool("singleMode", room.getPropertyAsBool("singleMode"));
+		params.putBool("debugMode", room.debugMode);
 		params.putSFSArray("units", UnitData.toSFSArray(room.battleField.units));
 		ArrayList<?> registeredPlayers = (ArrayList<?>) room.getProperty("registeredPlayers");
 		int i = 0;

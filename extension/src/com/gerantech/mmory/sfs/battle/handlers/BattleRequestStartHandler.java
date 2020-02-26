@@ -12,6 +12,7 @@ import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.Commands;
 import com.gerantech.mmory.libs.utils.BattleUtils;
+import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.gerantech.mmory.sfs.handlers.LoginEventHandler;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -23,6 +24,7 @@ public class BattleRequestStartHandler extends BaseClientRequestHandler
     private int mode;
     private int index;
     private int league;
+    private boolean debugMode;
     private int friendlyMode;
 
     public void handleClientRequest(User sender, ISFSObject params)
@@ -46,6 +48,7 @@ try {
         }
 
         Game game = (Game)sender.getSession().getProperty("core");
+        this.debugMode = params.containsKey("debugMode");
         this.friendlyMode = params.containsKey("friendlyMode") ? params.getInt("friendlyMode") : 0;
         this.league = game.player.get_arena(0);
         this.mode = ScriptEngine.getInt(ScriptEngine.T41_CHALLENGE_MODE, this.index, game.player.id, null, null);
@@ -73,6 +76,7 @@ try {
 
         if( room == null )
             room = bu.make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), user, this.index, this.mode, this.type, this.friendlyMode);
+        ((BattleRoom)room).debugMode = debugMode;
 
         bu.join(room, user, "");
     }
