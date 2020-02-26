@@ -55,7 +55,8 @@ public class BattleRoom extends BBGRoom {
 	private List<Integer> reservedUnitIds;
 	private BattleEventCallback eventCallback;
 
-	public void init(int id, CreateRoomSettings settings) {
+	public void init(int id, CreateRoomSettings settings)
+	{
 		super.init(id, settings);
 		battleField = new BattleField();
 		battleField.debugMode = this.debugMode;
@@ -63,7 +64,7 @@ public class BattleRoom extends BBGRoom {
 	}
 
 	public void createGame(Boolean opponentNotFound) {
-		if (this.autoJoinTimer != null)
+		if( this.autoJoinTimer != null )
 			this.autoJoinTimer.cancel(true);
 		this.autoJoinTimer = null;
 
@@ -76,7 +77,8 @@ public class BattleRoom extends BBGRoom {
 		for (User u : players)
 			registeredPlayers.add((Game) u.getSession().getProperty("core"));
 
-		if (this.singleMode) {
+		if( this.singleMode )
+		{
 			InitData data = new InitData();
 			data.id = (int) (Math.random() * 9999);
 			data.nickName = RankingUtils.getInstance().getRandomName();
