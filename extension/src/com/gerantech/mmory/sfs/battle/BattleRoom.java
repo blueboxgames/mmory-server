@@ -47,7 +47,7 @@ public class BattleRoom extends BBGRoom {
 	public BattleField battleField;
 	public EndCalculator endCalculator;
 	public ScheduledFuture<?> autoJoinTimer;
-
+	
 	private BattleBot bot;
 	private boolean singleMode;
 	private ScheduledFuture<?> timer;
@@ -127,8 +127,7 @@ public class BattleRoom extends BBGRoom {
 					double battleDuration = battleField.getDuration();
 					if( battleField.now - unitsUpdatedAt >= 500 )
 					{
-						if( registeredPlayers.get(0).appVersion < 3000 )
-							updateReservesData();
+						updateReservesData();
 
 						if( singleMode && battleDuration > 4 )
 							pokeBot();
@@ -146,48 +145,41 @@ public class BattleRoom extends BBGRoom {
 
 	public void updateReservesData()
 	{
-		reservedUnitIds = getChangedUnits();
+		List<Integer> reservedUnitIds = this.getChangedUnits();
 		if( reservedUnitIds == null )
 			return;
 
+		this.reservedUnitIds = reservedUnitIds;
 		ISFSObject units = new SFSObject();
 		units.putIntArray("keys", reservedUnitIds);
-
+		
 		/**
 		 * TEST_FLAG: Code bellow sneds some test information about changed units.
 		 */
-
 		if( this.debugMode )
 		{
 			List<String> testData = new ArrayList<>();
-			for ( int k:reservedUnitIds )
+			for( int k:reservedUnitIds )
 			{
-				Unit unit = this.battleField.units.get(k);
+				Unit unit = this.battleField.getUnit(k);
 				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
 			}
 			units.putUtfStringArray("testData", testData);
-		} */
-		send("u", units, getUserList());
+		}
+		send("u", units, this.getUserList());
 	}
 
 	private List<Integer> getChangedUnits()
 	{
 		List<Integer> ret = new ArrayList<>();
 		for( int i = 0; i < battleField.units.length ; i++ )
-			if( battleField.units.__get(i).health >= 0 )
+			if( battleField.units.__get(i).health > 0 )
 				ret.add(battleField.units.__get(i).id);
 		
-		if( reservedUnitIds == null )
+		if( this.reservedUnitIds == null || this.debugMode )
 			return ret;
 
-		if( reservedUnitIds.size() != ret.size() )
-			return ret;
-
-		for (int i = 0; i < ret.size(); i++)
-			if( ret.get(i) != reservedUnitIds.get(i) )
-				return ret;
-
-		return null;
+		return this.reservedUnitIds.equals(ret) ? null : ret;
 	}
 
 	// summon unit  =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
