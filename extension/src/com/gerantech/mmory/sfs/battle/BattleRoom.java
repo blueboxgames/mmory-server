@@ -52,6 +52,7 @@ public class BattleRoom extends BBGRoom {
 	private boolean singleMode;
 	private ScheduledFuture<?> timer;
 	private double unitsUpdatedAt;
+	private double forceUpdatedAt;
 	private List<Integer> reservedUnitIds;
 	private BattleEventCallback eventCallback;
 
@@ -145,7 +146,10 @@ public class BattleRoom extends BBGRoom {
 
 	public void updateReservesData()
 	{
-		List<Integer> reservedUnitIds = this.getChangedUnits();
+		boolean force = debugMode || battleField.now - forceUpdatedAt >= 3000;
+		if( force )
+			forceUpdatedAt = battleField.now;
+		List<Integer> reservedUnitIds = this.getChangedUnits(force);
 		if( reservedUnitIds == null )
 			return;
 
@@ -156,7 +160,7 @@ public class BattleRoom extends BBGRoom {
 		/**
 		 * TEST_FLAG: Code bellow sneds some test information about changed units.
 		 */
-		if( this.debugMode )
+		if( force )
 		{
 			List<String> testData = new ArrayList<>();
 			for( int k:reservedUnitIds )
@@ -164,19 +168,19 @@ public class BattleRoom extends BBGRoom {
 				Unit unit = this.battleField.getUnit(k);
 				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
 			}
-			units.putUtfStringArray("testData", testData);
+			units.putUtfStringArray("data", testData);
 		}
 		send("u", units, this.getUserList());
 	}
 
-	private List<Integer> getChangedUnits()
+	private List<Integer> getChangedUnits(boolean force)
 	{
 		List<Integer> ret = new ArrayList<>();
 		for( int i = 0; i < battleField.units.length ; i++ )
 			if( battleField.units.__get(i).health > 0 )
 				ret.add(battleField.units.__get(i).id);
 		
-		if( this.reservedUnitIds == null || this.debugMode )
+		if( this.reservedUnitIds == null || force )
 			return ret;
 
 		return this.reservedUnitIds.equals(ret) ? null : ret;
