@@ -14,7 +14,7 @@ import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.RankData;
 import com.gerantech.mmory.libs.data.UnitData;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
@@ -113,7 +113,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			if( response != MessageTypes.RESPONSE_SUCCEED )
 			{
 				params.putInt("response", response);
-				send(Commands.BATTLE_START, params, user);
+				send(SFSCommands.BATTLE_START, params, user);
 				return;
 			}
 		}
@@ -161,6 +161,6 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		if( !room.isSpectator(user) )
 			RankingUtils.getInstance().update(game.player.id, game.player.nickName,  game.player.get_point(), RankData.STATUS_BUSY);
 	
-		send(Commands.BATTLE_START, params, user);
+		send(SFSCommands.BATTLE_START, params, user);
 	}
 }

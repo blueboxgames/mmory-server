@@ -6,7 +6,7 @@ import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.socials.Friends;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.RankData;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.FCMUtils;
@@ -32,14 +32,14 @@ public class FriendAddRequestHandler extends BBGClientRequestHandler {
         try {
             inviterId = PasswordGenerator.recoverPlayerId(invitationCode);
         } catch (Exception e) {
-            send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
+            send(SFSCommands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
             return;
         }
 
         // Case 1:
         // User wants to add himself to get rewards
         if (inviterId == inviteeId) {
-            send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
+            send(SFSCommands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
             return;
         }
 
@@ -48,7 +48,7 @@ public class FriendAddRequestHandler extends BBGClientRequestHandler {
         RankData inviterRank = RankingUtils.getInstance().getUsers().get(inviterId);
         if( inviterRank == null )
         {
-            send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
+            send(SFSCommands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
             return;
         }
         params.putText("inviter", inviterRank.name);
@@ -59,7 +59,7 @@ public class FriendAddRequestHandler extends BBGClientRequestHandler {
         Friends friendship = FriendsUtils.getInstance().getFriendship(inviterId, inviteeId, Friends.STATE_ANY);
         if( friendship != null && friendship.state == Friends.STATE_NORMAL )
         {
-            send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_ALREADY_SENT, params, sender);
+            send(SFSCommands.BUDDY_ADD, MessageTypes.RESPONSE_ALREADY_SENT, params, sender);
             return;
         }
 
@@ -74,7 +74,7 @@ public class FriendAddRequestHandler extends BBGClientRequestHandler {
             } catch (final SQLException e) { e.printStackTrace(); }
             if( existsUDID )
             {
-                send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
+                send(SFSCommands.BUDDY_ADD, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
                 return;
             }
         }
@@ -103,6 +103,6 @@ public class FriendAddRequestHandler extends BBGClientRequestHandler {
         String msg = game.player.nickName + " باهات رفیق شد. ";
         InboxUtils.getInstance().send(MessageTypes.M50_URL, msg, BanUtils.SYSTEM_ID, inviterId, "k2k://open?controls=tabs&dashTab=3&socialTab=2" );
         FCMUtils.getInstance().send(msg, "k2k://open?controls=tabs&dashTab=3&socialTab=2", inviterId);
-        send(Commands.BUDDY_ADD, MessageTypes.RESPONSE_SUCCEED, params, sender);
+        send(SFSCommands.BUDDY_ADD, MessageTypes.RESPONSE_SUCCEED, params, sender);
     }
 }

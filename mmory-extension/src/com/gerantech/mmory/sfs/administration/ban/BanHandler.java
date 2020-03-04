@@ -7,7 +7,7 @@ import java.util.List;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.smartfoxserver.v2.entities.Room;
@@ -34,13 +34,13 @@ public class BanHandler extends BBGClientRequestHandler
 		} catch (SQLException e) { e.printStackTrace(); }
 		if( players == null || players.size() == 0 )
 		{
-			send(Commands.BAN, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
+			send(SFSCommands.BAN, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
 			return;
 		}
 
 		ISFSObject device = DBUtils.getInstance().getDevice(params.getInt("id"));
 		BanUtils.getInstance().warnOrBan(params.getInt("id"), device.getText("udid"), device.containsKey("imei") ? device.getText("imei") : null, params.getInt("mode"), (int)Instant.now().getEpochSecond(), params.getInt("len"), params.getText("msg"));
-		send(Commands.BAN, MessageTypes.RESPONSE_SUCCEED, params, sender);
+		send(SFSCommands.BAN, MessageTypes.RESPONSE_SUCCEED, params, sender);
 
 		if( params.getInt("mode") >= 2 )
 		{
@@ -55,7 +55,7 @@ public class BanHandler extends BBGClientRequestHandler
 					msg.putUtfString("s", "ادمین");
 					msg.putUtfString("o", players.getSFSObject(0).getUtfString("name"));
 					msg.putInt("p",  -1);
-					getApi().sendExtensionResponse(Commands.LOBBY_PUBLIC_MESSAGE, msg, p.getUserList(), p, false);
+					getApi().sendExtensionResponse(SFSCommands.LOBBY_PUBLIC_MESSAGE, msg, p.getUserList(), p, false);
 					p.getVariable("msg").getSFSArrayValue().addSFSObject(msg);
 
 				}

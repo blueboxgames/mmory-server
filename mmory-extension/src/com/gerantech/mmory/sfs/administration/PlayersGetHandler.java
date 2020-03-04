@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -35,6 +35,6 @@ public class PlayersGetHandler extends BBGClientRequestHandler
 		try {
 			params.putSFSArray("players", getDBManager().executeQuery(query , new Object[] {}));
 		} catch (SQLException e) { e.printStackTrace(); }
-		send(Commands.PLAYERS_GET, params, sender);
+		send(SFSCommands.PLAYERS_GET, params, sender);
 	}
 }

@@ -20,7 +20,7 @@ import com.gerantech.mmory.sfs.quests.QuestInitializeHandler;
 import com.gerantech.mmory.sfs.quests.QuestRewardCollectHandler;
 import com.gerantech.mmory.sfs.socials.handlers.*;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.gerantech.mmory.libs.utils.UtilBase;
@@ -47,71 +47,71 @@ public class MMOryExtension extends SFSExtension
 		addEventHandler(SFSEventType.USER_DISCONNECT, BattleUsersExitHandler.class);
 
 		// Add startBattle request handler
-		addRequestHandler(Commands.BATTLE_START, BattleRequestStartHandler.class);
-		addRequestHandler(Commands.BATTLE_CANCEL, BattleRequestCancelHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_START, BattleRequestStartHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_CANCEL, BattleRequestCancelHandler.class);
 
-		addRequestHandler(Commands.BATTLE_LEAVE, BattleLeaveRequestHandler.class);
-		addRequestHandler(Commands.BATTLE_SUMMON_UNIT, BattleSummonRequestHandler.class);
-		addRequestHandler(Commands.BATTLE_SEND_STICKER, BattleStickerRequestHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_LEAVE, BattleLeaveRequestHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_SUMMON, BattleSummonRequestHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_SEND_STICKER, BattleStickerRequestHandler.class);
 
 		// Add billing upgrade handler
-		addRequestHandler(Commands.CARD_UPGRADE, CardUpgradeHandler.class);
-		addRequestHandler(Commands.COLLECT_ROAD_REWARD, RoadCollectRewardHandler.class);
+		addRequestHandler(SFSCommands.CARD_UPGRADE, CardUpgradeHandler.class);
+		addRequestHandler(SFSCommands.COLLECT_ROAD_REWARD, RoadCollectRewardHandler.class);
 		
 		// Add rank handler
-		addRequestHandler(Commands.RANK, RankRequestHandler.class);
-		addRequestHandler(Commands.SELECT_NAME, SelectNameRequestHandler.class);
-		addRequestHandler(Commands.EXCHANGE, ExchangeHandler.class);
-		addRequestHandler(Commands.OAUTH, OauthHandler.class);
-		addRequestHandler(Commands.VERIFY_PURCHASE, PurchaseVerificationHandler.class);
-		addRequestHandler(Commands.CHANGE_DECK, ChangeDeckHandler.class);
-		addRequestHandler(Commands.PREFS, UserPrefsRequestHandler.class);
-		addRequestHandler(Commands.REGISTER_PUSH, RegisterPushHandler.class);
+		addRequestHandler(SFSCommands.RANK, RankRequestHandler.class);
+		addRequestHandler(SFSCommands.SELECT_NAME, SelectNameRequestHandler.class);
+		addRequestHandler(SFSCommands.EXCHANGE, ExchangeHandler.class);
+		addRequestHandler(SFSCommands.OAUTH, OauthHandler.class);
+		addRequestHandler(SFSCommands.VERIFY_PURCHASE, PurchaseVerificationHandler.class);
+		addRequestHandler(SFSCommands.CHANGE_DECK, ChangeDeckHandler.class);
+		addRequestHandler(SFSCommands.PREFS, UserPrefsRequestHandler.class);
+		addRequestHandler(SFSCommands.REGISTER_PUSH, RegisterPushHandler.class);
 		
 		// Social handlers
-		addRequestHandler(Commands.LOBBY_DATA, LobbyDataHandler.class);
-		addRequestHandler(Commands.LOBBY_JOIN, LobbyJoinHandler.class);
-		addRequestHandler(Commands.LOBBY_LEAVE, LobbyLeaveHandler.class);
-		addRequestHandler(Commands.LOBBY_CREATE, LobbyCreateHandler.class);
-		addRequestHandler(Commands.LOBBY_PUBLIC, LobbyPublicRequestHandler.class);
-		addRequestHandler(Commands.LOBBY_REMOVE, LobbyRemoveHandler.class);
+		addRequestHandler(SFSCommands.LOBBY_DATA, LobbyDataHandler.class);
+		addRequestHandler(SFSCommands.LOBBY_JOIN, LobbyJoinHandler.class);
+		addRequestHandler(SFSCommands.LOBBY_LEAVE, LobbyLeaveHandler.class);
+		addRequestHandler(SFSCommands.LOBBY_CREATE, LobbyCreateHandler.class);
+		addRequestHandler(SFSCommands.LOBBY_PUBLIC, LobbyPublicRequestHandler.class);
+		addRequestHandler(SFSCommands.LOBBY_REMOVE, LobbyRemoveHandler.class);
 		
-		addRequestHandler(Commands.BUDDY_ADD, FriendAddRequestHandler.class);
-		addRequestHandler(Commands.BUDDY_REMOVE, FriendRemoveRequestHandler.class);
-		addRequestHandler(Commands.BUDDY_BATTLE, BuddyBattleRequestHandler.class);
+		addRequestHandler(SFSCommands.BUDDY_ADD, FriendAddRequestHandler.class);
+		addRequestHandler(SFSCommands.BUDDY_REMOVE, FriendRemoveRequestHandler.class);
+		addRequestHandler(SFSCommands.BUDDY_BATTLE, BuddyBattleRequestHandler.class);
 		
-		addRequestHandler(Commands.BUDDY_DATA, FriendDataHandler.class);
+		addRequestHandler(SFSCommands.BUDDY_DATA, FriendDataHandler.class);
 		
-		addRequestHandler(Commands.PROFILE, ProfileRequestHandler.class);
+		addRequestHandler(SFSCommands.PROFILE, ProfileRequestHandler.class);
 
-		addRequestHandler(Commands.INBOX_GET_THREADS, InboxGetThreadsHandler.class);
-		addRequestHandler(Commands.INBOX_GET_RELATIONS, InboxGetRelationsHandler.class);
-		addRequestHandler(Commands.INBOX_OPEN, InboxOpenHandler.class);
-		addRequestHandler(Commands.INBOX_CONFIRM, InboxConfirmHandler.class);
-		addRequestHandler(Commands.INBOX_BROADCAST, InboxBroadcastMessageHandler.class);
+		addRequestHandler(SFSCommands.INBOX_GET_THREADS, InboxGetThreadsHandler.class);
+		addRequestHandler(SFSCommands.INBOX_GET_RELATIONS, InboxGetRelationsHandler.class);
+		addRequestHandler(SFSCommands.INBOX_OPEN, InboxOpenHandler.class);
+		addRequestHandler(SFSCommands.INBOX_CONFIRM, InboxConfirmHandler.class);
+		addRequestHandler(SFSCommands.INBOX_BROADCAST, InboxBroadcastMessageHandler.class);
 
 		// administration handlers
-		addRequestHandler(Commands.ISSUE_REPORT, IssueReportHandler.class);
-		addRequestHandler(Commands.ISSUE_GET, IssueGetHandler.class);
-		addRequestHandler(Commands.ISSUE_TRACK, IssueTrackHandler.class);
-		addRequestHandler(Commands.RESTORE, RestoreHandler.class);
-		addRequestHandler(Commands.BAN, BanHandler.class);
-		addRequestHandler(Commands.BANNED_DATA_GET, GetBannedDataHandler.class);
-		addRequestHandler(Commands.OFFENDER_DATA_GET, GetOffenderDataHandler.class);
-		addRequestHandler(Commands.INFRACTIONS_GET, InfractionsGetHandler.class);
-		addRequestHandler(Commands.INFRACTIONS_DELETE, InfractionsDeleteHandler.class);
-		addRequestHandler(Commands.PLAYERS_GET, PlayersGetHandler.class);
-		addRequestHandler(Commands.SEARCH_IN_CHATS, SearchInChatsHandler.class);
+		addRequestHandler(SFSCommands.ISSUE_REPORT, IssueReportHandler.class);
+		addRequestHandler(SFSCommands.ISSUE_GET, IssueGetHandler.class);
+		addRequestHandler(SFSCommands.ISSUE_TRACK, IssueTrackHandler.class);
+		addRequestHandler(SFSCommands.RESTORE, RestoreHandler.class);
+		addRequestHandler(SFSCommands.BAN, BanHandler.class);
+		addRequestHandler(SFSCommands.BANNED_DATA_GET, GetBannedDataHandler.class);
+		addRequestHandler(SFSCommands.OFFENDER_DATA_GET, GetOffenderDataHandler.class);
+		addRequestHandler(SFSCommands.INFRACTIONS_GET, InfractionsGetHandler.class);
+		addRequestHandler(SFSCommands.INFRACTIONS_DELETE, InfractionsDeleteHandler.class);
+		addRequestHandler(SFSCommands.PLAYERS_GET, PlayersGetHandler.class);
+		addRequestHandler(SFSCommands.SEARCH_IN_CHATS, SearchInChatsHandler.class);
 		addRequestHandler("resetalllobbies", ResetLobbiesHandler.class);
 		addRequestHandler("spectateBattles", JoinSpectatorHandler.class);
 
-		addRequestHandler(Commands.CHALLENGE_JOIN, ChallengeJoinHandler.class);
-		addRequestHandler(Commands.CHALLENGE_UPDATE, ChallengeUpdateHandler.class);
-		addRequestHandler(Commands.CHALLENGE_GET_ALL, ChallengeGetAllHandler.class);
-		addRequestHandler(Commands.CHALLENGE_COLLECT, ChallengeCollectRewardHandler.class);
+		addRequestHandler(SFSCommands.CHALLENGE_JOIN, ChallengeJoinHandler.class);
+		addRequestHandler(SFSCommands.CHALLENGE_UPDATE, ChallengeUpdateHandler.class);
+		addRequestHandler(SFSCommands.CHALLENGE_GET_ALL, ChallengeGetAllHandler.class);
+		addRequestHandler(SFSCommands.CHALLENGE_COLLECT, ChallengeCollectRewardHandler.class);
 
-		addRequestHandler(Commands.QUEST_INIT, QuestInitializeHandler.class);
-		addRequestHandler(Commands.QUEST_REWARD_COLLECT, QuestRewardCollectHandler.class);
+		addRequestHandler(SFSCommands.QUEST_INIT, QuestInitializeHandler.class);
+		addRequestHandler(SFSCommands.QUEST_REWARD_COLLECT, QuestRewardCollectHandler.class);
 	}
 
 	@Override

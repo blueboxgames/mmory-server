@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.handlers;
 
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
@@ -35,12 +35,12 @@ public class CardUpgradeHandler extends BaseClientRequestHandler
 		if( !success )
 		{
 			trace(ExtensionLogLevel.WARN, "card " + cardType + " can not upgrade to level " + card.level);
-			send(Commands.CARD_UPGRADE, params, sender);
+			send(SFSCommands.CARD_UPGRADE, params, sender);
 			return;
 		}
 		DBUtils.getInstance().upgradeBuilding(player, cardType, card.level);
 		DBUtils.getInstance().updateResources(player, mapChangeCallback.updates);
 		trace(ExtensionLogLevel.INFO, "card " + cardType + " upgraded to " + card.level );
-		send(Commands.CARD_UPGRADE, params, sender);
+		send(SFSCommands.CARD_UPGRADE, params, sender);
     }
 }

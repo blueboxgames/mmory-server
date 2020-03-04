@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.Room;
@@ -50,7 +50,7 @@ public class LobbyPublicRequestHandler extends BBGClientRequestHandler
             theRoom.setProperty("data", lobbyData);*/
         }
         join(sender, theRoom);
-        send(Commands.LOBBY_PUBLIC, banParams, sender);
+        send(SFSCommands.LOBBY_PUBLIC, banParams, sender);
     }
 
     private Room findReady(User user)

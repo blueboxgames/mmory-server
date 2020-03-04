@@ -3,7 +3,7 @@ package com.gerantech.mmory.sfs.handlers;
 import java.sql.SQLException;
 
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
@@ -85,6 +85,6 @@ public class ProfileRequestHandler extends BBGClientRequestHandler
 		} catch (SQLException e) { trace(e.getMessage()); }
 
 		//trace(params.getDump());
-		send(Commands.PROFILE, params, sender);
+		send(SFSCommands.PROFILE, params, sender);
 	}
 }

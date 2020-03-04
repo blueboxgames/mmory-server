@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
@@ -63,7 +63,7 @@ public class LobbyJoinHandler extends BBGClientRequestHandler
             msg.putInt("o", game.player.id);
             msg.putUtfString("on", game.player.nickName);
             try {
-                lobby.getExtension().handleClientRequest(Commands.LOBBY_PUBLIC_MESSAGE, sender, msg);
+                lobby.getExtension().handleClientRequest(SFSCommands.LOBBY_PUBLIC_MESSAGE, sender, msg);
             } catch (SFSException e) { e.printStackTrace(); }
 
             response = MessageTypes.RESPONSE_SENT;
@@ -78,7 +78,7 @@ public class LobbyJoinHandler extends BBGClientRequestHandler
     protected void send(int response, String name, ISFSObject params, User sender)
     {
         params.putText("lobby", name);
-        super.send(Commands.LOBBY_JOIN, response, params, sender);
+        super.send(SFSCommands.LOBBY_JOIN, response, params, sender);
         trace("Sender:", sender.getName() + "  Response: " + response + "  Lobby: " + name);
     }
 }

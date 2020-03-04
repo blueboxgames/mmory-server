@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.handlers;
 
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.constants.MessageTypes;
@@ -21,15 +21,15 @@ public class ChangeDeckHandler extends BBGClientRequestHandler
 
         if( !player.cards.exists(params.getInt("type")) )
         {
-            send(Commands.CHANGE_DECK, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
+            send(SFSCommands.CHANGE_DECK, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
             return;
         }
 
         if( player.decks.get(params.getInt("deckIndex")).existsValue(params.getInt("type")))
         {
-            send(Commands.CHANGE_DECK, MessageTypes.RESPONSE_ALREADY_SENT, params, sender);
+            send(SFSCommands.CHANGE_DECK, MessageTypes.RESPONSE_ALREADY_SENT, params, sender);
             return;
         }
-        send(Commands.CHANGE_DECK, DBUtils.getInstance().updateDeck(player, params.getInt("deckIndex"), params.getInt("index"), params.getInt("type")), params, sender);
+        send(SFSCommands.CHANGE_DECK, DBUtils.getInstance().updateDeck(player, params.getInt("deckIndex"), params.getInt("index"), params.getInt("type")), params, sender);
     }
 }

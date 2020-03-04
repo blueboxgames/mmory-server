@@ -10,7 +10,7 @@ import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.gerantech.mmory.sfs.handlers.LoginEventHandler;
@@ -34,7 +34,7 @@ try {
         if( now < LoginEventHandler.UNTIL_MAINTENANCE )
         {
             params.putInt("umt", LoginEventHandler.UNTIL_MAINTENANCE - now);
-            send(Commands.BATTLE_START, params, sender);
+            send(SFSCommands.BATTLE_START, params, sender);
             return;
         }
 
@@ -57,7 +57,7 @@ try {
         if( !game.player.has(cost) )
         {
             params.putInt("response", MessageTypes.RESPONSE_NOT_ENOUGH_REQS);
-            send(Commands.BATTLE_START, params, sender);
+            send(SFSCommands.BATTLE_START, params, sender);
             return;
         }
         this.joinUser(sender);

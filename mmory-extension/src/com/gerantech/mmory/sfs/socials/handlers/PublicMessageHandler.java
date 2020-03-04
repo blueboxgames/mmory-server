@@ -3,7 +3,7 @@ package com.gerantech.mmory.sfs.socials.handlers;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -19,7 +19,7 @@ public class PublicMessageHandler extends BaseClientRequestHandler
     {
         if( params.containsKey("x") )
         {
-            send(Commands.LOBBY_PUBLIC_MESSAGE, params, sender);
+            send(SFSCommands.LOBBY_PUBLIC_MESSAGE, params, sender);
             SmartFoxServer.getInstance().getTaskScheduler().schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -31,6 +31,6 @@ public class PublicMessageHandler extends BaseClientRequestHandler
             }, 10, TimeUnit.MILLISECONDS);
             return;
         }
-        send(Commands.LOBBY_PUBLIC_MESSAGE, params, getParentExtension().getParentRoom().getUserList());
+        send(SFSCommands.LOBBY_PUBLIC_MESSAGE, params, getParentExtension().getParentRoom().getUserList());
     }
 }

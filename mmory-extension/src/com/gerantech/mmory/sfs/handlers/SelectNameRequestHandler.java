@@ -6,7 +6,7 @@ import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.ExchangeType;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
@@ -31,7 +31,7 @@ public class SelectNameRequestHandler extends BBGClientRequestHandler
 		if( name.length() < game.loginData.nameMinLen || name.length() > game.loginData.nameMaxLen )
 		{
 			params.putInt("response", MessageTypes.RESPONSE_UNKNOWN_ERROR);
-			send(Commands.SELECT_NAME, params, sender);
+			send(SFSCommands.SELECT_NAME, params, sender);
 			return;
 		}
 
@@ -40,7 +40,7 @@ public class SelectNameRequestHandler extends BBGClientRequestHandler
 		if( (fm != null && fm.getOccurrences() > 0) || name.indexOf("'") > -1 )
 		{
 			params.putInt("response", MessageTypes.RESPONSE_NOT_ALLOWED);
-			send(Commands.SELECT_NAME, params, sender);
+			send(SFSCommands.SELECT_NAME, params, sender);
 			return;
 		}
 
@@ -50,7 +50,7 @@ public class SelectNameRequestHandler extends BBGClientRequestHandler
 			if( res != MessageTypes.RESPONSE_SUCCEED )
 			{
 				params.putInt("response", MessageTypes.RESPONSE_NOT_ENOUGH_REQS);
-				send(Commands.SELECT_NAME, params, sender);
+				send(SFSCommands.SELECT_NAME, params, sender);
 				return;
 			}
 		}
@@ -63,6 +63,6 @@ public class SelectNameRequestHandler extends BBGClientRequestHandler
 		}
 		game.player.nickName = name;
 		params.putInt("response", MessageTypes.RESPONSE_SUCCEED);
-		send(Commands.SELECT_NAME, params, sender);
+		send(SFSCommands.SELECT_NAME, params, sender);
 	}
 }

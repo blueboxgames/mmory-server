@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 
@@ -30,6 +30,6 @@ public class IssueReportHandler extends BBGClientRequestHandler
 			params.putText("errorCode", e.getErrorCode()+"");
 			trace(e.getMessage());
 		}
-		send(Commands.ISSUE_REPORT, params, sender);
+		send(SFSCommands.ISSUE_REPORT, params, sender);
 	}
 }

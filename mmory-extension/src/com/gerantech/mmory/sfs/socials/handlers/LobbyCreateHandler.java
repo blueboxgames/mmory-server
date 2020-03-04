@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
@@ -28,7 +28,7 @@ public class LobbyCreateHandler extends BBGClientRequestHandler
 
         if( !succeed )
         {
-            send(Commands.LOBBY_CREATE, MessageTypes.RESPONSE_NOT_ENOUGH_REQS, params, sender);
+            send(SFSCommands.LOBBY_CREATE, MessageTypes.RESPONSE_NOT_ENOUGH_REQS, params, sender);
             return;
         }
         String roomName = params.getUtfString("name");
@@ -40,7 +40,7 @@ public class LobbyCreateHandler extends BBGClientRequestHandler
 
         if( getParentExtension().getParentZone().getRoomByName(roomName) != null )
         {
-            send(Commands.LOBBY_CREATE, MessageTypes.RESPONSE_ALREADY_SENT, params, sender);
+            send(SFSCommands.LOBBY_CREATE, MessageTypes.RESPONSE_ALREADY_SENT, params, sender);
             return;
         }
 
@@ -48,10 +48,10 @@ public class LobbyCreateHandler extends BBGClientRequestHandler
         Room room = LobbyUtils.getInstance().create(sender, roomName, bio, emblem, capacity, minPoint, privacy);
         if( room == null )
         {
-            send(Commands.LOBBY_CREATE, MessageTypes.RESPONSE_UNKNOWN_ERROR, params, sender);
+            send(SFSCommands.LOBBY_CREATE, MessageTypes.RESPONSE_UNKNOWN_ERROR, params, sender);
             return;
         }
 
-        send(Commands.LOBBY_CREATE, MessageTypes.RESPONSE_SUCCEED, params, sender);
+        send(SFSCommands.LOBBY_CREATE, MessageTypes.RESPONSE_SUCCEED, params, sender);
     }
 }

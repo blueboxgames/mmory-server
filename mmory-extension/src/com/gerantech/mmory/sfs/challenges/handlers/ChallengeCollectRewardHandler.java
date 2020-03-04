@@ -8,7 +8,7 @@ import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
 import com.gerantech.mmory.libs.data.ChallengeSFS;
 import com.gerantech.mmory.libs.utils.ChallengeUtils;
@@ -27,7 +27,7 @@ public class ChallengeCollectRewardHandler extends BaseClientRequestHandler
         params.putInt("response", response);
         if( response != MessageTypes.RESPONSE_SUCCEED )
         {
-            send(Commands.CHALLENGE_COLLECT, params, sender);
+            send(SFSCommands.CHALLENGE_COLLECT, params, sender);
             return;
         }
 
@@ -49,11 +49,11 @@ public class ChallengeCollectRewardHandler extends BaseClientRequestHandler
         response =  manager.process(game, ei, now, 0, mapChangeCallback);
         if( response != MessageTypes.RESPONSE_SUCCEED )
         {
-            send(Commands.CHALLENGE_COLLECT, params, sender);
+            send(SFSCommands.CHALLENGE_COLLECT, params, sender);
             return;
         }
 
         params.putSFSArray("rewards", manager.getRewards(mapChangeCallback));
-        send(Commands.CHALLENGE_COLLECT, params, sender);
+        send(SFSCommands.CHALLENGE_COLLECT, params, sender);
     }
 }

@@ -2,7 +2,7 @@ package com.gerantech.mmory.sfs.callbacks;
 
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
 public class ElixirChangeCallback extends MapChangeCallback
@@ -20,6 +20,6 @@ public class ElixirChangeCallback extends MapChangeCallback
     {
         SFSObject params = new SFSObject();
         params.putInt(side + "", newValue);
-        room.getZone().getExtension().send(Commands.BATTLE_ELIXIR_UPDATE, params, room.getUserList());
+        room.getZone().getExtension().send(SFSCommands.BATTLE_ELIXIR_UPDATE, params, room.getUserList());
     }
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
@@ -47,6 +47,6 @@ public class InboxGetRelationsHandler extends BBGClientRequestHandler
 		}
 
 		params.putSFSArray("data", relations);
-		send(Commands.INBOX_GET_RELATIONS, params, sender);
+		send(SFSCommands.INBOX_GET_RELATIONS, params, sender);
 	}
 }

@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.socials;
 
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.sfs.socials.handlers.LobbyReportHandler;
 import com.gerantech.mmory.sfs.socials.handlers.PublicMessageHandler;
 import com.gerantech.mmory.libs.data.LobbySFS;
@@ -32,14 +32,14 @@ public class BaseLobbyRoom extends SFSExtension
     {
         lobby = getParentRoom();
         data = (LobbySFS) lobby.getProperty("data");
-        addRequestHandler(Commands.LOBBY_PUBLIC_MESSAGE, PublicMessageHandler.class);
-        addRequestHandler(Commands.LOBBY_REPORT, LobbyReportHandler.class);
+        addRequestHandler(SFSCommands.LOBBY_PUBLIC_MESSAGE, PublicMessageHandler.class);
+        addRequestHandler(SFSCommands.LOBBY_REPORT, LobbyReportHandler.class);
     }
 
     public void handleClientRequest(String requestId, User sender, ISFSObject params)
     {
         try {
-            if( requestId.equals(Commands.LOBBY_PUBLIC_MESSAGE) )
+            if( requestId.equals(SFSCommands.LOBBY_PUBLIC_MESSAGE) )
                 organizeMessage(sender, params, true);
             super.handleClientRequest(requestId, sender, params);
         } catch (Exception | Error e) { e.printStackTrace(); }

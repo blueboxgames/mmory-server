@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
@@ -20,14 +20,14 @@ public class LobbyRemoveHandler extends BBGClientRequestHandler
         Game game = ((Game)sender.getSession().getProperty("core"));
         if( !game.player.admin )
         {
-            send(Commands.LOBBY_REMOVE, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
+            send(SFSCommands.LOBBY_REMOVE, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
             return;
         }
 
         //Map<Integer, LobbySFS> all = LobbyUtils.getInstance().getAllData();
         if( !LobbyUtils.getInstance().getAllData().containsKey(params.getInt("id")) )
         {
-            send(Commands.LOBBY_REMOVE, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
+            send(SFSCommands.LOBBY_REMOVE, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
             return;
         }
 
@@ -38,6 +38,6 @@ public class LobbyRemoveHandler extends BBGClientRequestHandler
                 getApi().disconnectUser(u);
 
         LobbyUtils.getInstance().remove(params.getInt("id"));
-        send(Commands.LOBBY_REMOVE, MessageTypes.RESPONSE_SUCCEED, params, sender);
+        send(SFSCommands.LOBBY_REMOVE, MessageTypes.RESPONSE_SUCCEED, params, sender);
     }
 }

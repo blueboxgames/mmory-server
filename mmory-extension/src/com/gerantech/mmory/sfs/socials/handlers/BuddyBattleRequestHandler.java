@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
 import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.libs.utils.BanUtils;
@@ -53,7 +53,7 @@ public class BuddyBattleRequestHandler extends BaseClientRequestHandler
             BBGRoom room = BattleUtils.getInstance().rooms.get(params.getInt("bid"));
             BattleUtils.getInstance().join(room, sender, "");
             if( subjectUser != null )
-                send(Commands.BUDDY_BATTLE, params, Arrays.asList(sender, subjectUser));
+                send(SFSCommands.BUDDY_BATTLE, params, Arrays.asList(sender, subjectUser));
         }
         else
         {
@@ -75,10 +75,10 @@ public class BuddyBattleRequestHandler extends BaseClientRequestHandler
     {
         User subjectUser = getParentExtension().getParentZone().getUserManager().getUserByName(params.getInt("s") + "");
         if (subjectUser != null)
-            send(Commands.BUDDY_BATTLE, params, subjectUser);
+            send(SFSCommands.BUDDY_BATTLE, params, subjectUser);
 
         User objectUser = getParentExtension().getParentZone().getUserManager().getUserByName(params.getInt("o") + "");
         if (objectUser != null)
-            send(Commands.BUDDY_BATTLE, params, objectUser);
+            send(SFSCommands.BUDDY_BATTLE, params, objectUser);
     }
 }

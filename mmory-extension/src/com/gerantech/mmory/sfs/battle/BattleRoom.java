@@ -22,7 +22,7 @@ import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.DBUtils;
@@ -200,7 +200,7 @@ public class BattleRoom extends BBGRoom {
 		if( id == MessageTypes.RESPONSE_NOT_ALLOWED )
 		{
 			params.putDouble("now", this.battleField.now);
-			send(Commands.BATTLE_SUMMON_UNIT, params, getPlayersList().get(side));
+			send(SFSCommands.BATTLE_SUMMON, params, getPlayersList().get(side));
 			return id;
 		}
 
@@ -214,7 +214,7 @@ public class BattleRoom extends BBGRoom {
 				units.addSFSObject(getSFSUnit(type, id, side, card.level, x, y));
 				params.putDouble("time", time);
 				params.putSFSArray("units", units);
-				send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
+				send(SFSCommands.BATTLE_SUMMON, params, getUserList());
 				return id;
 			}
 
@@ -228,7 +228,7 @@ public class BattleRoom extends BBGRoom {
 			}
 			params.putDouble("time", time);
 			params.putSFSArray("units", units);
-			send(Commands.BATTLE_SUMMON_UNIT, params, getUserList());
+			send(SFSCommands.BATTLE_SUMMON, params, getUserList());
 		}
 		return id;
 	}
@@ -256,7 +256,7 @@ public class BattleRoom extends BBGRoom {
 		}
 		params.putInt("0", endCalculator.scores[0]);
 		params.putInt("1", endCalculator.scores[1]);
-		send(Commands.BATTLE_NEW_ROUND, params, getUserList());
+		send(SFSCommands.BATTLE_NEW_ROUND, params, getUserList());
 
 		if( singleMode )
 		{
@@ -275,7 +275,7 @@ public class BattleRoom extends BBGRoom {
 				bot.chatAnswering(params);
 
 			if( sender == null || u.getId() != sender.getId() )
-				send(Commands.BATTLE_SEND_STICKER, params, u);
+				send(SFSCommands.BATTLE_SEND_STICKER, params, u);
 		}
 	}
 
@@ -478,7 +478,7 @@ public class BattleRoom extends BBGRoom {
         SFSObject params = new SFSObject();
         params.putSFSArray("outcomes", outcomesSFSData);//trace(outcomesSFSData.getDump());
         for (int i=0; i < getUserList().size(); i++)
-            send( Commands.BATTLE_END, params, getUserList().get(i) );
+            send( SFSCommands.BATTLE_END, params, getUserList().get(i) );
    }
 
 

@@ -51,7 +51,7 @@ public class LobbyEditHandler extends BaseClientRequestHandler
         ((LobbyRoom) lobby.getExtension()).sendComment( MessageTypes.M15_COMMENT_EDIT, game.player, "", 0);
         } catch (Exception e) { e.printStackTrace(); }
         //params.putInt("response", RESPONSE_OK);
-        //send(Commands.LOBBY_EDIT, params, sender);
+        //send(SFSCommands.LOBBY_EDIT, params, sender);
     }
 
 }

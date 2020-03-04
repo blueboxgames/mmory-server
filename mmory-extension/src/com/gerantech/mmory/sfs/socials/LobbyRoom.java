@@ -5,7 +5,7 @@ import com.gerantech.mmory.sfs.socials.handlers.LobbyInfoHandler;
 import com.gerantech.mmory.sfs.socials.handlers.LobbyModerationHandler;
 import com.gerantech.mmory.sfs.socials.handlers.LobbyRoomServerEventsHandler;
 import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
@@ -37,14 +37,14 @@ public class LobbyRoom extends BaseLobbyRoom
         addEventHandler(SFSEventType.USER_JOIN_ROOM, LobbyRoomServerEventsHandler.class);
         addEventHandler(SFSEventType.USER_LEAVE_ROOM, LobbyRoomServerEventsHandler.class);
         addEventHandler(SFSEventType.USER_DISCONNECT, LobbyRoomServerEventsHandler.class);
-        addRequestHandler(Commands.LOBBY_INFO, LobbyInfoHandler.class);
-        addRequestHandler(Commands.LOBBY_EDIT, LobbyEditHandler.class);
-        addRequestHandler(Commands.LOBBY_MODERATION, LobbyModerationHandler.class);
+        addRequestHandler(SFSCommands.LOBBY_INFO, LobbyInfoHandler.class);
+        addRequestHandler(SFSCommands.LOBBY_EDIT, LobbyEditHandler.class);
+        addRequestHandler(SFSCommands.LOBBY_MODERATION, LobbyModerationHandler.class);
     }
 
     public void handleClientRequest(String requestId, User sender, ISFSObject params)
     {
-        if( requestId.equals(Commands.LOBBY_INFO) && !params.containsKey("nomsg") )
+        if( requestId.equals(SFSCommands.LOBBY_INFO) && !params.containsKey("nomsg") )
             params.putSFSArray("messages", messageQueue() );
         super.handleClientRequest(requestId, sender, params);
     }
@@ -189,7 +189,7 @@ public class LobbyRoom extends BaseLobbyRoom
         msg.putUtfString("o", object);
         msg.putInt("p", permissionId);
         //messageQueue().addSFSObject(msg);
-        handleClientRequest(Commands.LOBBY_PUBLIC_MESSAGE, null, msg);
+        handleClientRequest(SFSCommands.LOBBY_PUBLIC_MESSAGE, null, msg);
     }
 
     /*private int getActiveness ()

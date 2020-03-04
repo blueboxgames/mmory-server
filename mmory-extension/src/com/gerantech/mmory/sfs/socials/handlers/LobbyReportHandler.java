@@ -7,7 +7,7 @@ import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
@@ -58,6 +58,6 @@ public class LobbyReportHandler extends BBGClientRequestHandler
         params.putInt("response", response);
         params.removeElement("t");
         params.removeElement("u");
-        super.send(Commands.LOBBY_REPORT, params, sender);
+        super.send(SFSCommands.LOBBY_REPORT, params, sender);
     }
 }

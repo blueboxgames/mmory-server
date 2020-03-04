@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.administration;
 
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
 import com.gerantech.mmory.core.Game;
 import com.smartfoxserver.v2.entities.User;
@@ -20,6 +20,6 @@ public class SearchInChatsHandler extends BaseClientRequestHandler
 			return;
 
 		params.putSFSArray("result", LobbyUtils.getInstance().searchInChats(params.getUtfString("p")));
-		send(Commands.SEARCH_IN_CHATS, params, sender);
+		send(SFSCommands.SEARCH_IN_CHATS, params, sender);
     }
 }

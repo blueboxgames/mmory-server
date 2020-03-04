@@ -12,7 +12,7 @@ import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
@@ -34,7 +34,7 @@ public class SpectateRoom extends SFSExtension
 	public void init() 
 	{
 		room = getParentRoom();
-		addRequestHandler(Commands.BATTLE_LEAVE, BattleLeaveRequestHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_LEAVE, BattleLeaveRequestHandler.class);
 		List<RoomVariable> listOfVars = new ArrayList<>();
 		listOfVars.add( new SFSRoomVariable("rooms", SFSArray.newInstance()) );
 		sfsApi.setRoomVariables(null, room, listOfVars);

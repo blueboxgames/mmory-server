@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.inbox;
 
 import com.gerantech.mmory.core.Game;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.gerantech.mmory.libs.utils.FCMUtils;
 import com.gerantech.mmory.libs.utils.OneSignalUtils;
@@ -48,6 +48,6 @@ public class InboxBroadcastMessageHandler extends BaseClientRequestHandler
         }
 
         params.putInt("delivered", delivered);
-        send(Commands.INBOX_BROADCAST, params, sender);
+        send(SFSCommands.INBOX_BROADCAST, params, sender);
     }
 }

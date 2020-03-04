@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -41,7 +41,7 @@ public class OauthHandler extends BBGClientRequestHandler
 		} catch (SQLException e) { e.printStackTrace(); }
 
 		params.putInt("playerId", playerId);
-		send(Commands.OAUTH, params, sender);
+		send(SFSCommands.OAUTH, params, sender);
 	}
 
 	private boolean linkExists(ISFSArray accounts, int accountType )

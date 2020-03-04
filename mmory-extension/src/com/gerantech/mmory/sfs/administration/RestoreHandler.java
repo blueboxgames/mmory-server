@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.sfs.utils.PasswordGenerator;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
@@ -32,11 +32,11 @@ public class RestoreHandler extends BBGClientRequestHandler
 				} catch (SQLException e) { e.printStackTrace(); }
 			}
 			params.putInt( "id", playerId);
-			send(Commands.RESTORE, params, sender);
+			send(SFSCommands.RESTORE, params, sender);
 			return;
 		}
 
 		params.putText("restoreCode", PasswordGenerator.getRestoreCode(game.player.id));
-		send(Commands.RESTORE, params, sender);
+		send(SFSCommands.RESTORE, params, sender);
 	}
 }

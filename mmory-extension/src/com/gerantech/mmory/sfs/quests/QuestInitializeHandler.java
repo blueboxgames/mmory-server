@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.quests;
 
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.QuestsUtils;
 import com.gerantech.mmory.core.Game;
 import com.smartfoxserver.v2.entities.User;
@@ -18,6 +18,6 @@ public class QuestInitializeHandler extends BaseClientRequestHandler
     	Game game = (Game) sender.getSession().getProperty("core");
 		QuestsUtils.getInstance().insertNewQuests(game.player);
 		params.putSFSArray("quests", QuestsUtils.toSFS(game.player.quests));
-		send(Commands.QUEST_INIT, params, sender);
+		send(SFSCommands.QUEST_INIT, params, sender);
     }
 }

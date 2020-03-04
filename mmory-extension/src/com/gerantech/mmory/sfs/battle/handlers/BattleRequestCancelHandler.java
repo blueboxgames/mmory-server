@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.battle.handlers;
 
 import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
@@ -37,6 +37,6 @@ public class BattleRequestCancelHandler extends BaseClientRequestHandler
                 battle.autoJoinTimer.cancel(true);
             BattleUtils.getInstance().remove(foundRoom);
         }
-        send(Commands.BATTLE_CANCEL, null, sender);
+        send(SFSCommands.BATTLE_CANCEL, null, sender);
     }
 }

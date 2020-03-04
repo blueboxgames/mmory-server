@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.handlers;
 
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
 import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
 import com.gerantech.mmory.core.Game;
@@ -34,7 +34,7 @@ public class ExchangeHandler extends BaseClientRequestHandler
 		params.putInt("now", now);
 		if( response != MessageTypes.RESPONSE_SUCCEED )
 		{
-			send(Commands.EXCHANGE, params, sender);
+			send(SFSCommands.EXCHANGE, params, sender);
 			return;
 		}
 
@@ -43,6 +43,6 @@ public class ExchangeHandler extends BaseClientRequestHandler
 		if( sfsRewards.size() > 0 )
 			params.putSFSArray("rewards", sfsRewards);
 
-		send(Commands.EXCHANGE, params, sender);
+		send(SFSCommands.EXCHANGE, params, sender);
 	}
 }

@@ -1,7 +1,7 @@
 package com.gerantech.mmory.sfs.administration.ban;
 
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.libs.utils.DBUtils;
@@ -21,7 +21,7 @@ public class GetBannedDataHandler extends BBGClientRequestHandler
 		Game game = ((Game)sender.getSession().getProperty("core"));
 		if( !game.player.admin )
 		{
-			send(Commands.BANNED_DATA_GET, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
+			send(SFSCommands.BANNED_DATA_GET, MessageTypes.RESPONSE_NOT_ALLOWED, params, sender);
 			return;
 		}
 
@@ -41,6 +41,6 @@ public class GetBannedDataHandler extends BBGClientRequestHandler
 		// get all ban messages
 		params.putSFSArray("data", bannes);
 
-		send(Commands.BANNED_DATA_GET, MessageTypes.RESPONSE_SUCCEED, params, sender);
+		send(SFSCommands.BANNED_DATA_GET, MessageTypes.RESPONSE_SUCCEED, params, sender);
 	}
 }

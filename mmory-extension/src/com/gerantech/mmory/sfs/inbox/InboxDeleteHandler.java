@@ -14,6 +14,6 @@ public class InboxDeleteHandler extends BaseClientRequestHandler
   {
 		// Game game = ((Game)sender.getSession().getProperty("core"));
 		// params.putSFSArray("data", InboxUtils.getInstance().getAll(game.player.id, 30));
-		// send(Commands.INBOX_GET, params, sender);
+		// send(SFSCommands.INBOX_GET, params, sender);
 	}
 }

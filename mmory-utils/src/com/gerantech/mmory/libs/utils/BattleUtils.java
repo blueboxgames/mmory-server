@@ -9,13 +9,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.libs.Commands;
-import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.data.LobbySFS;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
@@ -184,7 +184,7 @@ public class BattleUtils extends UtilBase
                         if( battleState == 0 )
                             msgIndex = j;
                         if( lobby.getUserList().size() > 0 )
-                            ext.getApi().sendExtensionResponse(Commands.LOBBY_PUBLIC_MESSAGE, msg, lobby.getUserList(), lobby, false);
+                            ext.getApi().sendExtensionResponse(SFSCommands.LOBBY_PUBLIC_MESSAGE, msg, lobby.getUserList(), lobby, false);
                     }
                 }
                 //trace(room.getName(), lobby.getName());

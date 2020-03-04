@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.LobbyDataUtils;
 import com.gerantech.mmory.libs.utils.RankingUtils;
 import com.gerantech.mmory.libs.data.LobbySFS;
@@ -18,8 +18,8 @@ public class LobbyInfoHandler extends BaseClientRequestHandler
         LobbySFS data = (LobbySFS) getParentExtension().getParentRoom().getProperty("data");
         LobbyDataUtils.getInstance().fillRoomData(data, params, RankingUtils.getInstance().getUsers(), true, true);
         if( params.containsKey("broadcast") )
-            send(Commands.LOBBY_INFO, params, getParentExtension().getParentRoom().getUserList());
+            send(SFSCommands.LOBBY_INFO, params, getParentExtension().getParentRoom().getUserList());
         else
-            send(Commands.LOBBY_INFO, params, sender);
+            send(SFSCommands.LOBBY_INFO, params, sender);
     }
 }

@@ -5,7 +5,7 @@ import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.others.TrophyReward;
 import com.gerantech.mmory.core.socials.Friends;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.callbacks.MapChangeCallback;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
@@ -32,7 +32,7 @@ public class RoadCollectRewardHandler extends BBGClientRequestHandler {
 			Friends friendship = FriendsUtils.getInstance().getFriendship(left, right, Friends.STATE_NORMAL);
 			if( friendship == null )
 			{
-				send(Commands.COLLECT_ROAD_REWARD, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
+				send(SFSCommands.COLLECT_ROAD_REWARD, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
 				return;
 			}
 
@@ -42,7 +42,7 @@ public class RoadCollectRewardHandler extends BBGClientRequestHandler {
 			response = reward.achievable(RankingUtils.getInstance().getPoint(right), step, false);
 			if( response != MessageTypes.RESPONSE_SUCCEED )
 			{
-				send(Commands.COLLECT_ROAD_REWARD, response, params, sender);
+				send(SFSCommands.COLLECT_ROAD_REWARD, response, params, sender);
 				return;
 			}
 			
@@ -60,7 +60,7 @@ public class RoadCollectRewardHandler extends BBGClientRequestHandler {
 		game.player.resources.changeCallback = null;
 		if( response != MessageTypes.RESPONSE_SUCCEED )
 		{
-			send(Commands.COLLECT_ROAD_REWARD, response, params, sender);
+			send(SFSCommands.COLLECT_ROAD_REWARD, response, params, sender);
 			return;
 		}
 		DBUtils dbUtils = DBUtils.getInstance();
@@ -69,6 +69,6 @@ public class RoadCollectRewardHandler extends BBGClientRequestHandler {
 		ISFSArray outcomes = ExchangeUtils.getInstance().getRewards(mapChangeCallback);
 		if( outcomes.size() > 0 )
 			params.putSFSArray("outcomes", outcomes);
-		send(Commands.COLLECT_ROAD_REWARD, response, params, sender);
+		send(SFSCommands.COLLECT_ROAD_REWARD, response, params, sender);
 	}
 }

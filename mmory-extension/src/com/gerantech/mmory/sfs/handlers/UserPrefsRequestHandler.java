@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.libs.BBGClientRequestHandler;
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.DBUtils;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -31,6 +31,6 @@ public class UserPrefsRequestHandler extends BBGClientRequestHandler
 			params.putSFSArray("map", DBUtils.getInstance().getPrefs(game.player.id, game.appVersion));
 		}
 
-		send(Commands.PREFS, params, sender);
+		send(SFSCommands.PREFS, params, sender);
 	}
 }

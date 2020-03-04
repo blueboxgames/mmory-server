@@ -1,6 +1,6 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
-import com.gerantech.mmory.libs.Commands;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.gerantech.mmory.sfs.socials.LobbyRoom;
@@ -52,7 +52,7 @@ public class LobbyModerationHandler extends BaseClientRequestHandler
         if( targetMember == null || modMember == null )
         {
             params.putBool("succeed", succeed);
-            send(Commands.LOBBY_MODERATION, params, sender);
+            send(SFSCommands.LOBBY_MODERATION, params, sender);
             return;
         }
 
@@ -64,7 +64,7 @@ public class LobbyModerationHandler extends BaseClientRequestHandler
             succeed = demote(params.getInt("id"), params.getUtfString("name"));
 
         params.putBool("succeed", succeed);
-        send(Commands.LOBBY_MODERATION, params, sender);
+        send(SFSCommands.LOBBY_MODERATION, params, sender);
     }
 
     private boolean kick(Integer targetId, String targetName)
