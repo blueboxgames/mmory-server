@@ -27,12 +27,14 @@ import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSRoomVariable;
 import com.smartfoxserver.v2.extensions.SFSExtension;
 
+import haxe.root.Array;
+
 public class SpectateRoom extends SFSExtension
 {
 	private Room room;
 	private ScheduledFuture<?> timer;
 
-	public void init() 
+	public void init()
 	{
 		room = getParentRoom();
 		addRequestHandler(SFSCommands.BATTLE_LEAVE, BattleRequestLeaveHandler.class);
@@ -42,28 +44,28 @@ public class SpectateRoom extends SFSExtension
 		LobbyUtils lobbyUtils = LobbyUtils.getInstance();
 
 		timer = SmartFoxServer.getInstance().getTaskScheduler().scheduleAtFixedRate(new TimerTask() {
-		@Override
-		public void run() {
-			ISFSArray reservedRooms = room.getVariable("rooms").getSFSArrayValue();
-			SFSArray battles = SFSArray.newInstance();
-			SFSObject battle;
-			int numRooms = 0;
-			Set<Map.Entry<Integer, BBGRoom>> entries = BattleUtils.getInstance().rooms.entrySet();
-			for( Map.Entry<Integer, BBGRoom> entry : entries )
-			{
+			@Override
+			public void run() {
+				ISFSArray reservedRooms = room.getVariable("rooms").getSFSArrayValue();
+				SFSArray battles = SFSArray.newInstance();
+				SFSObject battle;
+				int numRooms = 0;
+				Set<Map.Entry<Integer, BBGRoom>> entries = BattleUtils.getInstance().rooms.entrySet();
+				for( Map.Entry<Integer, BBGRoom> entry : entries )
+				{
 					BattleRoom r = (BattleRoom) entry.getValue();
 					if (r.battleField.state != BattleField.STATE_2_STARTED)
-					continue;
-				battle = new SFSObject();
-				battle.putInt("id", r.getId());
-				battle.putText("name", r.getName());
-				battle.putInt("startAt", r.getPropertyAsInt("startAt"));
-				ISFSArray players = new SFSArray();
+						continue;
+					battle = new SFSObject();
+					battle.putInt("id", r.getId());
+					battle.putText("name", r.getName());
+					battle.putInt("startAt", r.battleField.startAt);
+					ISFSArray players = new SFSArray();
 
-				ArrayList<?> registeredPlayers = (ArrayList<?>)r.getProperty("registeredPlayers");
-				for ( Object obj : registeredPlayers )
+				Array<Game> games = r.battleField.games;
+				for( int i = 0; i < games.length; i++ )
 				{
-					Player player = ((Game)obj).player;
+					Player player = games.__get(i).player;
 					SFSObject p = new SFSObject();
 					p.putText("n", player.nickName);
 					LobbySFS lobby = lobbyUtils.getDataByMember(player.id);
