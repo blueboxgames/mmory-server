@@ -76,7 +76,7 @@ try {
 
         if( room == null )
             room = bu.make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), user, this.index, this.mode, this.type, this.friendlyMode);
-        ((BattleRoom)room).debugMode = debugMode;
+        ((BattleRoom)room).battleField.debugMode = debugMode;
 
         bu.join(room, user, "");
     }

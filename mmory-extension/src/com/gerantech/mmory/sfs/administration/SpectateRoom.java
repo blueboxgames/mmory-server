@@ -16,7 +16,8 @@ import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
-import com.gerantech.mmory.sfs.battle.handlers.BattleLeaveRequestHandler;
+import com.gerantech.mmory.sfs.battle.BattleRoom;
+import com.gerantech.mmory.sfs.battle.handlers.BattleRequestLeaveHandler;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
@@ -34,9 +35,9 @@ public class SpectateRoom extends SFSExtension
 	public void init() 
 	{
 		room = getParentRoom();
-		addRequestHandler(SFSCommands.BATTLE_LEAVE, BattleLeaveRequestHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_LEAVE, BattleRequestLeaveHandler.class);
 		List<RoomVariable> listOfVars = new ArrayList<>();
-		listOfVars.add( new SFSRoomVariable("rooms", SFSArray.newInstance()) );
+		listOfVars.add(new SFSRoomVariable("rooms", SFSArray.newInstance()));
 		sfsApi.setRoomVariables(null, room, listOfVars);
 		LobbyUtils lobbyUtils = LobbyUtils.getInstance();
 
@@ -50,8 +51,8 @@ public class SpectateRoom extends SFSExtension
 			Set<Map.Entry<Integer, BBGRoom>> entries = BattleUtils.getInstance().rooms.entrySet();
 			for( Map.Entry<Integer, BBGRoom> entry : entries )
 			{
-				BBGRoom r = entry.getValue();
-				if( r.getPropertyAsInt("state") != BattleField.STATE_2_STARTED )
+					BattleRoom r = (BattleRoom) entry.getValue();
+					if (r.battleField.state != BattleField.STATE_2_STARTED)
 					continue;
 				battle = new SFSObject();
 				battle.putInt("id", r.getId());

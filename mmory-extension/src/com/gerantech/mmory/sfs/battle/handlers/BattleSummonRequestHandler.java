@@ -13,7 +13,7 @@ public class BattleSummonRequestHandler extends BaseClientRequestHandler
 	{
 		try {
 			BattleRoom room = (BattleRoom) BattleUtils.getInstance().rooms.get(params.getInt("r"));
-			if( room.getState() < BattleField.STATE_1_CREATED || room.getState() > BattleField.STATE_3_PAUSED )
+			if( room.battleField.state < BattleField.STATE_1_CREATED || room.battleField.state > BattleField.STATE_3_PAUSED )
 				return;
 			int side = room.getPlayerGroup(sender);
 			double time = params.containsKey("time") ? params.getDouble("time") : System.currentTimeMillis() - 200;

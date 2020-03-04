@@ -166,7 +166,7 @@ public class BattleBot
             }
         }
 
-        if( battleRoom.getState() >= BattleField.STATE_2_STARTED )
+        if( battleRoom.battleField.state >= BattleField.STATE_2_STARTED )
         {
             summonCard();
             updateChatProcess();
