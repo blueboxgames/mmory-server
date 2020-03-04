@@ -37,7 +37,6 @@ public class PurchaseVerificationHandler extends BBGClientRequestHandler
 	private ExchangeItem item;
 	private Properties props = ConfigUtils.getInstance().load(ConfigUtils.DEFAULT);
 	private static String packageName = "com.grantech.k2k";
-	private String accessToken_cafebazaar = props.getProperty("cafebazaarAccessToken");
 
 	public PurchaseVerificationHandler() { }
 	public void handleClientRequest(User sender, ISFSObject params)
@@ -262,7 +261,8 @@ public class PurchaseVerificationHandler extends BBGClientRequestHandler
 		if (data.statusCode != HttpStatus.SC_OK || !data.json.containsKey("access_token"))
 			return false;
 
-		accessToken_cafebazaar = data.json.getString("access_token");
+		props.setProperty("cafebazaarAccessToken", data.json.getString("access_token"));
+		ConfigUtils.getInstance().save(ConfigUtils.DEFAULT);
 		return true;
 	}
 
@@ -310,7 +310,7 @@ public class PurchaseVerificationHandler extends BBGClientRequestHandler
 		if( market.equals("myket") )
 			url = "https://developer.myket.ir/api/applications/" + packageName + "/purchases/products/" + productID + "/tokens/" + purchaseToken;
 		else if( market.equals("cafebazaar") )
-			url = "https://pardakht.cafebazaar.ir/devapi/v2/api/validate/" + packageName + "/inapp/" + productID + "/purchases/" + purchaseToken + "/?access_token=" + accessToken_cafebazaar;
+			url = "https://pardakht.cafebazaar.ir/devapi/v2/api/validate/" + packageName + "/inapp/" + productID + "/purchases/" + purchaseToken + "/?access_token=" + props.getProperty("cafebazaarAccessToken");
 
 		// trace("purchase url:", url);
 		HttpUtils.Data data = HttpUtils.get(url, headers, true);
