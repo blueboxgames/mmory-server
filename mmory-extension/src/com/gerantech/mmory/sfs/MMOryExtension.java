@@ -47,12 +47,12 @@ public class MMOryExtension extends SFSExtension
 		addEventHandler(SFSEventType.USER_DISCONNECT, BattleUsersExitHandler.class);
 
 		// Add startBattle request handler
-		addRequestHandler(SFSCommands.BATTLE_START, BattleRequestStartHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_JOIN, BattleRequestJoinHandler.class);
 		addRequestHandler(SFSCommands.BATTLE_CANCEL, BattleRequestCancelHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_LEAVE, BattleRequestLeaveHandler.class);
 
-		addRequestHandler(SFSCommands.BATTLE_LEAVE, BattleLeaveRequestHandler.class);
 		addRequestHandler(SFSCommands.BATTLE_SUMMON, BattleSummonRequestHandler.class);
-		addRequestHandler(SFSCommands.BATTLE_SEND_STICKER, BattleStickerRequestHandler.class);
+		addRequestHandler(SFSCommands.BATTLE_SEND_STICKER, BattleSendStickerHandler.class);
 
 		// Add billing upgrade handler
 		addRequestHandler(SFSCommands.CARD_UPGRADE, CardUpgradeHandler.class);

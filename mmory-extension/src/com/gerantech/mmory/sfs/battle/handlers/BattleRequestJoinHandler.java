@@ -18,7 +18,7 @@ import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
-public class BattleRequestStartHandler extends BaseClientRequestHandler
+public class BattleRequestJoinHandler extends BaseClientRequestHandler
 {
     private int type;
     private int mode;
@@ -34,7 +34,7 @@ try {
         if( now < LoginEventHandler.UNTIL_MAINTENANCE )
         {
             params.putInt("umt", LoginEventHandler.UNTIL_MAINTENANCE - now);
-            send(SFSCommands.BATTLE_START, params, sender);
+            send(SFSCommands.BATTLE_JOIN, params, sender);
             return;
         }
 
@@ -57,7 +57,7 @@ try {
         if( !game.player.has(cost) )
         {
             params.putInt("response", MessageTypes.RESPONSE_NOT_ENOUGH_REQS);
-            send(SFSCommands.BATTLE_START, params, sender);
+            send(SFSCommands.BATTLE_JOIN, params, sender);
             return;
         }
         this.joinUser(sender);

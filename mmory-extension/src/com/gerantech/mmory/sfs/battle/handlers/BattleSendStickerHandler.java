@@ -9,7 +9,7 @@ import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 /**
  * Created by ManJav on 7/28/2017.
  */
-public class BattleStickerRequestHandler extends BaseClientRequestHandler
+public class BattleSendStickerHandler extends BaseClientRequestHandler
 {
     public void handleClientRequest(User sender, ISFSObject params)
     {
