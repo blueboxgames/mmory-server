@@ -75,6 +75,7 @@ public class BattleBot
     private int logFlags = 0x0;
     /** Log buffer */
     private String logBuffer = "";
+	public boolean autoStart;
     private void flushLogBuffer()
     {
         this.logBuffer = "";
@@ -166,7 +167,7 @@ public class BattleBot
             }
         }
 
-        if( battleRoom.battleField.state >= BattleField.STATE_2_STARTED )
+        if( battleRoom.battleField.numSummonedUnits > 0 || autoStart )
         {
             summonCard();
             updateChatProcess();

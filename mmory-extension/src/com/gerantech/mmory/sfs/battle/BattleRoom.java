@@ -103,8 +103,7 @@ public class BattleRoom extends BBGRoom {
 			bot = new BattleBot(this);
 
 			// sometimes auto start battle
-			if( Math.random() > 0.2 && !this.battleField.games.__get(0).player.inTutorial() )
-				this.battleField.state = BattleField.STATE_2_STARTED;
+			this.bot.autoStart = Math.random() > 0.2 && !this.battleField.games.__get(0).player.inTutorial();
 		}
 
 		timer = SmartFoxServer.getInstance().getTaskScheduler().scheduleAtFixedRate(new TimerTask() {
