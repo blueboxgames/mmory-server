@@ -33,8 +33,6 @@ public class BattleRequestCancelHandler extends BaseClientRequestHandler
         if( foundRoom != null )
         {
             BattleRoom battle = (BattleRoom)foundRoom;
-            if( battle != null )
-                battle.autoJoinTimer.cancel(true);
             BattleUtils.getInstance().remove(foundRoom);
         }
         send(SFSCommands.BATTLE_CANCEL, null, sender);

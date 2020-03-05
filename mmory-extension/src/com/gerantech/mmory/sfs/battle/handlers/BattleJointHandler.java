@@ -1,7 +1,5 @@
 package com.gerantech.mmory.sfs.battle.handlers;
 
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -10,15 +8,12 @@ import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.core.exchanges.ExchangeItem;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
-import com.gerantech.mmory.core.constants.SFSCommands;
-import com.gerantech.mmory.libs.data.RankData;
-import com.gerantech.mmory.libs.data.UnitData;
 import com.gerantech.mmory.libs.utils.ExchangeUtils;
-import com.gerantech.mmory.libs.utils.RankingUtils;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.core.ISFSEvent;
@@ -79,19 +74,20 @@ public class BattleJointHandler extends BaseServerEventHandler {
 					cancel();
 					room.autoJoinTimer.cancel(true);
 					room.setMaxUsers(1);
-					try { sendStartBattleResponse(true); } catch (Error | Exception e) { e.printStackTrace(); }
+					try {
+						sendStartBattleResponse(true);
+					} catch (Error | Exception e) { e.printStackTrace(); }
 				}
 			}, delay, TimeUnit.MILLISECONDS);
 		}
 	}
 
-	private void sendStartBattleResponse(Boolean opponentNotFound){
-		room.setProperty("startAt", (int) Instant.now().getEpochSecond());
-		room.createGame(opponentNotFound);
-
-		List<User> players = room.getPlayersList();
+	private void sendStartBattleResponse(Boolean opponentNotFound) {
+		
+		this.room.create(opponentNotFound);
+		List<User> players = this.room.getPlayersList();
 		for (int i = 0; i < players.size(); i++)
-			sendBattleData(players.get(i));
+		this.sendBattleData(players.get(i));
 	}
 
 	private void sendBattleData(User user) {
@@ -105,38 +101,31 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		SFSObject params = new SFSObject();
 
 		// reduce battle cost
-		if( room.battleField.friendlyMode == 0 && game.player.get_battleswins() > 4 )
-		{
-			IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, room.getPropertyAsInt("index"), null, null, null));
+		if (room.battleField.friendlyMode == 0 && game.player.get_battleswins() > 4) {
+			IntIntMap cost = new IntIntMap((String) ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, room.getPropertyAsInt("index"), null, null, null));
 			ExchangeItem exItem = Challenge.getExchangeItem(room.getPropertyAsInt("mode"), cost, game.player.get_arena(0));
 			int response = ExchangeUtils.getInstance().process(game, exItem, 0, 0);
-			if( response != MessageTypes.RESPONSE_SUCCEED )
-			{
+			if (response != MessageTypes.RESPONSE_SUCCEED) {
 				params.putInt("response", response);
-				send(SFSCommands.BATTLE_START, params, user);
+				send(SFSCommands.BATTLE_JOIN, params, user);
 				return;
 			}
 		}
 
+		params.putInt("id", room.getId());
 		params.putInt("side", room.getPlayerGroup(user));
-		params.putInt("startAt", room.battleField.startAt);
-		params.putInt("roomId", room.getId());
 		params.putInt("userType", room.getUserType(user));
-		params.putDouble("now", room.battleField.now);
 		params.putInt("index", room.getPropertyAsInt("index"));
 		params.putInt("type", room.getPropertyAsInt("type"));
 		params.putInt("mode", room.getPropertyAsInt("mode"));
+		params.putInt("createAt", room.battleField.createAt);
 		params.putInt("friendlyMode", room.battleField.friendlyMode);
-		params.putBool("singleMode", room.getPropertyAsBool("singleMode"));
-		params.putBool("debugMode", room.debugMode);
-		params.putSFSArray("units", UnitData.toSFSArray(room.battleField.units));
-		ArrayList<?> registeredPlayers = (ArrayList<?>) room.getProperty("registeredPlayers");
-		int i = 0;
-		for (Object o : registeredPlayers)
+		params.putBool("singleMode", room.battleField.singleMode);
+		params.putBool("debugMode", room.battleField.debugMode);
+
+		for ( int i = 0; i < room.battleField.games.length; i++ )
 		{
-			Player player = ((Game) o).player;
-			if( !player.isBot() && player.game.appVersion < 2500 )
-				params.putText("map", room.battleField.field.mapData);
+			Player player = room.battleField.games.__get(i).player;
 			SFSObject p = new SFSObject();
 			p.putInt("id", player.id);
 			p.putInt("xp", player.get_xp());
@@ -145,22 +134,15 @@ public class BattleJointHandler extends BaseServerEventHandler {
 
 			String deck = "";
 			int qlen = room.battleField.decks.get(i)._queue.length;
-			for (int k = 0; k <qlen; k++)
-			{
+			for (int k = 0; k < qlen; k++) {
 				int t = room.battleField.decks.get(i)._queue[k];
-				deck += (t + ":" + room.battleField.decks.get(i).get(t).level + (k < qlen-1 ? "," : ""));
+				deck += (t + ":" + room.battleField.decks.get(i).get(t).level + (k < qlen - 1 ? "," : ""));
 			}
-			
 			p.putText("deck", deck);
 			p.putInt("score", room.endCalculator.scores[i]);
 			params.putSFSObject(i == 0 ? "p0" : "p1", p);
-
-			i++;
 		}
 
-		if( !room.isSpectator(user) )
-			RankingUtils.getInstance().update(game.player.id, game.player.nickName,  game.player.get_point(), RankData.STATUS_BUSY);
-	
-		send(SFSCommands.BATTLE_START, params, user);
+		send(SFSCommands.BATTLE_JOIN, params, user);
 	}
 }

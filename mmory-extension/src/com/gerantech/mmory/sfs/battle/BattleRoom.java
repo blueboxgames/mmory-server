@@ -60,7 +60,7 @@ public class BattleRoom extends BBGRoom {
 		this.battleField = new BattleField();
 	}
 
-	public void createGame(Boolean opponentNotFound) {
+	public void create(Boolean opponentNotFound) {
 		if( this.autoJoinTimer != null )
 			this.autoJoinTimer.cancel(true);
 		this.autoJoinTimer = null;
@@ -85,20 +85,31 @@ public class BattleRoom extends BBGRoom {
 		}
 		setProperty("games", games);
 
+		// create battle field
 		int mode = this.getPropertyAsInt("mode");
+		if( !BattleUtils.getInstance().maps.containsKey(mode) )
 		BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".json", null, false).text);
 
-		Instant instant = Instant.now();
-		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)registeredPlayers.get(0)).appVersion);
-		this.battleField.initialize(registeredPlayers.get(0), registeredPlayers.get(1), field, 0, instant.getEpochSecond(), instant.toEpochMilli(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
+		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)games.get(0)).appVersion);
+		this.battleField.create(games.get(0), games.get(1), field, 0, System.currentTimeMillis(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
+
+		// add callbacks
 		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
 		this.eventCallback = new BattleEventCallback(this);
 		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
 			endCalculator = new TouchDownEndCalculator(this);
 		else
 			endCalculator = new EndCalculator(this);
+	}
 
-		if( singleMode )
+	public void start()
+	{
+		if( this.battleField.state >= BattleField.STATE_2_STARTED )
+			return;
+		this.battleField.start(System.currentTimeMillis(), System.currentTimeMillis());
+		this.unitsUpdatedAt = battleField.now;
+
+		if( this.battleField.singleMode )
 		{
 			bot = new BattleBot(this);
 
@@ -110,7 +121,7 @@ public class BattleRoom extends BBGRoom {
 			@Override
 			public void run() {
 
-				if( battleField.state < BattleField.STATE_1_CREATED || battleField.state > BattleField.STATE_4_ENDED )
+				if( battleField.state < BattleField.STATE_2_STARTED || battleField.state > BattleField.STATE_4_ENDED )
 					return;
 				try {
 					double battleDuration = battleField.getDuration();
@@ -156,7 +167,7 @@ public class BattleRoom extends BBGRoom {
 			}
 			units.putUtfStringArray("data", testData);
 		}
-		send("u", units, this.getUserList());
+		send(SFSCommands.BATTLE_UNIT_CHANGE, units, this.getUserList());
 	}
 
 	private List<Integer> getChangedUnits(boolean force)
@@ -452,13 +463,14 @@ public class BattleRoom extends BBGRoom {
 			LobbyUtils.getInstance().save(lobbySFS, null, null, -1, -1, -1, -1, lobbySFS.getMembersBytes(), null);
 		}
 	}
-    private void sendData(SFSArray outcomesSFSData)
-    {
-        SFSObject params = new SFSObject();
-        params.putSFSArray("outcomes", outcomesSFSData);//trace(outcomesSFSData.getDump());
-        for (int i=0; i < getUserList().size(); i++)
-            send( SFSCommands.BATTLE_END, params, getUserList().get(i) );
-   }
+
+	private void sendData(SFSArray outcomesSFSData)
+	{
+		SFSObject params = new SFSObject();
+		params.putSFSArray("outcomes", outcomesSFSData);//trace(outcomesSFSData.getDump());
+		for (int i=0; i < getUserList().size(); i++)
+				send( SFSCommands.BATTLE_END, params, getUserList().get(i) );
+	}
 
 	@Override
 	public int getState() {
