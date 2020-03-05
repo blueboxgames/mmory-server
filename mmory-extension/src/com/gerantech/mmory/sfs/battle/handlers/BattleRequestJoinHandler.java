@@ -2,15 +2,15 @@ package com.gerantech.mmory.sfs.battle.handlers;
 
 import java.time.Instant;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
 import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.gerantech.mmory.sfs.handlers.LoginEventHandler;
@@ -87,18 +87,18 @@ try {
         //List<User> matchingUsers = sfsApi.findUsers(zone.getUserList(), exp, 50);
         WeakHashMap<Integer, BBGRoom> battles = BattleUtils.getInstance().rooms;
         trace("alive battles " + battles.size());
-        BBGRoom room = null;
+        BattleRoom room = null;
         for(Map.Entry<Integer, BBGRoom> entry : battles.entrySet())
         {
-            room = entry.getValue();
+            room = (BattleRoom)entry.getValue();
             trace(room.toString());
             if( room.isFull() )
                 continue;
-            if( room.getPropertyAsInt("friendlyMode") > 0 )
+            if( room.battleField.friendlyMode > 0 )
                 continue;
             if( room.getPropertyAsInt("league") != league )
                 continue;
-            if( room.getPropertyAsInt("state") != BattleField.STATE_0_WAITING )
+            if( room.getState() != BattleField.STATE_0_WAITING )
                 continue;
             if( room.getPropertyAsInt("mode") != mode )
                 continue;

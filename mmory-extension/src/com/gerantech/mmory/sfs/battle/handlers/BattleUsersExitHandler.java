@@ -25,7 +25,7 @@ public class BattleUsersExitHandler extends BaseServerEventHandler
         BBGRoom room = bu.find(bu.getGame(user).player.id, BattleField.STATE_0_WAITING, BattleField.STATE_4_ENDED);
         if( room == null )
             return;
-        if( room.getPropertyAsInt("state") < BattleField.STATE_1_CREATED )
+        if( room.getState() < BattleField.STATE_1_CREATED )
             BattleUtils.getInstance().remove(room);
         else
             BattleUtils.getInstance().leave(room, user);

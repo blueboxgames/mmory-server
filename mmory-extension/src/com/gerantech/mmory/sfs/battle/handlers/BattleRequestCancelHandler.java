@@ -22,7 +22,7 @@ public class BattleRequestCancelHandler extends BaseClientRequestHandler
         {
             if( entry.getValue().getOwner().equals(sender) )
             {
-                if( entry.getValue().getPropertyAsInt("state") < BattleField.STATE_1_CREATED )
+                if( entry.getValue().getState() < BattleField.STATE_1_CREATED )
                 {
                     foundRoom = entry.getValue();
                     break;

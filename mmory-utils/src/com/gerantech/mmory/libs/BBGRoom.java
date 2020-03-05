@@ -101,6 +101,9 @@ public class BBGRoom implements Room
     public int getId() {
         return this.id;
     }
+    public int getState() {
+        return 0;
+    }
     public String getGroupId() {
         return settings.getGroupId();
     }

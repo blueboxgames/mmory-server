@@ -53,7 +53,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 
 	private void join() {
 		// Rejoin to previous room
-		if (room.getPropertyAsInt("state") == BattleField.STATE_2_STARTED) {
+		if (room.getState() == BattleField.STATE_2_STARTED || room.getState() == BattleField.STATE_3_PAUSED) {
 			List<User> players = room.getPlayersList();
 			for (int i = 0; i < players.size(); i++) {
 				if (players.get(i).equals(user)) {
@@ -69,7 +69,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		}
 
 		// Wait to match making ( complete battle-room`s players )
-		if (room.getPropertyAsInt("friendlyMode") == 0) {
+		if (room.battleField.friendlyMode == 0) {
 			int delay = 5000;// Math.max(12000, player.get_arena(0) * 400 + 7000);
 			// trace(room.getName(), waitingPeak, room.getPlayersList().size(),
 

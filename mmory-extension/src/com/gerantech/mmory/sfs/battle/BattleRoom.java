@@ -43,13 +43,11 @@ import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
 
 public class BattleRoom extends BBGRoom {
-	public boolean debugMode;
 	public BattleField battleField;
 	public EndCalculator endCalculator;
 	public ScheduledFuture<?> autoJoinTimer;
 	
 	private BattleBot bot;
-	private boolean singleMode;
 	private ScheduledFuture<?> timer;
 	private double unitsUpdatedAt;
 	private double forceUpdatedAt;
@@ -463,7 +461,10 @@ public class BattleRoom extends BBGRoom {
             send( SFSCommands.BATTLE_END, params, getUserList().get(i) );
    }
 
-
+	@Override
+	public int getState() {
+		return this.battleField.state;
+	}
 
     private void close()
 	{
@@ -477,7 +478,6 @@ public class BattleRoom extends BBGRoom {
 
 		if( this.battleField != null )
 			battleField.dispose();
-		//battleField = null;
 	}
 
 	public int getPlayerGroup(User user)
@@ -504,7 +504,7 @@ public class BattleRoom extends BBGRoom {
 	}
 
 	public String toString() {
-		return String.format("[ Battle: %s, Id: %s, mode: %s, type: %s, friendlyMode: %s, state: %s ]", new Object[] { this.getName(), this.getId(), this.getPropertyAsInt("mode"), this.getPropertyAsInt("type"), this.getPropertyAsInt("friendlyMode"), this.getPropertyAsInt("state") });
+		return String.format("[ Battle: %s, Id: %s, mode: %s, type: %s, friendlyMode: %s, state: %s ]", new Object[] { this.getName(), this.getId(), this.getPropertyAsInt("mode"), this.getPropertyAsInt("type"), this.getPropertyAsInt("friendlyMode"), this.getState() });
 	}
 
 }

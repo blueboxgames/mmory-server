@@ -148,7 +148,7 @@ public class BattleUtils extends UtilBase
         Set<Map.Entry<Integer, BBGRoom>> entries = rooms.entrySet();
         for( Map.Entry<Integer, BBGRoom> entry : entries )
         {
-            if( entry.getValue().getPropertyAsInt("state") >= minState && entry.getValue().getPropertyAsInt("state") <= maxState )
+            if( entry.getValue().getState() >= minState && entry.getValue().getState() <= maxState )
             {
                 if( !entry.getValue().containsProperty("games") )
                     continue;
