@@ -271,30 +271,23 @@ public class BattleRoom extends BBGRoom {
 	// leave =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	public void leave(User user, boolean retryMode)
 	{
-		if( isSpectator(user) )
+		if( isSpectator(user) || !this.battleField.field.isOperation() )
 		{
 			BattleUtils.getInstance().leave(this, user);
 			return;
 		}
 
-		if( this.battleField.field.isOperation() )
+		this.battleField.state = BattleField.STATE_4_ENDED;
+		if( retryMode )
 		{
-			this.battleField.state = BattleField.STATE_4_ENDED;
-			if( retryMode )
-			{
-				close();
-				BattleUtils.getInstance().remove(this);
-				return;
-			}
-			endCalculator.scores[1] = endCalculator.scores[0] = 0;
-			calculateResult();
 			close();
 			BattleUtils.getInstance().remove(this);
+			return;
 		}
-		else
-		{
-			BattleUtils.getInstance().leave(this, user);
-		}
+		endCalculator.scores[1] = endCalculator.scores[0] = 0;
+		calculateResult();
+		close();
+		BattleUtils.getInstance().remove(this);
 	}
 
 	private void pokeBot()
