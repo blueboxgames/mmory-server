@@ -9,6 +9,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.LoginData;
@@ -17,9 +19,9 @@ import com.gerantech.mmory.core.constants.ExchangeType;
 import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.constants.ResourceType;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
+import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.data.RankData;
 import com.smartfoxserver.v2.db.IDBManager;
-import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
@@ -337,12 +339,12 @@ public class DBUtils extends UtilBase
         } catch (SQLException e) { return "Query failed"; }
 
         // reset disconnected in-battle players
-        List<Room> battles = ext.getParentZone().getRoomManager().getRoomListFromGroup("battles");
-        for( Room r : battles )
+        Set<Map.Entry<Integer, BBGRoom>> entries = BattleUtils.getInstance().rooms.entrySet();
+        for( Map.Entry<Integer, BBGRoom> entry : entries )
         {
-            List<?> registeredPlayers = (List<?>) r.getProperty("registeredPlayers");
-            for( Object game : registeredPlayers )
-                result += resetDailyBattlesOfUsers((Game)game,  " in game " + r.getName());
+            List<?> games = (List<?>) entry.getValue().getProperty("games");
+            for( Object game : games )
+                result += resetDailyBattlesOfUsers((Game)game,  " in game " + entry.getValue().getName());
         }
 
         // reset connected players

@@ -149,9 +149,9 @@ public class BattleUtils extends UtilBase
         {
             if( entry.getValue().getPropertyAsInt("state") >= minState && entry.getValue().getPropertyAsInt("state") <= maxState )
             {
-                if( !entry.getValue().containsProperty("registeredPlayers") )
+                if( !entry.getValue().containsProperty("games") )
                     continue;
-                List<?> games = (List<?>)entry.getValue().getProperty("registeredPlayers");
+                List<?> games = (List<?>)entry.getValue().getProperty("games");
                 for( Object g : games )
                     if( ((Game)g).player.id == userId )
                         return entry.getValue();

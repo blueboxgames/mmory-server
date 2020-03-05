@@ -85,6 +85,7 @@ public class BattleRoom extends BBGRoom {
 			botGame.init(data);
 			games.add(botGame);
 		}
+		setProperty("games", games);
 
 		int mode = this.getPropertyAsInt("mode");
 		BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".json", null, false).text);
