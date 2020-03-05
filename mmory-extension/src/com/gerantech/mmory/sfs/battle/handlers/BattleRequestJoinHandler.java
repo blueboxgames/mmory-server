@@ -85,7 +85,7 @@ try {
     {
         //MatchExpression exp = new MatchExpression('rank', NumberMatch.GREATER_THAN, 5).and('country', StringMatch.EQUALS, 'Italy')
         //List<User> matchingUsers = sfsApi.findUsers(zone.getUserList(), exp, 50);
-        ConcurrentHashMap<Integer, BBGRoom> battles = BattleUtils.getInstance().rooms;
+        WeakHashMap<Integer, BBGRoom> battles = BattleUtils.getInstance().rooms;
         trace("alive battles " + battles.size());
         BBGRoom room = null;
         for(Map.Entry<Integer, BBGRoom> entry : battles.entrySet())

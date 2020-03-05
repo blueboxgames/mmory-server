@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,7 +38,7 @@ public class BattleUtils extends UtilBase
     }
     private AtomicInteger roomId = new AtomicInteger();
     public ConcurrentHashMap<Integer, String> maps = new ConcurrentHashMap<>();
-    public ConcurrentHashMap<Integer, BBGRoom> rooms = new ConcurrentHashMap<>();
+    public WeakHashMap<Integer, BBGRoom> rooms = new WeakHashMap<>();
 
     public BBGRoom make(Class<?> roomClass, User owner, int index, int mode, int type, int friendlyMode)
     {
