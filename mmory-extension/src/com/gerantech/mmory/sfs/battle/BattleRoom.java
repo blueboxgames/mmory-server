@@ -34,6 +34,7 @@ import com.gerantech.mmory.sfs.battle.factories.EndCalculator;
 import com.gerantech.mmory.sfs.battle.factories.TouchDownEndCalculator;
 import com.gerantech.mmory.sfs.callbacks.BattleEventCallback;
 import com.gerantech.mmory.sfs.callbacks.ElixirChangeCallback;
+import com.gerantech.mmory.sfs.callbacks.HitUnitCallback;
 import com.smartfoxserver.v2.SmartFoxServer;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
@@ -93,13 +94,10 @@ public class BattleRoom extends BBGRoom {
 		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)games.get(0)).appVersion);
 		this.battleField.create(games.get(0), games.get(1), field, 0, System.currentTimeMillis(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
 
-		// add callbacks
-		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
-		this.eventCallback = new BattleEventCallback(this);
 		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
-			endCalculator = new TouchDownEndCalculator(this);
+			this.endCalculator = new TouchDownEndCalculator(this);
 		else
-			endCalculator = new EndCalculator(this);
+			this.endCalculator = new EndCalculator(this);
 	}
 
 	public void start()
@@ -107,13 +105,15 @@ public class BattleRoom extends BBGRoom {
 		if( this.battleField.state >= BattleField.STATE_2_STARTED )
 			return;
 		this.battleField.start(System.currentTimeMillis(), System.currentTimeMillis());
+		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
+		this.battleField.unitsHitCallback = new HitUnitCallback(this);
+		this.eventCallback = new BattleEventCallback(this);
 		this.unitsUpdatedAt = battleField.now;
 
 		if( this.battleField.singleMode )
 		{
-			bot = new BattleBot(this);
-
 			// sometimes auto start battle
+			this.bot = new BattleBot(this);
 			this.bot.autoStart = Math.random() > 0.2 && !this.battleField.games.__get(0).player.inTutorial();
 		}
 
