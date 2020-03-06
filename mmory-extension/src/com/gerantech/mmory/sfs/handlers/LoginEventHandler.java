@@ -206,6 +206,7 @@ try {
 		if( res == null || res.size() != 1 )
 		{
 			LoginErrors.dispatch(LoginErrors.LOGIN_BAD_USERNAME, "Login error! id=" + id + " name=" + name, new String[]{"user id not found."});
+			outData.putInt("loginError", LoginErrors.LOGIN_BAD_PASSWORD.getId());
 			return;
 		}
 
@@ -213,6 +214,7 @@ try {
 		if( !getApi().checkSecurePassword(session, userData.getText("password"), password) )
 		{
 			LoginErrors.dispatch(LoginErrors.LOGIN_BAD_PASSWORD, "Login error! id" + id + " inpass " + password + " dbpass:" + userData.getText("password"), new String[]{name});
+			outData.putInt("loginError", LoginErrors.LOGIN_BAD_PASSWORD.getId());
 			return;
 		}
 
