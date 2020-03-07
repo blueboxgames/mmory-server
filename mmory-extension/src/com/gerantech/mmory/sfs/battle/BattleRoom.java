@@ -505,6 +505,9 @@ public class BattleRoom extends BBGRoom {
 	@Override
 	public void destroy()
 	{
+		if( this.autoJoinTimer != null )
+			this.autoJoinTimer.cancel(true);
+		
 		//clearAllHandlers();
 		if( this.battleField.state < BattleField.STATE_5_DISPOSED )
 			this.battleField.state = BattleField.STATE_5_DISPOSED;
