@@ -10,44 +10,31 @@ import com.gerantech.mmory.core.events.EventCallback;
 import com.gerantech.mmory.core.socials.Challenge;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 
-public class BattleEventCallback implements EventCallback
-{
-    private final BattleRoom battleRoom;
-//    private boolean waitForConquest = true;
+public class BattleEventCallback implements EventCallback {
+    private final BattleRoom room;
+    // private boolean waitForConquest = true;
 
-    public BattleEventCallback(BattleRoom battleRoom)
-    {
-        this.battleRoom = battleRoom;
-        for( int i = 0 ; i < this.battleRoom.battleField.units.length ; i++ )
-            if(!this.battleRoom.battleField.units.__get(i).disposed())
-                this.battleRoom.battleField.units.__get(i).eventCallback = this;
+    public BattleEventCallback(BattleRoom room) {
+        this.room = room;
+        for (int i = 0; i < this.room.battleField.units.length; i++)
+            if (!this.room.battleField.units.__get(i).disposed())
+                this.room.battleField.units.__get(i).eventCallback = this;
     }
 
     @Override
-    public void dispatch(int id, String type, Object data)
-    {
+    public void dispatch(int id, String type, Object data) {
         // only headquarter battle is alive
-        if( battleRoom.battleField.state >= BattleField.STATE_4_ENDED || battleRoom.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
+        if (room.battleField.state >= BattleField.STATE_4_ENDED || room.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN)
             return;
 
         // when units disposed
-        if( Objects.equals(type, BattleEvent.STATE_CHANGE) && (int) data == GameObject.STATE_8_DIPOSED )
-        {
-            Unit unit = battleRoom.battleField.getUnit(id);
-            if( unit.card.type >= 201 )
-            {
-                int other = unit.side == 0 ? 1 : 0;
-                if( id < 6 )
-                {
-                    unit.hit(100);
-                    battleRoom.updateReservesData();
-                    if( id < 2 )
-                        battleRoom.endCalculator.scores[other] = Math.min(3, battleRoom.endCalculator.scores[other] + 3);
-                    else
-                        battleRoom.endCalculator.scores[other] ++;
-                }
+        if (Objects.equals(type, BattleEvent.STATE_CHANGE) && (int) data == GameObject.STATE_8_DIPOSED) {
 
-                battleRoom.sendNewRoundResponse(other, 0);
+            if (id < 6) {
+                Unit unit = room.battleField.getUnit(id);
+                int other = unit.side == 0 ? 1 : 0;
+                this.room.endCalculator.scores[other] = id < 2 ? 3 : room.endCalculator.scores[other] + 1;
+                this.room.sendNewRoundResponse(other, 0);
             }
         }
     }
