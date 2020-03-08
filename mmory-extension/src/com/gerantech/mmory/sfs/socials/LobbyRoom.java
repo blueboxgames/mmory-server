@@ -1,26 +1,28 @@
 package com.gerantech.mmory.sfs.socials;
 
-import com.gerantech.mmory.sfs.socials.handlers.LobbyEditHandler;
-import com.gerantech.mmory.sfs.socials.handlers.LobbyInfoHandler;
-import com.gerantech.mmory.sfs.socials.handlers.LobbyModerationHandler;
-import com.gerantech.mmory.sfs.socials.handlers.LobbyRoomServerEventsHandler;
-import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.core.constants.SFSCommands;
-import com.gerantech.mmory.libs.data.LobbySFS;
+import java.time.Instant;
+import java.util.List;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.constants.MessageTypes;
+import com.gerantech.mmory.core.constants.SFSCommands;
+import com.gerantech.mmory.libs.BBGRoom;
+import com.gerantech.mmory.libs.data.LobbySFS;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.InboxUtils;
 import com.gerantech.mmory.libs.utils.LobbyUtils;
+import com.gerantech.mmory.sfs.socials.handlers.LobbyEditHandler;
+import com.gerantech.mmory.sfs.socials.handlers.LobbyInfoHandler;
+import com.gerantech.mmory.sfs.socials.handlers.LobbyModerationHandler;
+import com.gerantech.mmory.sfs.socials.handlers.LobbyRoomServerEventsHandler;
 import com.smartfoxserver.v2.core.SFSEventType;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-
-import java.time.Instant;
 
 /**
  * Created by ManJav on 8/25/2017.
@@ -96,7 +98,7 @@ public class LobbyRoom extends BaseLobbyRoom
             if( message != null )
             {
                 BBGRoom room = battleUtils.rooms.get(params.getInt("bid"));
-                if( room != null )
+                if( room != null && room.getState() > BattleField.STATE_1_CREATED && room.getState() < BattleField.STATE_4_ENDED )
                     battleUtils.join(room, sender, ((Game)((List<?>)room.getProperty("games")).get(0)).player.id);
                 return;
             }

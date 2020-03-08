@@ -39,7 +39,7 @@ try {
         }
 
         this.index = params.getInt("index");
-        if( params.containsKey("spectatedUser") )
+        if( this.index > 1 )
         {
             BBGRoom room = BattleUtils.getInstance().rooms.get(this.index);
             if (room == null )

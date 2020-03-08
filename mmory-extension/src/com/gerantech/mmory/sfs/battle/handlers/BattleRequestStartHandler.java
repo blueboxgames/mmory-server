@@ -3,8 +3,8 @@ package com.gerantech.mmory.sfs.battle.handlers;
 import java.util.List;
 
 import com.gerantech.mmory.core.Game;
+import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.constants.SFSCommands;
-import com.gerantech.mmory.libs.data.RankData;
 import com.gerantech.mmory.libs.data.UnitData;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.libs.utils.RankingUtils;
@@ -24,14 +24,17 @@ public class BattleRequestStartHandler extends BaseClientRequestHandler {
 		for( User u : room.getPlayersList() )
 			if( !u.containsProperty("lastBattleStared") || (int)u.getProperty("lastBattleStared") != room.getId() )
 				return;
-		this.sendStartBattleResponse();
+		if( this.room.getState() > BattleField.STATE_1_CREATED )
+			this.sendBattleData(sender);
+		else
+			this.sendStartBattleResponse();
 	}
 
 	private void sendStartBattleResponse() {
 		this.room.start();
 		List<User> players = this.room.getPlayersList();
 		for (int i = 0; i < players.size(); i++)
-		this.sendBattleData(players.get(i));
+			this.sendBattleData(players.get(i));
 	}
 
 	private void sendBattleData(User user) {
@@ -47,7 +50,7 @@ public class BattleRequestStartHandler extends BaseClientRequestHandler {
 		params.putDouble("startAt", room.battleField.startAt);
 		params.putSFSArray("units", UnitData.toSFSArray(room.battleField.units));
 		if (!room.isSpectator(user))
-			RankingUtils.getInstance().update(game.player.id, game.player.nickName, game.player.get_point(), RankData.STATUS_BUSY);
+			RankingUtils.getInstance().update(game.player.id, game.player.nickName, game.player.get_point(), this.room.getId());
 		send(SFSCommands.BATTLE_START, params, user);
 	}
 }

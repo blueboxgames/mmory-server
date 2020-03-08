@@ -37,8 +37,9 @@ public class BattleJointHandler extends BaseServerEventHandler {
 			if (!arg.getType().equals(SFSEventType.USER_JOIN_ROOM) || room == null)
 				return;
 
-			if (room.isSpectator(user)) {
-				sendBattleData(user);
+			// Rejoin to previous room
+			if (room.getState() > BattleField.STATE_0_WAITING) {
+				this.sendBattleData(user);
 				return;
 			}
 
@@ -47,16 +48,6 @@ public class BattleJointHandler extends BaseServerEventHandler {
 	}
 
 	private void join() {
-		// Rejoin to previous room
-		if (room.getState() == BattleField.STATE_2_STARTED || room.getState() == BattleField.STATE_3_PAUSED) {
-			List<User> players = room.getPlayersList();
-			for (int i = 0; i < players.size(); i++) {
-				if (players.get(i).equals(user)) {
-					sendBattleData(players.get(i));
-				}
-			}
-			return;
-		}
 
 		if (room.isFull()) {
 			sendStartBattleResponse(false);
