@@ -1,7 +1,6 @@
 package com.gerantech.mmory.libs.utils;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +22,6 @@ import com.smartfoxserver.v2.entities.SFSRoomRemoveMode;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
-import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.extensions.ExtensionLogLevel;
 
 /**
@@ -56,7 +53,7 @@ public class BattleUtils extends UtilBase
 
         Player player = ((Game)owner.getSession().getProperty("core")).player;
         int league = player.get_arena(0);
-        boolean singleMode = player.get_battleswins() < ScriptEngine.getInt(ScriptEngine.T61_BATTLE_NUM_TUTORS, player.id, null, null, null);
+        boolean tutorial = player.get_battleswins() < ScriptEngine.getInt(ScriptEngine.T61_BATTLE_NUM_TUTORS, player.id, null, null, null);
         Map<Object, Object> roomProperties = new HashMap<>();
         roomProperties.put("index", index);
         roomProperties.put("mode", mode);
@@ -68,9 +65,9 @@ public class BattleUtils extends UtilBase
         int id = roomId.getAndIncrement();
         CreateRoomSettings rs = new CreateRoomSettings();
         rs.setName( "m" + mode + "_t" + type + "_f" + friendlyMode + "_" + id );
-        rs.setAutoRemoveMode( singleMode ? SFSRoomRemoveMode.WHEN_EMPTY : SFSRoomRemoveMode.NEVER_REMOVE );
-        rs.setRoomProperties( roomProperties );
-        rs.setMaxUsers(singleMode ? 1 : 2);
+        rs.setAutoRemoveMode(SFSRoomRemoveMode.WHEN_EMPTY);
+        rs.setRoomProperties(roomProperties);
+        rs.setMaxUsers(tutorial ? 1 : 2);
         rs.setGroupId("battles");
         rs.setMaxSpectators(50);
         rs.setDynamic(true);

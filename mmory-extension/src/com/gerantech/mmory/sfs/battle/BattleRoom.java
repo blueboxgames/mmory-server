@@ -109,6 +109,7 @@ public class BattleRoom extends BBGRoom {
 		this.battleField.unitsHitCallback = new HitUnitCallback(this);
 		this.eventCallback = new BattleEventCallback(this);
 		this.unitsUpdatedAt = battleField.now;
+		this.setAutoRemoveMode( this.battleField.games.__get(0).player.get_battleswins() < 4 || this.battleField.friendlyMode > 0 ? SFSRoomRemoveMode.WHEN_EMPTY : SFSRoomRemoveMode.NEVER_REMOVE );
 		
 		if( this.battleField.singleMode )
 		{
