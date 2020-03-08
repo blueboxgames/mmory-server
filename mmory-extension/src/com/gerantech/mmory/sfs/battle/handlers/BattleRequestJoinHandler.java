@@ -10,15 +10,15 @@ import com.gerantech.mmory.core.constants.MessageTypes;
 import com.gerantech.mmory.core.constants.SFSCommands;
 import com.gerantech.mmory.core.scripts.ScriptEngine;
 import com.gerantech.mmory.core.utils.maps.IntIntMap;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.utils.BattleUtils;
 import com.gerantech.mmory.sfs.battle.BattleRoom;
 import com.gerantech.mmory.sfs.handlers.LoginEventHandler;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
-import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 
-public class BattleRequestJoinHandler extends BaseClientRequestHandler
+public class BattleRequestJoinHandler extends BBGClientRequestHandler
 {
     private int type;
     private int mode;
@@ -34,7 +34,7 @@ try {
         if( now < LoginEventHandler.UNTIL_MAINTENANCE )
         {
             params.putInt("umt", LoginEventHandler.UNTIL_MAINTENANCE - now);
-            send(SFSCommands.BATTLE_JOIN, params, sender);
+            send(SFSCommands.BATTLE_JOIN, MessageTypes.RESPONSE_MUST_WAIT, params, sender);
             return;
         }
 
@@ -42,8 +42,12 @@ try {
         if( this.index > 1 )
         {
             BBGRoom room = BattleUtils.getInstance().rooms.get(this.index);
-            if (room == null )
-                BattleUtils.getInstance().join(room, sender, params.containsKey("spectatedUser") ? params.getInt("spectatedUser") : -1);
+            if (room == null || room.getState() >= BattleField.STATE_4_ENDED )
+            {
+                send(SFSCommands.BATTLE_JOIN, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
+				return;
+            }
+            BattleUtils.getInstance().join(room, sender, params.containsKey("spectatedUser") ? params.getInt("spectatedUser") : -1);
             return;
         }
 
@@ -56,8 +60,7 @@ try {
         IntIntMap cost = new IntIntMap((String)ScriptEngine.get(ScriptEngine.T52_CHALLENGE_RUN_REQS, this.index, null, null, null));
         if( !game.player.has(cost) )
         {
-            params.putInt("response", MessageTypes.RESPONSE_NOT_ENOUGH_REQS);
-            send(SFSCommands.BATTLE_JOIN, params, sender);
+            send(SFSCommands.BATTLE_JOIN, MessageTypes.RESPONSE_NOT_ENOUGH_REQS, params, sender);
             return;
         }
         this.joinUser(sender);
@@ -67,7 +70,7 @@ try {
 	private void joinUser(User user)
     {
         BBGRoom room;
-            room = findWaitingBattleRoom(user);
+        room = findWaitingBattleRoom(user);
 
         if( room == null )
             room = BattleUtils.getInstance().make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), user, this.index, this.mode, this.type, this.friendlyMode);
