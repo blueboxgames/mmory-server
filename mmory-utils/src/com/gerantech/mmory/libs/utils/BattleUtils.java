@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
@@ -33,7 +32,6 @@ public class BattleUtils extends UtilBase
     {
         return (BattleUtils)UtilBase.get(BattleUtils.class);
     }
-    private AtomicInteger roomId = new AtomicInteger();
     public ConcurrentHashMap<Integer, String> maps = new ConcurrentHashMap<>();
     public WeakHashMap<Integer, BBGRoom> rooms = new WeakHashMap<>();
 
@@ -62,7 +60,7 @@ public class BattleUtils extends UtilBase
         roomProperties.put("friendlyMode", friendlyMode);
         roomProperties.put("state", BattleField.STATE_0_WAITING);
 
-        int id = roomId.getAndIncrement();
+        int id = (int) (Math.floor(System.currentTimeMillis()/100) % 1000000000);
         CreateRoomSettings rs = new CreateRoomSettings();
         rs.setName( "m" + mode + "_t" + type + "_f" + friendlyMode + "_" + id );
         rs.setAutoRemoveMode(SFSRoomRemoveMode.WHEN_EMPTY);
