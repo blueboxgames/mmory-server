@@ -94,7 +94,8 @@ public class BattleUtils extends UtilBase
      */
     public void join(BBGRoom room, User user, int spectatingUser)
     {
-        if( room.isFull() )
+        Player player = ((Game)user.getSession().getProperty("core")).player;
+        if( spectatingUser == -1 && room.getState() > BattleField.STATE_0_WAITING && !isPlayer(room, player.id) )
         {
             trace(ExtensionLogLevel.ERROR, "Battle " + room.getName() + " is full.");
             return;
@@ -132,26 +133,38 @@ public class BattleUtils extends UtilBase
             removeReferences(room);
             rooms.remove(room.getId());
             ext.getLogger().info(String.format("Battle removed: %s, %s, num remaining battles = %s", new Object[] { room.getZone().toString(), room.toString(), rooms.size() }));
-
         }
     }
 
-    public BBGRoom find(int userId, int minState, int maxState)
+    public BBGRoom findByPlayer(int playerId, int minState, int maxState)
     {
         Set<Map.Entry<Integer, BBGRoom>> entries = rooms.entrySet();
         for( Map.Entry<Integer, BBGRoom> entry : entries )
-        {
             if( entry.getValue().getState() >= minState && entry.getValue().getState() <= maxState )
-            {
-                if( !entry.getValue().containsProperty("games") )
-                    continue;
-                List<?> games = (List<?>)entry.getValue().getProperty("games");
-                for( Object g : games )
-                    if( ((Game)g).player.id == userId )
-                        return entry.getValue();
-            }
-        }
+                if( isPlayer(entry.getValue(), playerId) )
+                    return entry.getValue();
         return null;
+    }
+
+    public BBGRoom findByUser(User user, int minState, int maxState)
+    {
+        Set<Map.Entry<Integer, BBGRoom>> entries = rooms.entrySet();
+        for( Map.Entry<Integer, BBGRoom> entry : entries )
+            if( entry.getValue().getState() >= minState && entry.getValue().getState() <= maxState )
+                if( entry.getValue().containsUser(user) )
+                    return entry.getValue();
+        return null;
+    }
+
+    public Boolean isPlayer(BBGRoom room, int playerId)
+    {
+        if( !room.containsProperty("games") )
+            return false;
+        for( Object g : (List<?>)room.getProperty("games") )
+            if( ((Game)g).player.id == playerId )
+                return true;
+
+        return false;
     }
 
     private void removeReferences(BBGRoom room)
@@ -173,7 +186,6 @@ public class BattleUtils extends UtilBase
                     int battleState = msg.containsKey("st") ? msg.getInt("st") : 0;
                     if( msg.getInt("bid") == room.getId() && battleState < 2 )
                     {
-
                         msg.putInt("st", battleState == 0 ? 3 : 2);
                         if( battleState == 0 )
                             msgIndex = j;
