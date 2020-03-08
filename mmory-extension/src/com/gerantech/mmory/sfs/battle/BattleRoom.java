@@ -513,7 +513,6 @@ public class BattleRoom extends BBGRoom {
 			this.battleField.state = BattleField.STATE_5_DISPOSED;
 
 		trace(this.getName(), "destroyed.");
-		BattleUtils.getInstance().removeReferences(this);
 		super.destroy();
 	}
 

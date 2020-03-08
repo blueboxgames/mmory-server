@@ -134,6 +134,7 @@ public class BattleUtils extends UtilBase
         else
         {
             room.destroy();
+            removeReferences(room);
             rooms.remove(room.getId());
             ext.getLogger().info(String.format("Battle removed: %s, %s, num remaining battles = %s", new Object[] { room.getZone().toString(), room.toString(), rooms.size() }));
 
@@ -158,7 +159,7 @@ public class BattleUtils extends UtilBase
         return null;
     }
 
-    public void removeReferences(BBGRoom room)
+    private void removeReferences(BBGRoom room)
     {
         List<Room> lobbies = ext.getParentZone().getRoomListFromGroup("lobbies");
         int msgIndex = -1;
