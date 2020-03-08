@@ -87,30 +87,27 @@ public class BattleUtils extends UtilBase
         return newRoom;
     }
 
-
+    public void join(BBGRoom room, User user)
+    {
+        this.join(room, user, -1);
+    }
     /**
      * join users in  battle room
      * @param room
      * @param user
-     * @param spectatedUser
+     * @param spectatingUser
      */
-    public void join(BBGRoom room, User user, String spectatedUser)
+    public void join(BBGRoom room, User user, int spectatingUser)
     {
         if( room.isFull() )
         {
-            trace(ExtensionLogLevel.ERROR, "Battle room " + room.getName() + " is full.");
+            trace(ExtensionLogLevel.ERROR, "Battle " + room.getName() + " is full.");
             return;
         }
 
-        //user.getSession().setProperty("challengeType", challengeType);
-        Player player = ((Game)user.getSession().getProperty("core")).player;
-        List<UserVariable> vars = new ArrayList<>();
-        vars.add(new SFSUserVariable("name", player.nickName));
-        vars.add(new SFSUserVariable("point", player.get_point()));
-        vars.add(new SFSUserVariable("spectatedUser", spectatedUser));
-        ext.getApi().setUserVariables(user, vars, true, true);
-        room.addUser(user, spectatedUser == "" ? BBGRoom.USER_TYPE_PLAYER : BBGRoom.USER_TYPE_SPECTATOR);
-        ext.getLogger().info(String.format("Battle joined: %s, %s, spectatedUser = %s", new Object[] { room.toString(), user.toString(), spectatedUser }));
+        user.getSession().setProperty("spectatingUser", spectatingUser);
+        room.addUser(user, spectatingUser > -1 ? BBGRoom.USER_TYPE_SPECTATOR : BBGRoom.USER_TYPE_PLAYER);
+        ext.getLogger().info(String.format("Battle joined: %s, %s, spectatingUser = %s", new Object[] { room.toString(), user.toString(), spectatingUser }));
     }
 
     public void leave(BBGRoom room, User user)

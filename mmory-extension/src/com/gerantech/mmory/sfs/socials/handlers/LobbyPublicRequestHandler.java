@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
-import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.core.constants.SFSCommands;
+import com.gerantech.mmory.libs.BBGClientRequestHandler;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.Room;
@@ -19,8 +19,6 @@ import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.variables.RoomVariable;
 import com.smartfoxserver.v2.entities.variables.SFSRoomVariable;
-import com.smartfoxserver.v2.entities.variables.SFSUserVariable;
-import com.smartfoxserver.v2.entities.variables.UserVariable;
 import com.smartfoxserver.v2.exceptions.SFSCreateRoomException;
 import com.smartfoxserver.v2.exceptions.SFSJoinRoomException;
 
@@ -49,7 +47,9 @@ public class LobbyPublicRequestHandler extends BBGClientRequestHandler
             lobbyData.setMessages(new SFSArray());
             theRoom.setProperty("data", lobbyData);*/
         }
-        join(sender, theRoom);
+        try {
+            getApi().joinRoom(sender, theRoom, null, false, null);
+        } catch (SFSJoinRoomException e) { e.printStackTrace(); }
         send(SFSCommands.LOBBY_PUBLIC, banParams, sender);
     }
 
@@ -91,19 +91,5 @@ public class LobbyPublicRequestHandler extends BBGClientRequestHandler
             e.printStackTrace();
         }
         return null;
-    }
-
-    private void join(User user, Room theRoom)
-    {
-        Player player = ((Game)user.getSession().getProperty("core")).player;
-        trace("---------=========<<<<  JOIN user:"+user.getName()+" the public lobby:"+theRoom.getName()+" >>>>==========---------");
-        List<UserVariable> vars = new ArrayList<>();
-        vars.add(new SFSUserVariable("name", player.nickName));
-        //vars.add(new SFSUserVariable("point", player.get_point()));
-        getApi().setUserVariables(user, vars, true, true);
-
-        try {
-            getApi().joinRoom(user, theRoom, null, false, null);
-        } catch (SFSJoinRoomException e) { e.printStackTrace(); }
     }
 }

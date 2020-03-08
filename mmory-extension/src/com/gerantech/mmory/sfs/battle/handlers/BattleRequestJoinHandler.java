@@ -42,8 +42,8 @@ try {
         if( params.containsKey("spectatedUser") )
         {
             BBGRoom room = BattleUtils.getInstance().rooms.get(this.index);
-            if( room != null )
-                BattleUtils.getInstance().join(room, sender, params.getText("spectatedUser"));
+            if (room == null )
+                BattleUtils.getInstance().join(room, sender, params.containsKey("spectatedUser") ? params.getInt("spectatedUser") : -1);
             return;
         }
 

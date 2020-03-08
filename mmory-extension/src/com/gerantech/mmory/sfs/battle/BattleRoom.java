@@ -497,7 +497,7 @@ public class BattleRoom extends BBGRoom {
 			return 0;
 
 		if( this.isSpectator(user) )
-			return getPlayerGroup(this.getUserByName(user.getVariable("spectatedUser").getStringValue()));
+			return getPlayerGroup(this.getUserById((int)user.getSession().getProperty("spectatingUser")));
 
 		return this.battleField.getSide(getGame(user).player.id);
 	}

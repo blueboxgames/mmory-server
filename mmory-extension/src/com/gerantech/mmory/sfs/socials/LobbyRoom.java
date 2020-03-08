@@ -77,7 +77,7 @@ public class LobbyRoom extends BaseLobbyRoom
                 BBGRoom room = battleUtils.rooms.get(params.getInt("bid"));
                 if( room != null)
                 {
-                    battleUtils.join(room, sender, "");
+                    battleUtils.join(room, sender);
 
                     params.putUtfString("o", game.player.nickName);
                     message.putUtfString("o", game.player.nickName);
@@ -97,7 +97,7 @@ public class LobbyRoom extends BaseLobbyRoom
             {
                 BBGRoom room = battleUtils.rooms.get(params.getInt("bid"));
                 if( room != null )
-                    battleUtils.join(room, sender, game.player.nickName);
+                    battleUtils.join(room, sender, ((Game)((List<?>)room.getProperty("games")).get(0)).player.id);
                 return;
             }
 
@@ -107,7 +107,7 @@ public class LobbyRoom extends BaseLobbyRoom
 
             BBGRoom room = battleUtils.make((Class<?>) getParentZone().getProperty("battleClass"), sender, 0, params.getInt("md"), 0, 1);
             lobby.setProperty(room.getName(), true);
-            battleUtils.join(room, sender, "");
+            battleUtils.join(room, sender);
             params.putInt("bid", room.getId());
         }
         else if( MessageTypes.isConfirm(mode) )
