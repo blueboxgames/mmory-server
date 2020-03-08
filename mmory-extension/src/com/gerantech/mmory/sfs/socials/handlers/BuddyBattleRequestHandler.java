@@ -1,19 +1,19 @@
 package com.gerantech.mmory.sfs.socials.handlers;
 
-import com.gerantech.mmory.libs.BBGRoom;
-import com.gerantech.mmory.core.constants.SFSCommands;
+import java.util.Arrays;
+
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
+import com.gerantech.mmory.core.constants.SFSCommands;
+import com.gerantech.mmory.libs.BBGRoom;
 import com.gerantech.mmory.libs.utils.BanUtils;
 import com.gerantech.mmory.libs.utils.BattleUtils;
+import com.gerantech.mmory.libs.utils.FCMUtils;
 import com.gerantech.mmory.libs.utils.InboxUtils;
-import com.gerantech.mmory.libs.utils.OneSignalUtils;
 import com.smartfoxserver.v2.entities.Room;
 import com.smartfoxserver.v2.entities.User;
 import com.smartfoxserver.v2.entities.data.ISFSObject;
 import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
-
-import java.util.Arrays;
 
 /**
  * Created by ManJav on 9/4/2017.
@@ -42,7 +42,7 @@ public class BuddyBattleRequestHandler extends BaseClientRequestHandler
             }
             else
             {
-                OneSignalUtils.getInstance().send(player.nickName + " تو رو به رقابت دوستانه دعوت می کنه ", null, objectUserId);
+                FCMUtils.getInstance().send(player.nickName + " تو رو به رقابت دوستانه دعوت می کنه ", null, objectUserId);
                 params.putInt("bs", 4);
                 sendResponse(params);
             }
