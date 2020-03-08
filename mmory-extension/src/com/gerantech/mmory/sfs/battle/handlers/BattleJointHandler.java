@@ -55,7 +55,7 @@ public class BattleJointHandler extends BaseServerEventHandler {
 		}
 
 		// Wait to match making ( complete battle-room`s players )
-		if (room.battleField.friendlyMode == 0) {
+		if (room.getPropertyAsInt("friendlyMode") == 0) {
 			int delay = 5000;// Math.max(12000, player.get_arena(0) * 400 + 7000);
 			// trace(room.getName(), waitingPeak, room.getPlayersList().size(),
 
@@ -74,11 +74,10 @@ public class BattleJointHandler extends BaseServerEventHandler {
 	}
 
 	private void sendStartBattleResponse(Boolean opponentNotFound) {
-		
 		this.room.create(opponentNotFound);
 		List<User> players = this.room.getPlayersList();
 		for (int i = 0; i < players.size(); i++)
-		this.sendBattleData(players.get(i));
+			this.sendBattleData(players.get(i));
 	}
 
 	private void sendBattleData(User user) {

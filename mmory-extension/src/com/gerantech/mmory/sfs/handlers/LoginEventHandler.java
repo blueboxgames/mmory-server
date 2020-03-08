@@ -162,7 +162,6 @@ try {
 		} catch (SQLException e) { e.printStackTrace(); }
 
 		addFriends(resources, playerId);
-		session.setProperty("joinedRoomId", -1);
 
 		// send data to user
 		outData.putInt("id", playerId);
@@ -235,10 +234,8 @@ try {
 		outData.putSFSArray("decks", dbUtils.getDecks(id));
 
 		// Find active battle room
-		BBGRoom room = BattleUtils.getInstance().find(id, BattleField.STATE_2_STARTED, BattleField.STATE_2_STARTED);
-		int joinedRoomId = room == null ? -1 : room.getId();
-		session.setProperty("joinedRoomId", joinedRoomId);
-		outData.putBool("inBattle", joinedRoomId > -1 );
+		BBGRoom room = BattleUtils.getInstance().findByPlayer(id, BattleField.STATE_2_STARTED, BattleField.STATE_3_PAUSED);
+		outData.putInt("joinedBattle", room == null ? -1 : room.getId());
 		//outData.putSFSArray("challenges", ChallengeUtils.getInstance().getChallengesOfAttendee(-1, game.player, false));
 		initiateCore(session, inData, outData, loginData);
 	}

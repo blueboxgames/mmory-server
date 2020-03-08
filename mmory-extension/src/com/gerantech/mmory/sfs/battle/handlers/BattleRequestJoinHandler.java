@@ -67,24 +67,16 @@ try {
 	private void joinUser(User user)
     {
         BBGRoom room;
-        BattleUtils bu = BattleUtils.getInstance();
-        int joinedRoomId = (Integer) user.getSession().getProperty("joinedRoomId");
-        if( joinedRoomId > -1 )
-            room = bu.rooms.get(joinedRoomId);
-        else
             room = findWaitingBattleRoom(user);
 
         if( room == null )
-            room = bu.make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), user, this.index, this.mode, this.type, this.friendlyMode);
+            room = BattleUtils.getInstance().make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), user, this.index, this.mode, this.type, this.friendlyMode);
+        BattleUtils.getInstance().join(room, user);
         ((BattleRoom)room).battleField.debugMode = debugMode;
-
-        bu.join(room, user, "");
     }
 
     private BBGRoom findWaitingBattleRoom(User user)
     {
-        //MatchExpression exp = new MatchExpression('rank', NumberMatch.GREATER_THAN, 5).and('country', StringMatch.EQUALS, 'Italy')
-        //List<User> matchingUsers = sfsApi.findUsers(zone.getUserList(), exp, 50);
         WeakHashMap<Integer, BBGRoom> battles = BattleUtils.getInstance().rooms;
         trace("alive battles " + battles.size());
         BattleRoom room = null;

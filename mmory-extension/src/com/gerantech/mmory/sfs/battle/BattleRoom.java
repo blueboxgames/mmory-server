@@ -89,7 +89,7 @@ public class BattleRoom extends BBGRoom {
 		// create battle field
 		int mode = this.getPropertyAsInt("mode");
 		if( !BattleUtils.getInstance().maps.containsKey(mode) )
-		BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".json", null, false).text);
+			BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".json", null, false).text);
 		
 		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)games.get(0)).appVersion);
 		this.battleField.create(games.get(0), games.get(1), field, 0, System.currentTimeMillis(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
@@ -104,7 +104,8 @@ public class BattleRoom extends BBGRoom {
 	{
 		if( this.battleField.state >= BattleField.STATE_2_STARTED )
 			return;
-		this.battleField.start(System.currentTimeMillis(), System.currentTimeMillis());
+		long t = System.currentTimeMillis();
+		this.battleField.start(t, t);
 		this.battleField.elixirUpdater.callback = new ElixirChangeCallback(this);
 		this.battleField.unitsHitCallback = new HitUnitCallback(this);
 		this.eventCallback = new BattleEventCallback(this);
@@ -478,7 +479,7 @@ public class BattleRoom extends BBGRoom {
 		return this.battleField.state;
 	}
 
-    private void close()
+	private void close()
 	{
 		this.setAutoRemoveMode(SFSRoomRemoveMode.WHEN_EMPTY);
 		if( this.battleField.field.isOperation() || this.getUserList().size() == 0 )
