@@ -90,16 +90,16 @@ public class BattleRoom extends BBGRoom {
 		int mode = this.getPropertyAsInt("mode");
 		if( !BattleUtils.getInstance().maps.containsKey(mode) )
 		BattleUtils.getInstance().maps.put(mode, HttpUtils.post("http://localhost:8080/assets/map-" + mode + ".json", null, false).text);
-
+		
 		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)games.get(0)).appVersion);
 		this.battleField.create(games.get(0), games.get(1), field, 0, System.currentTimeMillis(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
-
+		
 		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
 			this.endCalculator = new TouchDownEndCalculator(this);
 		else
 			this.endCalculator = new EndCalculator(this);
 	}
-
+	
 	public void start()
 	{
 		if( this.battleField.state >= BattleField.STATE_2_STARTED )
@@ -109,7 +109,7 @@ public class BattleRoom extends BBGRoom {
 		this.battleField.unitsHitCallback = new HitUnitCallback(this);
 		this.eventCallback = new BattleEventCallback(this);
 		this.unitsUpdatedAt = battleField.now;
-
+		
 		if( this.battleField.singleMode )
 		{
 			// sometimes auto start battle

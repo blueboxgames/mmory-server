@@ -64,8 +64,7 @@ public class BBGRoom implements Room
     public void trace(ExtensionLogLevel level, Object... args) {
         ext.trace(level, args);
     }
-    public Game getGame(User user)
-    {
+    public Game getGame(User user) {
         return (Game) user.getSession().getProperty("core");
     }
 
@@ -220,7 +219,7 @@ public class BBGRoom implements Room
 
     }
     public ISFSExtension getExtension() {
-        return null;
+        return ext;
     }
     public void setExtension(ISFSExtension isfsExtension) {
 
