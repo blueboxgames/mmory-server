@@ -145,7 +145,7 @@ public class BattleRoom extends BBGRoom {
 
 	public void updateReservesData()
 	{
-		boolean force = battleField.debugMode && battleField.now - forceUpdatedAt >= 3000;
+		boolean force = battleField.debugMode && battleField.now - forceUpdatedAt >= 1000;
 		if( force )
 			forceUpdatedAt = battleField.now;
 		List<Integer> reservedUnitIds = this.getChangedUnits(force);
@@ -165,9 +165,12 @@ public class BattleRoom extends BBGRoom {
 			for( int k:reservedUnitIds )
 			{
 				Unit unit = this.battleField.getUnit(k);
-				testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
+				if( battleField.debugMode )
+					testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health + "," + unit.card.type + "," + unit.side + "," + unit.card.level);
+				else
+					testData.add(unit.id + "," + unit.x + "," + unit.y + "," + unit.health);
 			}
-			units.putUtfStringArray("g", testData);
+			units.putUtfStringArray(battleField.debugMode ? "g" : "d", testData);
 		}
 		send(SFSCommands.BATTLE_UNIT_CHANGE, units, this.getUserList());
 	}
