@@ -1,8 +1,8 @@
 package com.gerantech.mmory.sfs.battle.handlers;
 
 import java.time.Instant;
+import java.util.AbstractMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.battle.BattleField;
@@ -80,7 +80,7 @@ try {
 
     private BBGRoom findWaitingBattleRoom(User user)
     {
-        WeakHashMap<Integer, BBGRoom> battles = BattleUtils.getInstance().rooms;
+        AbstractMap<Integer, BBGRoom> battles = BattleUtils.getInstance().rooms;
         trace("alive battles " + battles.size());
         BattleRoom room = null;
         for(Map.Entry<Integer, BBGRoom> entry : battles.entrySet())
