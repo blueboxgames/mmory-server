@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.gerantech.mmory.core.Game;
@@ -33,7 +32,7 @@ public class BattleUtils extends UtilBase
         return (BattleUtils)UtilBase.get(BattleUtils.class);
     }
     public ConcurrentHashMap<Integer, String> maps = new ConcurrentHashMap<>();
-    public WeakHashMap<Integer, BBGRoom> rooms = new WeakHashMap<>();
+    public ConcurrentHashMap<Integer, BBGRoom> rooms = new ConcurrentHashMap<>();
 
     public BBGRoom make(Class<?> roomClass, User owner, int index, int mode, int type, int friendlyMode)
     {
@@ -60,7 +59,7 @@ public class BattleUtils extends UtilBase
         roomProperties.put("friendlyMode", friendlyMode);
         roomProperties.put("state", BattleField.STATE_0_WAITING);
 
-        int id = (int) (Math.floor(System.currentTimeMillis()/100) % 1000000000);
+        int id = (int)Math.floor(System.currentTimeMillis()/100%100000000);
         CreateRoomSettings rs = new CreateRoomSettings();
         rs.setName( "m" + mode + "_t" + type + "_f" + friendlyMode + "_" + id );
         rs.setAutoRemoveMode(SFSRoomRemoveMode.WHEN_EMPTY);
