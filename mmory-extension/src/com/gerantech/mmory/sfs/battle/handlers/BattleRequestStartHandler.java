@@ -47,7 +47,7 @@ public class BattleRequestStartHandler extends BaseClientRequestHandler {
 
 		SFSObject params = new SFSObject();
 		params.putDouble("now", room.battleField.now);
-		params.putDouble("startAt", room.battleField.startAt);
+		params.putDouble("startAt", (double)room.battleField.startAt * 1000);
 		params.putSFSArray("units", UnitData.toSFSArray(room.battleField.units));
 		if (!room.isSpectator(user))
 			RankingUtils.getInstance().update(game.player.id, game.player.nickName, game.player.get_point(), this.room.getId());
