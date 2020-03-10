@@ -50,7 +50,8 @@ public class AssetUtils extends UtilBase
         ISFSObject item = assets.getSFSObject(key);
         try {
             md5 = DigestUtils.md5Hex(Files.newInputStream(Paths.get("www/" + new URI(baseURL + key).getPath())));
-        } catch(Exception e) { e.printStackTrace(); }
+        } catch(Exception e) { e.printStackTrace(); trace(baseURL + key); }
+        
         item.putText("md5", md5);
         item.putText("url", baseURL + key);
     }
