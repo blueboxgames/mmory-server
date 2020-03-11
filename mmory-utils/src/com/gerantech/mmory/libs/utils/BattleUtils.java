@@ -120,6 +120,15 @@ public class BattleUtils extends RoomsUtils
         return null;
     }
 
+    public BBGRoom findByName(String name) {
+        Set<Map.Entry<Integer, BBGRoom>> entries = this.rooms.entrySet();
+        for (Map.Entry<Integer, BBGRoom> entry : entries)
+          // if (entry.getValue().getState() >= minState && entry.getValue().getState() <= maxState)
+            if (entry.getValue().getName().equals(name))
+              return entry.getValue();
+        return null;
+    }
+    
     public Boolean isPlayer(BBGRoom room, int playerId)
     {
         if( !room.containsProperty("games") )
