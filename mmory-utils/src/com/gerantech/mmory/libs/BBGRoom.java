@@ -103,11 +103,14 @@ public class BBGRoom implements Room
     public int getState() {
         return 0;
     }
-    public String getGroupId() {
+    public String getxpId() {
         return settings.getGroupId();
     }
     public void setGroupId(String s) {
         settings.setGroupId(s);
+    }
+    public String getGroupId() {
+        return settings.getGroupId();
     }
     public String getName() {
         return settings.getName();

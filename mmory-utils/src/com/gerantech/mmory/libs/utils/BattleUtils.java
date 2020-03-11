@@ -25,23 +25,22 @@ import com.smartfoxserver.v2.extensions.ExtensionLogLevel;
 /**
  * Created by ManJav on 9/23/2017.
  */
-public class BattleUtils extends UtilBase
+public class BattleUtils extends RoomsUtils
 {
     public static BattleUtils getInstance()
     {
         return (BattleUtils)UtilBase.get(BattleUtils.class);
     }
     public ConcurrentHashMap<Integer, String> maps = new ConcurrentHashMap<>();
-    public ConcurrentHashMap<Integer, BBGRoom> rooms = new ConcurrentHashMap<>();
 
     public BBGRoom make(Class<?> roomClass, User owner, int index, int mode, int type, int friendlyMode)
     {
         // temp solution
         long now = Instant.now().getEpochSecond();
-        Set<Map.Entry<Integer, BBGRoom>> entries = rooms.entrySet();
+        Set<Map.Entry<Integer, BBGRoom>> entries = this.rooms.entrySet();
         for( Map.Entry<Integer, BBGRoom> entry : entries )
         {
-            if ( entry.getValue().containsProperty("startAt") && now - entry.getValue().getPropertyAsInt("startAt") > 500 )
+            if( entry.getValue().containsProperty("startAt") && now - entry.getValue().getPropertyAsInt("startAt") > 500 )
             {
                 trace("WAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY!!!    BATTLE KHARAB SHOOOOOD!!!!");
                 remove(entry.getValue());
@@ -81,10 +80,6 @@ public class BattleUtils extends UtilBase
         return newRoom;
     }
 
-    public void join(BBGRoom room, User user)
-    {
-        this.join(room, user, -1);
-    }
     /**
      * join users in  battle room
      * @param room
@@ -104,40 +99,10 @@ public class BattleUtils extends UtilBase
         room.addUser(user, spectatingUser > -1 ? BBGRoom.USER_TYPE_SPECTATOR : BBGRoom.USER_TYPE_PLAYER);
         ext.getLogger().info(String.format("Battle joined: %s, %s, spectatingUser = %s", new Object[] { room.toString(), user.toString(), spectatingUser }));
     }
-
-    public void leave(BBGRoom room, User user)
-    {
-        room.leave(user);
-        ext.getLogger().info(String.format("User %s exit from %s", new Object[] { user.toString(), room.getName() }));
-        if( room.getUserList().size() == 0 && room.getAutoRemoveMode() == SFSRoomRemoveMode.WHEN_EMPTY )
-            remove(room);
-    }
-
-    /**
-     * Kick all users and remove room
-     * @param room
-     */
-    public void remove(BBGRoom room)
-    {
-        if( room.getUserList().size() > 0 )
-        {
-            room.setAutoRemoveMode(SFSRoomRemoveMode.WHEN_EMPTY);
-            List<User> users = room.getUsersByType(-1);
-            for( User u : users )
-                leave(room, u);
-        }
-        else
-        {
-            room.destroy();
-            removeReferences(room);
-            rooms.remove(room.getId());
-            ext.getLogger().info(String.format("Battle removed: %s, %s, num remaining battles = %s", new Object[] { room.getZone().toString(), room.toString(), rooms.size() }));
-        }
-    }
-
+          
     public BBGRoom findByPlayer(int playerId, int minState, int maxState)
     {
-        Set<Map.Entry<Integer, BBGRoom>> entries = rooms.entrySet();
+        Set<Map.Entry<Integer, BBGRoom>> entries = this.rooms.entrySet();
         for( Map.Entry<Integer, BBGRoom> entry : entries )
             if( entry.getValue().getState() >= minState && entry.getValue().getState() <= maxState )
                 if( isPlayer(entry.getValue(), playerId) )
@@ -147,7 +112,7 @@ public class BattleUtils extends UtilBase
 
     public BBGRoom findByUser(User user, int minState, int maxState)
     {
-        Set<Map.Entry<Integer, BBGRoom>> entries = rooms.entrySet();
+        Set<Map.Entry<Integer, BBGRoom>> entries = this.rooms.entrySet();
         for( Map.Entry<Integer, BBGRoom> entry : entries )
             if( entry.getValue().getState() >= minState && entry.getValue().getState() <= maxState )
                 if( entry.getValue().containsUser(user) )
@@ -162,11 +127,11 @@ public class BattleUtils extends UtilBase
         for( Object g : (List<?>)room.getProperty("games") )
             if( ((Game)g).player.id == playerId )
                 return true;
-
         return false;
     }
 
-    private void removeReferences(BBGRoom room)
+    @Override
+    protected void removeReferences(BBGRoom room)
     {
         List<Room> lobbies = ext.getParentZone().getRoomListFromGroup("lobbies");
         int msgIndex = -1;
