@@ -65,7 +65,7 @@ public class LobbyRoom extends BaseLobbyRoom
             {
                 params.putInt("st", 3);
                 messages.getSFSObject(battleMsgIndex).putInt("st", 3);
-                BBGRoom room = battleUtils.rooms.get(messages.getSFSObject(battleMsgIndex).getInt("bid"));
+                BBGRoom room = battleUtils.getRoom(messages.getSFSObject(battleMsgIndex).getInt("bid"));
                 if( room != null )
                     battleUtils.remove(room);
                 messages.removeElementAt(battleMsgIndex);
@@ -76,7 +76,7 @@ public class LobbyRoom extends BaseLobbyRoom
             ISFSObject message = getAvailableBattle(params);
             if( message != null )
             {
-                BBGRoom room = battleUtils.rooms.get(params.getInt("bid"));
+                BBGRoom room = battleUtils.getRoom(params.getInt("bid"));
                 if( room != null)
                 {
                     battleUtils.join(room, sender);
@@ -97,7 +97,7 @@ public class LobbyRoom extends BaseLobbyRoom
             message = getStartedBattle(params);
             if( message != null )
             {
-                BBGRoom room = battleUtils.rooms.get(params.getInt("bid"));
+                BBGRoom room = battleUtils.getRoom(params.getInt("bid"));
                 if( room != null && room.getState() > BattleField.STATE_1_CREATED && room.getState() < BattleField.STATE_4_ENDED )
                     battleUtils.join(room, sender, ((Game)((List<?>)room.getProperty("games")).get(0)).player.id);
                 return;
