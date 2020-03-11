@@ -18,7 +18,7 @@ public class BattleRequestStartHandler extends BaseClientRequestHandler {
 	BattleRoom room;
 
 	public void handleClientRequest(User sender, ISFSObject params) {
-		this.room = (BattleRoom) BattleUtils.getInstance().rooms.get(params.getInt("r"));
+		this.room = (BattleRoom) BattleUtils.getInstance().getRoom(params.getInt("r"));
 		
 		sender.setProperty("lastBattleStared", room.getId());
 		for( User u : room.getPlayersList() )

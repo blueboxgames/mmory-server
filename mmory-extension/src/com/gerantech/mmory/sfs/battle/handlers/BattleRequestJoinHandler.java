@@ -24,8 +24,8 @@ public class BattleRequestJoinHandler extends BBGClientRequestHandler
     private int mode;
     private int index;
     private int league;
-    private boolean debugMode;
     private int friendlyMode;
+    private boolean debugMode;
 
     public void handleClientRequest(User sender, ISFSObject params)
     {
@@ -41,7 +41,7 @@ try {
         this.index = params.getInt("index");
         if( this.index > 2 )
         {
-            BBGRoom room = BattleUtils.getInstance().rooms.get(this.index);
+            BBGRoom room = BattleUtils.getInstance().getRoom(this.index);
             if (room == null || room.getState() >= BattleField.STATE_4_ENDED )
             {
                 send(SFSCommands.BATTLE_JOIN, MessageTypes.RESPONSE_NOT_FOUND, params, sender);
@@ -69,9 +69,7 @@ try {
  
 	private void joinUser(User user)
     {
-        BBGRoom room;
-        room = findWaitingBattleRoom(user);
-
+        BBGRoom room = this.findWaitingBattleRoom(user);
         if( room == null )
             room = BattleUtils.getInstance().make((Class<?>) getParentExtension().getParentZone().getProperty("battleClass"), user, this.index, this.mode, this.type, this.friendlyMode);
         BattleUtils.getInstance().join(room, user);
@@ -80,7 +78,7 @@ try {
 
     private BBGRoom findWaitingBattleRoom(User user)
     {
-        AbstractMap<Integer, BBGRoom> battles = BattleUtils.getInstance().rooms;
+        AbstractMap<Integer, BBGRoom> battles = BattleUtils.getInstance().getRooms();
         trace("alive battles " + battles.size());
         BattleRoom room = null;
         for(Map.Entry<Integer, BBGRoom> entry : battles.entrySet())

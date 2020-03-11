@@ -12,7 +12,7 @@ import com.smartfoxserver.v2.extensions.BaseClientRequestHandler;
 public class BattleSendStickerHandler extends BaseClientRequestHandler {
     public void handleClientRequest(User sender, ISFSObject params) {
         try {
-            ((BattleRoom) BattleUtils.getInstance().rooms.get(params.getInt("r"))).sendSticker(sender, params);
+            ((BattleRoom) BattleUtils.getInstance().getRoom(params.getInt("r"))).sendSticker(sender, params);
         } catch (Exception | Error e) { e.printStackTrace(); }
     }
 }

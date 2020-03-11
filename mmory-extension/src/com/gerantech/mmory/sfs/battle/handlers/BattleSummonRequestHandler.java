@@ -12,7 +12,7 @@ public class BattleSummonRequestHandler extends BaseClientRequestHandler
 	public void handleClientRequest(User sender, ISFSObject params)
 	{
 		try {
-			BattleRoom room = (BattleRoom) BattleUtils.getInstance().rooms.get(params.getInt("r"));
+			BattleRoom room = (BattleRoom) BattleUtils.getInstance().getRoom(params.getInt("r"));
 			if( room.battleField.state < BattleField.STATE_1_CREATED || room.battleField.state > BattleField.STATE_3_PAUSED )
 				return;
 			int side = room.getPlayerGroup(sender);

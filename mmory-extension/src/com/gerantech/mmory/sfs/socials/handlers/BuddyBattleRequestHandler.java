@@ -50,7 +50,7 @@ public class BuddyBattleRequestHandler extends BaseClientRequestHandler
         else if( battleState == STATE_BATTLE_STARTED )
         {
             User subjectUser = getParentExtension().getParentZone().getUserManager().getUserByName(params.getInt("s") + "");
-            BBGRoom room = BattleUtils.getInstance().rooms.get(params.getInt("bid"));
+            BBGRoom room = BattleUtils.getInstance().getRoom(params.getInt("bid"));
             BattleUtils.getInstance().join(room, sender);
             if( subjectUser != null )
                 send(SFSCommands.BUDDY_BATTLE, params, Arrays.asList(sender, subjectUser));

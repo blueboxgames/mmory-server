@@ -11,7 +11,7 @@ public class BattleRequestLeaveHandler extends BaseClientRequestHandler
 	public void handleClientRequest(User sender, ISFSObject params)
 	{
 		try {
-			BattleRoom room = (BattleRoom) BattleUtils.getInstance().rooms.get(params.getInt("r"));
+			BattleRoom room = (BattleRoom) BattleUtils.getInstance().getRoom(params.getInt("r"));
 			room.leave(sender, params.containsKey("retryMode"));
 		} catch (Exception | Error e) { e.printStackTrace(); };
 	}
