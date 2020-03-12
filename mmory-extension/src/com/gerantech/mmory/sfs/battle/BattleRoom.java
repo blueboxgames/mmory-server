@@ -32,6 +32,7 @@ import com.gerantech.mmory.libs.utils.RankingUtils;
 import com.gerantech.mmory.sfs.battle.bots.BattleBot;
 import com.gerantech.mmory.sfs.battle.factories.EndCalculator;
 import com.gerantech.mmory.sfs.battle.factories.TouchDownEndCalculator;
+import com.gerantech.mmory.sfs.battle.factories.ZoneEndCalculator;
 import com.gerantech.mmory.sfs.callbacks.BattleEventCallback;
 import com.gerantech.mmory.sfs.callbacks.ElixirChangeCallback;
 import com.gerantech.mmory.sfs.callbacks.HitUnitCallback;
@@ -93,9 +94,10 @@ public class BattleRoom extends BBGRoom {
 		
 		FieldData field = new FieldData(mode, BattleUtils.getInstance().maps.get(mode), ((Game)games.get(0)).appVersion);
 		this.battleField.create(games.get(0), games.get(1), field, 0, System.currentTimeMillis(), containsProperty("hasExtraTime"), this.getPropertyAsInt("friendlyMode"));
-		
-		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
+		if( field.mode == Challenge.MODE_1_TOUCHDOWN )
 			this.endCalculator = new TouchDownEndCalculator(this);
+		else if( field.mode == Challenge.MODE_3_ZONE )
+			this.endCalculator = new ZoneEndCalculator(this);
 		else
 			this.endCalculator = new EndCalculator(this);
 	}

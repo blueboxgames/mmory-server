@@ -24,7 +24,7 @@ public class BattleEventCallback implements EventCallback {
     @Override
     public void dispatch(int id, String type, Object data) {
         // only headquarter battle is alive
-        if (room.battleField.state >= BattleField.STATE_4_ENDED || room.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN)
+        if (room.battleField.state >= BattleField.STATE_4_ENDED || room.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN || room.battleField.field.mode == Challenge.MODE_3_ZONE)
             return;
 
         // when units disposed
