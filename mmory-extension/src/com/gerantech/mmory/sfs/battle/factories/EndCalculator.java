@@ -5,6 +5,7 @@ import com.gerantech.mmory.sfs.battle.BattleRoom;
 public class EndCalculator
 {
 	protected final BattleRoom room;
+	public int round = 1;
 	public int[] scores = new int[2];
 
 	public EndCalculator(BattleRoom room)

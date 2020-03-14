@@ -5,7 +5,6 @@ import com.gerantech.mmory.sfs.battle.BattleRoom;
 
 public class ZoneEndCalculator extends EndCalculator
 {
-    public int round = 1;
     public ZoneEndCalculator(BattleRoom room)
     {
         super(room);
@@ -24,8 +23,8 @@ public class ZoneEndCalculator extends EndCalculator
         this.room.trace("zone captured by " + side);
         this.round ++;
         this.scores[side] ++;
-
         this.room.sendNewRoundResponse(side, -1);
+
         if( this.scores[side] > 2 )
             return true;
 

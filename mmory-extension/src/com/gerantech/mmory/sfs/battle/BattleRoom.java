@@ -253,7 +253,7 @@ public class BattleRoom extends BBGRoom {
 	{
 		SFSObject params = new SFSObject();
 		params.putInt("winner", winner);
-		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
+		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN || this.battleField.field.mode == Challenge.MODE_3_ZONE )
 		{
 			params.putInt("unitId", unitId);
 			params.putInt("round", endCalculator.round);
