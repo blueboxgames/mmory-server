@@ -256,7 +256,7 @@ public class BattleRoom extends BBGRoom {
 		if( this.battleField.field.mode == Challenge.MODE_1_TOUCHDOWN )
 		{
 			params.putInt("unitId", unitId);
-			params.putInt("round", ((TouchDownEndCalculator)endCalculator).round);
+			params.putInt("round", endCalculator.round);
 		}
 		params.putInt("0", endCalculator.scores[0]);
 		params.putInt("1", endCalculator.scores[1]);

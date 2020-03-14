@@ -6,7 +6,6 @@ import com.gerantech.mmory.sfs.battle.BattleRoom;
 
 public class TouchDownEndCalculator extends EndCalculator
 {
-    public int round = 1;
     public TouchDownEndCalculator(BattleRoom room)
     {
         super(room);
