@@ -8,7 +8,6 @@ import java.util.TimerTask;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import com.gerantech.mmory.core.Game;
 import com.gerantech.mmory.core.Player;
 import com.gerantech.mmory.core.battle.BattleField;
 import com.gerantech.mmory.core.constants.SFSCommands;
@@ -22,8 +21,6 @@ import com.smartfoxserver.v2.api.CreateRoomSettings;
 import com.smartfoxserver.v2.entities.data.ISFSArray;
 import com.smartfoxserver.v2.entities.data.SFSArray;
 import com.smartfoxserver.v2.entities.data.SFSObject;
-
-import haxe.root.Array;
 
 public class SpectateRoom extends BBGRoom {
 	private ScheduledFuture<?> timer;
@@ -55,16 +52,14 @@ public class SpectateRoom extends BBGRoom {
 				int end = Math.max(0, newIds.size() - 20);
 				for (int i = newIds.size() - 1; i >= end; i--) {
 					BattleRoom r = (BattleRoom) BattleUtils.getInstance().getRoom(newIds.get(i));
-					trace(r);
 					battle = new SFSObject();
 					battle.putInt("id", r.getId());
 					battle.putText("name", r.getName());
 					battle.putInt("startAt", r.battleField.startAt);
 					ISFSArray players = new SFSArray();
 
-					Array<Game> games = r.battleField.games;
-					for (int g = 0; g < games.length; g++) {
-						Player player = games.__get(g).player;
+					for (int g = 0; g < r.battleField.games.length; g++) {
+						Player player = r.battleField.games.__get(g).player;
 						SFSObject p = new SFSObject();
 						p.putInt("i", player.id);
 						p.putText("n", player.nickName);
@@ -85,21 +80,7 @@ public class SpectateRoom extends BBGRoom {
 		}, 0, 1, TimeUnit.SECONDS);
 	}
 
-	private boolean isChanged(List<Integer> newRooms) {
-		if (roomIds.equals(newRooms))
-			return true;
-		// trace(reservedRooms.size(), newRooms.size());
-
-		/*
-		 * for (int i = 0; i < reservedRooms.size(); i++) if(
-		 * !reservedgetRoomSFSObject(i).getText("users").equals(newgetRoomSFSObject(i).
-		 * getText("users")) ) return true;
-		 */
-		return false;
-	}
-
 	public void destroy() {
-		// clearAllHandlers();
 		if (timer != null)
 			timer.cancel(true);
 		timer = null;
