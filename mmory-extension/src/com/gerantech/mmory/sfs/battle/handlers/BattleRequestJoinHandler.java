@@ -39,7 +39,7 @@ try {
         }
 
         this.index = params.getInt("index");
-        if( this.index > 2 )
+        if( this.index > 3 )
         {
             BBGRoom room = BattleUtils.getInstance().getRoom(this.index);
             if (room == null || room.getState() >= BattleField.STATE_4_ENDED )
