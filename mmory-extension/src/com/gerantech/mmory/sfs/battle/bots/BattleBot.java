@@ -147,6 +147,13 @@ public class BattleBot
 
     public void update()
     {
+        /** Don't summon if mode is not 1 and dice roll says not to */
+        if( (this.battleField.field.mode == 0 || this.battleField.field.mode == 3) && player.get_battleswins() < 1 )
+        {
+            trace("BattleBot: 1: free enemy battle for mode 0 and 3.");
+            return;
+        }
+        
         /** With randomness of:
          * * 1/5 -> no summon
          * * 4/5 -> do summon
@@ -154,18 +161,10 @@ public class BattleBot
          */
         if( Math.random() < 0.2 )
         {
-            trace("BattleBot: 1: randomness summon return.");
+            trace("BattleBot: 2: offen times, bot not summoning.");
             return;
         }
-        /** Don't summon if mode is not 1 and dice roll says not to */
-        else if( this.battleField.field.mode == 0 )
-        {
-            if( player.get_battleswins() < 1 )
-            {
-                trace("BattleBot: 2: bosscar less than 1 win return.");
-                return;
-            }
-        }
+
 
         if( battleRoom.battleField.numSummonedUnits > 0 || autoStart )
         {
@@ -346,7 +345,7 @@ public class BattleBot
                 }
             }
 
-            if( CardTypes.isFlying(playerHead.card.type) )
+            if( playerHead.card.z < 0 )// flying units
             {
                 // Only summon card when card has less more than 30% of it's health.
                 // REMINDER: C117 counter must be area damage.
