@@ -177,7 +177,8 @@ try {
 
 		// add udid and device as account id for restore players
 		try {
-			if( deviceUDID != null )
+			ISFSArray numDevices = dbManager.executeQuery("SELECT player_id FROM devices WHERE udid='" + deviceUDID + "' AND model='" + deviceModel + deviceIMEI + "'", new Object[] {});
+			if( deviceUDID != null && numDevices.size() < 3 )
 			{
 				if( deviceIMEI == "" )
 					dbManager.executeInsert("INSERT INTO devices (`player_id`, `model`, `udid`) VALUES ('" + playerId + "', '" + deviceModel + "', '" + deviceUDID + "');", new Object[] {});
