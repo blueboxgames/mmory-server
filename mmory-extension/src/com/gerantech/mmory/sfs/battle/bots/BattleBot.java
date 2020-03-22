@@ -148,7 +148,7 @@ public class BattleBot
     public void update()
     {
         /** Don't summon if mode is not 1 and dice roll says not to */
-        if( (this.battleField.field.mode == 0 || this.battleField.field.mode == 3) && player.get_battleswins() < 1 )
+        if( this.battleField.field.mode != Challenge.MODE_1_TOUCHDOWN && player.get_battleswins() < 1 )
         {
             trace("BattleBot: 1: free enemy battle for mode 0 and 3.");
             return;
