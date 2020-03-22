@@ -63,9 +63,9 @@ public class RoadCollectRewardHandler extends BBGClientRequestHandler {
 			send(SFSCommands.COLLECT_ROAD_REWARD, response, params, sender);
 			return;
 		}
-		DBUtils dbUtils = DBUtils.getInstance();
-		dbUtils.updateResources(game.player, mapChangeCallback.updates);
-		dbUtils.insertResources(game.player, mapChangeCallback.inserts);
+		
+		DBUtils.getInstance().updateResources(game.player, mapChangeCallback.updates);
+		DBUtils.getInstance().insertResources(game.player, mapChangeCallback.inserts);
 		ISFSArray outcomes = ExchangeUtils.getInstance().getRewards(mapChangeCallback);
 		if( outcomes.size() > 0 )
 			params.putSFSArray("outcomes", outcomes);

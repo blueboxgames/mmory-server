@@ -336,10 +336,8 @@ public class BattleRoom extends BBGRoom {
 	private void end(double battleDuration)
 	{
 		this.battleField.state = BattleField.STATE_4_ENDED;
-		trace(this.getName(), "ended duration:" + battleDuration, " (" + this.battleField.field.times.toString() + ")");
-
-	    calculateResult();
-		close();
+		this.calculateResult();
+		this.close();
 	}
 
 	private void calculateResult()
@@ -402,7 +400,7 @@ public class BattleRoom extends BBGRoom {
 			// update DB
 			if( !game.player.isBot() )
 			{
-				//trace("battle outcomes:", outcomesList[i].toString());
+				trace("battle outcomes:", outcomesList[i].toString());
 				// increase daily battles
 				if( game.player.get_battleswins() > 0 )
 				{
