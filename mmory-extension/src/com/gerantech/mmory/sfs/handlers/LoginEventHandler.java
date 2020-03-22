@@ -113,15 +113,16 @@ try {
 				ISFSArray devices = dbManager.executeQuery("SELECT player_id FROM devices WHERE udid='" + deviceUDID + "' AND model='" + deviceModel + deviceIMEI + "'", new Object[]{});
 				if( devices.size() > 0 )
 				{
-					ISFSArray players = dbManager.executeQuery("SELECT id, name, password FROM " + DBUtils.getInstance().liveDB + ".players WHERE id=" + devices.getSFSObject(0).getInt("player_id"), new Object[]{});
+					String ids = "";
+					int len = Math.min(devices.size(), 3);
+					for (int i = 0; i < len; i++)
+						ids += "id=" + devices.getSFSObject(i).getInt("player_id") + (i == len-1 ? "" : " OR ");
+					ISFSArray players = dbManager.executeQuery("SELECT id, name, password FROM " + DBUtils.getInstance().liveDB + ".players WHERE " + ids, new Object[]{});
 					if( players.size() < 1 )
-						players = dbManager.executeQuery("SELECT id, name, password FROM players WHERE id=" + devices.getSFSObject(0).getInt("player_id"), new Object[]{});
-					if ( players.size() > 0 )
+						players = dbManager.executeQuery("SELECT id, name, password FROM players WHERE " + ids, new Object[]{});
+					if( players.size() > 0 )
 					{
-						outData.putBool("exists", true);
-						outData.putInt("id", players.getSFSObject(0).getInt("id"));
-						outData.putText("name", players.getSFSObject(0).getText("name"));
-						outData.putText("password", players.getSFSObject(0).getText("password"));
+						outData.putSFSArray("existGames", players);
 						return;
 					}
 				}
