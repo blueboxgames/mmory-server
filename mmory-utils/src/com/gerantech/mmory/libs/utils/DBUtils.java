@@ -131,24 +131,21 @@ public class DBUtils extends UtilBase
 
     public void updateResources(Player player, IntIntMap resources)
     {
+        boolean hasRankFields = resources.exists(ResourceType.R2_POINT);
+        String query = "UPDATE " + liveDB + ".resources SET count= CASE";
         int[] keys = resources.keys();
         int keyLen = keys.length;
         if( keyLen <= 0 )
             return;
 
-        boolean hasRankFields = false;
-        String query = "UPDATE " + liveDB + ".resources SET count= CASE";
         for (int i = 0; i < keyLen; i++)
         {
             if( resources.get(keys[i]) == 0 || ResourceType.isBook(keys[i]) )
                 continue;
-            if( !hasRankFields )
-                hasRankFields = keys[i] == ResourceType.R2_POINT;
 
             query += " WHEN type= " + keys[i] + " THEN " + player.resources.get(keys[i]);
         }
         query += " ELSE count END WHERE player_id=" + player.id;
-
         try {
             db.executeUpdate(query, new Object[] {});
         } catch (SQLException e) { e.printStackTrace(); }

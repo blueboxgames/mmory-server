@@ -321,7 +321,7 @@ public class BattleRoom extends BBGRoom {
 		if( this.battleField.state > BattleField.STATE_2_STARTED || battleDuration < 3 )
 			return;
 
-		// this.endCalculator.scoreED32C  333333333333333s[0] = 3;
+		// this.endCalculator.scores[0] = 3;
 		boolean haveWinner = endCalculator.check();
 		// trace("state:" + this.battleField.state + " haveWinner " + haveWinner + " scores[0]:" + endCalculator.scores[0] + " scores[1]:" + endCalculator.scores[1] );
 		if( haveWinner )
