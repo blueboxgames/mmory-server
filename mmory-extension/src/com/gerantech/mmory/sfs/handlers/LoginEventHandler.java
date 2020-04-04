@@ -284,6 +284,15 @@ try {
 				initData.cardsLevel.set(element.getInt("type"), element.getInt("level"));
 		}
 
+		// fill lost max-point
+		if( !initData.resources.exists(ResourceType.R7_MAX_POINT)){
+			SFSObject sfs = new SFSObject();
+			sfs.putInt("type", ResourceType.R7_MAX_POINT);
+			sfs.putInt("count", initData.resources.get(ResourceType.R2_POINT));
+			resources.addSFSObject(sfs);
+			outData.putSFSArray("resources", resources);
+		}
+
 		// create decks init data
 		for(int i = 0; i < outData.getSFSArray("decks").size(); i++)
 		{
